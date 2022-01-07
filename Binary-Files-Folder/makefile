@@ -51,6 +51,9 @@ STD_EXECUTE_FLAGS := -lm
 .PRECIOUS: $(OBJECT_FILES)
 
 
+default:
+	@echo $(ENGINE_SOURCE)
+
 SDL_PROGRAMS :=
 STD_PROGRAMS := program
 
