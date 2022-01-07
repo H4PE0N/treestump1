@@ -63,9 +63,10 @@ extern const unsigned int BOARD_LENGTH;
 // ==========================================
 
 extern const int INDEX_NONE;
-// extern const int POINT_NONE;
+extern const Point POINT_NONE;
 
-/*
+// ==========================================
+
 extern const char WHITE_SYMBOLS[];
 extern const char BLACK_SYMBOLS[];
 
@@ -82,6 +83,5 @@ extern const char RANK_DELIM[];
 
 extern const char PASSANT_NONE[];
 extern const char CASTLES_NONE[];
-*/
 
 #endif

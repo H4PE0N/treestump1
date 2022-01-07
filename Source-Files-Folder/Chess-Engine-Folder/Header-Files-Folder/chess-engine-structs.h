@@ -8,12 +8,12 @@
 // Bits 4-7 store file of ep square (starting at 1, so 0 = no ep square)	4
 // Bits 8-13 captured piece													6
 // Bits 14-... fifty mover counter											+
+	
+// 	current			castles 		passant		counter		turns	
+//	white/black		true/false * 4	0 - 15		0 - 63		0 - 127
+//	00				0000			0000		000000 		0000000
 
-// 	current			castles 		passant		turns		counter	
-//	white/black		true/false * 4	file		0 - 128?	0 - 64
-//	00				0000			0000		00000000	0000000
-
-//	0000000 00000000 0000 0000 00
+//	0000000 000000 0000 0000 00
 
 typedef unsigned int Piece; 	// 00 	000
 								// team type
@@ -21,17 +21,25 @@ typedef unsigned int Piece; 	// 00 	000
 typedef int Point; 				// 000  000
 								// file rank
 
-typedef unsigned int Info;		// ????			 0000	 0000	 00
-								// turns counter passant castles team
+typedef unsigned int Info;		// 0000000	000000	0000	0000	00
+								// turns 	counter passant castles team
 
 // board: Piece[64] or Piece* board
 
-typedef unsigned int Castle;	// 0000
+// ==========================================
 
-typedef unsigned int Turns;		// 000000
+typedef unsigned int Turns;		// 0000000
 
 typedef unsigned int Counter; 	// 000000
 
-typedef unsigned int File;		// 0000
+typedef unsigned int Passant;	// 0000
+
+typedef unsigned int Team;		// 00
+
+typedef unsigned int Type;		// 000
+
+typedef unsigned int Rank;		// 000
+
+typedef unsigned int File;		// 000
 
 #endif
