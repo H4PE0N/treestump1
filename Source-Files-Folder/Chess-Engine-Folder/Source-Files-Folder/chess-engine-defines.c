@@ -1,5 +1,5 @@
 
-#include "../Header-Files-Folder/chess-engine-includer.h"
+#include "../Header-Files-Folder/engine-include-file.h"
 
 // ==========================================
 
@@ -44,26 +44,26 @@ const Info INFO_TEAM_BLACK		= 0b00000000000000000000010;
 
 // ==========================================
 
-const unsigned int PIECE_TEAM_SHIFT = 3;
-const unsigned int PIECE_TYPE_SHIFT = 0;
+const unsigned short PIECE_TEAM_SHIFT = 3;
+const unsigned short PIECE_TYPE_SHIFT = 0;
 
-const unsigned int POINT_FILE_SHIFT = 3;
-const unsigned int POINT_RANK_SHIFT = 0;
+const unsigned short POINT_FILE_SHIFT = 3;
+const unsigned short POINT_RANK_SHIFT = 0;
 
-const unsigned int INFO_TEAM_SHIFT = 0;
-const unsigned int INFO_PASSANT_SHIFT = 6;
-const unsigned int INFO_COUNTER_SHIFT = 10;
-const unsigned int INFO_TURNS_SHIFT   = 16;
-
-// ==========================================
-
-const unsigned int BOARD_RANKS = 8;
-const unsigned int BOARD_FILES = 8;
-const unsigned int BOARD_LENGTH = 64;
+const unsigned short INFO_TEAM_SHIFT = 0;
+const unsigned short INFO_PASSANT_SHIFT = 6;
+const unsigned short INFO_COUNTER_SHIFT = 10;
+const unsigned short INFO_TURNS_SHIFT   = 16;
 
 // ==========================================
 
-const int INDEX_NONE = -1;
+const unsigned short BOARD_RANKS = 8;
+const unsigned short BOARD_FILES = 8;
+const unsigned short BOARD_LENGTH = 64;
+
+// ==========================================
+
+const signed short INDEX_NONE = -1;
 const Point POINT_NONE = -1;
 
 const Piece PIECE_NONE = 0b00000;
@@ -74,7 +74,7 @@ const Info INFO_NONE = 0b00000000000000000000000;
 const char WHITE_SYMBOLS[] = {'X', 'P', 'N', 'B', 'R', 'Q', 'K'};
 const char BLACK_SYMBOLS[] = {'x', 'p', 'n', 'b', 'r', 'q', 'k'};
 
-const unsigned int TEAM_AMOUNT = 7;
+const unsigned short TEAM_AMOUNT = 7;
 
 const char RANK_SYMBOLS[] = {'8', '7', '6', '5', '4', '3', '2', '1'};
 const char FILE_SYMBOLS[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};

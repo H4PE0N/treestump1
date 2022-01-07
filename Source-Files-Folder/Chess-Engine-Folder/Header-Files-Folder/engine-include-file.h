@@ -1,6 +1,6 @@
 
-#ifndef CHESS_ENGINE_INCLUDER_H
-#define CHESS_ENGINE_INCLUDER_H
+#ifndef ENGINE_INCLUDE_FILE_H
+#define ENGINE_INCLUDE_FILE_H
 
 #include <stdlib.h>
 #include <stdbool.h>

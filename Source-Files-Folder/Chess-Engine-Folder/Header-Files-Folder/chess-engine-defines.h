@@ -43,26 +43,26 @@ extern const Info INFO_TEAM_BLACK;
 
 // ==========================================
 
-extern const unsigned int PIECE_TEAM_SHIFT;
-extern const unsigned int PIECE_TYPE_SHIFT;
+extern const unsigned short PIECE_TEAM_SHIFT;
+extern const unsigned short PIECE_TYPE_SHIFT;
 
-extern const unsigned int POINT_RANK_SHIFT;
-extern const unsigned int POINT_FILE_SHIFT;
+extern const unsigned short POINT_RANK_SHIFT;
+extern const unsigned short POINT_FILE_SHIFT;
 
-extern const unsigned int INFO_TEAM_SHIFT;
-extern const unsigned int INFO_PASSANT_SHIFT;
-extern const unsigned int INFO_TURNS_SHIFT;
-extern const unsigned int INFO_COUNTER_SHIFT;
-
-// ==========================================
-
-extern const unsigned int BOARD_RANKS;
-extern const unsigned int BOARD_FILES;
-extern const unsigned int BOARD_LENGTH;
+extern const unsigned short INFO_TEAM_SHIFT;
+extern const unsigned short INFO_PASSANT_SHIFT;
+extern const unsigned short INFO_TURNS_SHIFT;
+extern const unsigned short INFO_COUNTER_SHIFT;
 
 // ==========================================
 
-extern const int INDEX_NONE;
+extern const unsigned short BOARD_RANKS;
+extern const unsigned short BOARD_FILES;
+extern const unsigned short BOARD_LENGTH;
+
+// ==========================================
+
+extern const signed short INDEX_NONE;
 extern const Point POINT_NONE;
 
 // ==========================================
@@ -70,7 +70,7 @@ extern const Point POINT_NONE;
 extern const char WHITE_SYMBOLS[];
 extern const char BLACK_SYMBOLS[];
 
-extern const unsigned int SYMBOL_AMOUNT;
+extern const unsigned short SYMBOL_AMOUNT;
 
 extern const char RANK_SYMBOLS[];
 extern const char FILE_SYMBOLS[];

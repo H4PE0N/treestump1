@@ -15,31 +15,37 @@
 
 //	0000000 000000 0000 0000 00
 
-typedef unsigned int Piece; 	// 00 	000
-								// team type
+typedef unsigned short Piece; 	// 00 	000
+									// team type
 
-typedef int Point; 				// 000  000
-								// file rank
+typedef signed short Point; 	// 000  000
+									// file rank
 
-typedef unsigned int Info;		// 0000000	000000	0000	0000	00
-								// turns 	counter passant castles team
+typedef unsigned int Info;			// 0000000	000000	0000	0000	00
+									// turns 	counter passant castles team
 
 // board: Piece[64] or Piece* board
 
 // ==========================================
 
-typedef unsigned int Turns;		// 0000000
+// I don't know if these are going to be used?:
 
-typedef unsigned int Counter; 	// 000000
+typedef unsigned short Turns;	// 0000000
 
-typedef unsigned int Passant;	// 0000
+typedef unsigned short Counter; // 000000
 
-typedef unsigned int Team;		// 00
+typedef unsigned short Passant;	// 0000
 
-typedef unsigned int Type;		// 000
+typedef unsigned short Team;	// 00
 
-typedef unsigned int Rank;		// 000
+typedef unsigned short Type;	// 000
 
-typedef unsigned int File;		// 000
+typedef unsigned short Rank;	// 000
+
+typedef unsigned short File;	// 000
+
+typedef unsigned short Move;	// 000000 000000
+
+typedef unsigned short Index;	//
 
 #endif
