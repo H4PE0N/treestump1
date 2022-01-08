@@ -25,6 +25,23 @@ const Point POINT_FILE_MASK 	= 0b111000;
 
 // ==========================================
 
+const Move MOVE_FLAG_NONE		= 0b000000000000000;
+
+const Move MOVE_FLAG_KNIGHT		= 0b001000000000000;
+const Move MOVE_FLAG_BISHOP		= 0b010000000000000;
+const Move MOVE_FLAG_ROOK		= 0b011000000000000;
+const Move MOVE_FLAG_QUEEN		= 0b100000000000000;
+
+const Move MOVE_FLAG_DOUBLE		= 0b101000000000000;
+const Move MOVE_FLAG_CASTLE		= 0b110000000000000;
+const Move MOVE_FLAG_PASSANT	= 0b111000000000000;
+
+const Move MOVE_START_MASK		= 0b000000000111111;
+const Move MOVE_STOP_MASK		= 0b000111111000000;
+const Move MOVE_FLAG_MASK		= 0b111000000000000;
+
+// ==========================================
+
 // 0000000 000000 0000 0000 00 (23 bits out of 32 - int)
 
 const Info INFO_TEAM_MASK 		= 0b00000000000000000000011;
@@ -67,6 +84,7 @@ const signed short INDEX_NONE = -1;
 const Point POINT_NONE = -1;
 
 const Piece PIECE_NONE = 0b00000;
+const Move MOVE_NONE = 0b000000000000000;
 const Info INFO_NONE = 0b00000000000000000000000;
 
 // ==========================================

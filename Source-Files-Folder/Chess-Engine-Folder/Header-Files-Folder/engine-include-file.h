@@ -10,5 +10,9 @@
 
 #include "chess-engine-structs.h"
 #include "chess-engine-defines.h"
+#include "chess-game-logic.h"
+#include "chess-moves-legal.h"
+#include "execute-chess-moves.h"
+#include "chess-game-actions.h"
 
 #endif

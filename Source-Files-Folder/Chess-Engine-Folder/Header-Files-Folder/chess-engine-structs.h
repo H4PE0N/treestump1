@@ -15,14 +15,20 @@
 
 //	0000000 000000 0000 0000 00
 
+
+// Maybe Piece and Point can be of type 'char' (1 byte = 8 bits)
+
 typedef unsigned short Piece; 	// 00 	000
-									// team type
+								// team type
 
 typedef signed short Point; 	// 000  000
-									// file rank
+								// file rank
 
-typedef unsigned int Info;			// 0000000	000000	0000	0000	00
-									// turns 	counter passant castles team
+typedef unsigned int Info;		// 0000000	000000	0000	0000	00
+								// turns 	counter passant castles team
+
+typedef unsigned short Move;	// 000 	000000 000000
+								// flag	point  point
 
 // board: Piece[64] or Piece* board
 
@@ -43,8 +49,6 @@ typedef unsigned short Type;	// 000
 typedef unsigned short Rank;	// 000
 
 typedef unsigned short File;	// 000
-
-typedef unsigned short Move;	// 000000 000000
 
 typedef unsigned short Index;	//
 

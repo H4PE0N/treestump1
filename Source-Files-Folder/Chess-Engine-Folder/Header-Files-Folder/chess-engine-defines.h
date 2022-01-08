@@ -65,6 +65,10 @@ extern const unsigned short BOARD_LENGTH;
 extern const signed short INDEX_NONE;
 extern const Point POINT_NONE;
 
+extern const Piece PIECE_NONE;
+extern const Move MOVE_NONE;
+extern const Info INFO_NONE;
+
 // ==========================================
 
 extern const char WHITE_SYMBOLS[];
