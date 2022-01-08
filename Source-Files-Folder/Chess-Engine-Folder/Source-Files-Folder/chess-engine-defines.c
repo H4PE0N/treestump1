@@ -34,7 +34,7 @@ const Move MOVE_FLAG_QUEEN		= 0b100000000000000;
 
 const Move MOVE_FLAG_DOUBLE		= 0b101000000000000;
 const Move MOVE_FLAG_CASTLE		= 0b110000000000000;
-const Move MOVE_FLAG_PASSANT	= 0b111000000000000;
+const Move MOVE_FLAG_PASSANT	= 0b111000000000000; // Capture En-Passant Pawn
 
 const Move MOVE_STOP_MASK		= 0b000000000111111;
 const Move MOVE_START_MASK		= 0b000111111000000;
@@ -108,3 +108,47 @@ const char RANK_DELIM[] = "/";
 
 const char PASSANT_NONE[] = "-";
 const char CASTLES_NONE[] = "-";
+
+// ==========================================
+
+// These values must be inverted using the WHITE / BLACK - MOVE_VALUE:
+
+const signed short PAWN_MOVE_DIRS[]		= {+7, +8, +9, +16}; // pawn takes + double jump
+const signed short KNIGHT_MOVE_DIRS[]	= {-17, -15, -10, -6, +6, +10, +15, +17};
+const signed short BISHOP_MOVE_DIRS[]	= {-9, -7, +7, +9};
+const signed short ROOK_MOVE_DIRS[]		= {-8, -1, +1, +8};
+const signed short QUEEN_MOVE_DIRS[]	= {-9, -8, -7, -1, +1, +7, +8, +9};
+const signed short KING_MOVE_DIRS[]		= {-9, -8, -7, -2, -1, +1, +2, +7, +8, +9}; // castling
+
+const signed short CATSLE_MOVE_DIRS[]	= {-2, +2};
+const signed short PAWN_TAKE_DIRS[]		= {+7, +9};
+const signed short PAWN_DOUBLE_DIR		= +16;
+
+// ==========================================
+
+const unsigned short PAWN_DIRS_AMOUNT 	= sizeof(PAWN_MOVE_DIRS) / sizeof(PAWN_MOVE_DIRS[0]);
+const unsigned short KNIGHT_DIRS_AMOUNT = sizeof(KNIGHT_MOVE_DIRS) / sizeof(KNIGHT_MOVE_DIRS[0]);
+const unsigned short BISHOP_DIRS_AMOUNT = sizeof(BISHOP_MOVE_DIRS) / sizeof(BISHOP_MOVE_DIRS[0]);
+const unsigned short ROOK_DIRS_AMOUNT 	= sizeof(ROOK_MOVE_DIRS) / sizeof(ROOK_MOVE_DIRS[0]);
+const unsigned short QUEEN_DIRS_AMOUNT 	= sizeof(QUEEN_MOVE_DIRS) / sizeof(QUEEN_MOVE_DIRS[0]);
+const unsigned short KING_DIRS_AMOUNT 	= sizeof(KING_MOVE_DIRS) / sizeof(KING_MOVE_DIRS[0]);
+
+const unsigned short TAKE_DIRS_AMOUNT	= sizeof(PAWN_TAKE_DIRS) / sizeof(PAWN_TAKE_DIRS[0]);
+const unsigned short CASTLE_DIRS_AMOUNT	= sizeof(CATSLE_MOVE_DIRS) / sizeof(CATSLE_MOVE_DIRS[0]);
+
+// ==========================================
+
+const signed short BLACK_MOVE_VALUE 	= 1;
+const signed short WHITE_MOVE_VALUE 	= -1;
+
+// ==========================================
+
+const unsigned short WHITE_START_RANK	= 7; // This is the index rank, not the notation rank
+const unsigned short BLACK_START_RANK	= 0; // This is the index rank, not the notation rank
+
+const unsigned short WHITE_PAWN_RANK	= 6;
+const unsigned short BLACK_PAWN_RANK	= 1;
+
+// These values are set knowing that WHITE is at the bottom and BLACK is at the top of the board:
+
+const unsigned short KING_START_FILE	= 4; // This is the index file, not the notation file

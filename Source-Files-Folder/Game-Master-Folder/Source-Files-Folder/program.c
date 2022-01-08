@@ -40,11 +40,11 @@ int main(int argAmount, char* arguments[])
 	}
 
 	
-	board[25] = PIECE_TEAM_BLACK | PIECE_TYPE_PAWN;
+	board[25] = PIECE_TEAM_WHITE | PIECE_TYPE_PAWN;
 	board[26] = PIECE_TEAM_BLACK | PIECE_TYPE_KNIGHT;
 	board[27] = PIECE_TEAM_BLACK | PIECE_TYPE_BISHOP;
 	board[33] = PIECE_TEAM_WHITE | PIECE_TYPE_ROOK;
-	board[34] = PIECE_TEAM_WHITE | PIECE_TYPE_QUEEN;
+	board[34] = PIECE_TEAM_WHITE | PIECE_TYPE_PAWN;
 	board[35] = PIECE_TEAM_WHITE | PIECE_TYPE_KING;
 
 
@@ -52,7 +52,7 @@ int main(int argAmount, char* arguments[])
 
 	Move move = MOVE_NONE;
 	Point start = 34;
-	Point stop = 26;
+	Point stop = 27;
 
 	move |= (start << MOVE_START_SHIFT);
 	move |= (stop << MOVE_STOP_SHIFT);
