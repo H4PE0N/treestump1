@@ -50,6 +50,4 @@ typedef unsigned short Rank;	// 000
 
 typedef unsigned short File;	// 000
 
-typedef unsigned short Index;	//
-
 #endif

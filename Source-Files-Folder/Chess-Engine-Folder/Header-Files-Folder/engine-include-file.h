@@ -10,6 +10,7 @@
 
 #include "chess-engine-structs.h"
 #include "chess-engine-defines.h"
+#include "chess-board-handler.h"
 #include "chess-game-logic.h"
 #include "chess-moves-legal.h"
 #include "execute-chess-moves.h"

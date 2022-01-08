@@ -8,7 +8,10 @@ bool move_chess_piece(Piece* board, Info* info, Move move)
 		return false;
 	}
 
-	// Execute move (change board and info)
+	if(!execute_chess_move(board, info, move))
+	{
+		return false;
+	}
 
 	return true;
 }

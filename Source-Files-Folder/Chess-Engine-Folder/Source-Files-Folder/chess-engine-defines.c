@@ -36,8 +36,8 @@ const Move MOVE_FLAG_DOUBLE		= 0b101000000000000;
 const Move MOVE_FLAG_CASTLE		= 0b110000000000000;
 const Move MOVE_FLAG_PASSANT	= 0b111000000000000;
 
-const Move MOVE_START_MASK		= 0b000000000111111;
-const Move MOVE_STOP_MASK		= 0b000111111000000;
+const Move MOVE_STOP_MASK		= 0b000000000111111;
+const Move MOVE_START_MASK		= 0b000111111000000;
 const Move MOVE_FLAG_MASK		= 0b111000000000000;
 
 // ==========================================
@@ -61,31 +61,34 @@ const Info INFO_TEAM_BLACK		= 0b00000000000000000000010;
 
 // ==========================================
 
-const unsigned short PIECE_TEAM_SHIFT = 3;
-const unsigned short PIECE_TYPE_SHIFT = 0;
+const unsigned short PIECE_TEAM_SHIFT 	= 3;
+const unsigned short PIECE_TYPE_SHIFT 	= 0;
 
-const unsigned short POINT_FILE_SHIFT = 3;
-const unsigned short POINT_RANK_SHIFT = 0;
+const unsigned short POINT_FILE_SHIFT 	= 3;
+const unsigned short POINT_RANK_SHIFT 	= 0;
 
-const unsigned short INFO_TEAM_SHIFT = 0;
+const unsigned short INFO_TEAM_SHIFT 	= 0;
 const unsigned short INFO_PASSANT_SHIFT = 6;
 const unsigned short INFO_COUNTER_SHIFT = 10;
 const unsigned short INFO_TURNS_SHIFT   = 16;
 
-// ==========================================
-
-const unsigned short BOARD_RANKS = 8;
-const unsigned short BOARD_FILES = 8;
-const unsigned short BOARD_LENGTH = 64;
+const unsigned short MOVE_STOP_SHIFT	= 0;
+const unsigned short MOVE_START_SHIFT	= 6;
 
 // ==========================================
 
-const signed short INDEX_NONE = -1;
-const Point POINT_NONE = -1;
+const unsigned short BOARD_RANKS 	= 8;
+const unsigned short BOARD_FILES 	= 8;
+const unsigned short BOARD_LENGTH 	= 64;
 
-const Piece PIECE_NONE = 0b00000;
-const Move MOVE_NONE = 0b000000000000000;
-const Info INFO_NONE = 0b00000000000000000000000;
+// ==========================================
+
+const signed short INDEX_NONE 	= -1;
+const Point POINT_NONE 			= -1;
+
+const Piece PIECE_NONE 			= 0b00000;
+const Move MOVE_NONE 			= 0b000000000000000;
+const Info INFO_NONE 			= 0b00000000000000000000000;
 
 // ==========================================
 

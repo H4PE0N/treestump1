@@ -39,11 +39,26 @@ int main(int argAmount, char* arguments[])
 		board[index] = PIECE_TEAM_NONE | PIECE_TYPE_NONE;
 	}
 
-	board[56] = PIECE_TEAM_BLACK | PIECE_TYPE_PAWN;
+	
+	board[25] = PIECE_TEAM_BLACK | PIECE_TYPE_PAWN;
+	board[26] = PIECE_TEAM_BLACK | PIECE_TYPE_KNIGHT;
+	board[27] = PIECE_TEAM_BLACK | PIECE_TYPE_BISHOP;
+	board[33] = PIECE_TEAM_WHITE | PIECE_TYPE_ROOK;
+	board[34] = PIECE_TEAM_WHITE | PIECE_TYPE_QUEEN;
+	board[35] = PIECE_TEAM_WHITE | PIECE_TYPE_KING;
+
 
 	Info info = INFO_NONE;
 
 	Move move = MOVE_NONE;
+	Point start = 34;
+	Point stop = 26;
+
+	move |= (start << MOVE_START_SHIFT);
+	move |= (stop << MOVE_STOP_SHIFT);
+	move |= (MOVE_FLAG_NONE);
+
+	print_chess_board(board);
 
 	if(!move_chess_piece(board, &info, move))
 	{

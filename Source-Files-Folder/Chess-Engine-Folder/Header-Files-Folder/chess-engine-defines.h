@@ -26,6 +26,23 @@ extern const Point POINT_FILE_MASK;
 
 // ==========================================
 
+extern const Move MOVE_FLAG_NONE;
+
+extern const Move MOVE_FLAG_KNIGHT;
+extern const Move MOVE_FLAG_BISHOP;
+extern const Move MOVE_FLAG_ROOK;
+extern const Move MOVE_FLAG_QUEEN;
+
+extern const Move MOVE_FLAG_DOUBLE;
+extern const Move MOVE_FLAG_CASTLE;
+extern const Move MOVE_FLAG_PASSANT;
+
+extern const Move MOVE_STOP_MASK;
+extern const Move MOVE_START_MASK;
+extern const Move MOVE_FLAG_MASK;
+
+// ==========================================
+
 extern const Info INFO_TEAM_MASK;
 extern const Info INFO_PASSANT_MASK;
 extern const Info INFO_CASTLES_MASK;
@@ -53,6 +70,25 @@ extern const unsigned short INFO_TEAM_SHIFT;
 extern const unsigned short INFO_PASSANT_SHIFT;
 extern const unsigned short INFO_TURNS_SHIFT;
 extern const unsigned short INFO_COUNTER_SHIFT;
+
+extern const unsigned short MOVE_STOP_SHIFT;
+extern const unsigned short MOVE_START_SHIFT;
+
+// ==========================================
+
+#define MOVE_STOP_MACRO(MOVE) 		(MOVE & MOVE_STOP_MASK) >> MOVE_STOP_SHIFT
+#define MOVE_START_MACRO(MOVE) 		(MOVE & MOVE_START_MASK) >> MOVE_START_SHIFT
+
+#define INFO_TEAM_MACRO(INFO) 		(INFO & INFO_TEAM_MASK) >> INFO_TEAM_SHIFT
+#define INFO_PASSANT_MACRO(INFO) 	(INFO & INFO_PASSANT_MASK) >> INFO_PASSANT_SHIFT
+#define INFO_TURNS_MACRO(INFO) 		(INFO & INFO_TURNS_MASK) >> INFO_TURNS_SHIFT
+#define INFO_COUNTER_MACRO(INFO) 	(INFO & INFO_COUNTER_MASK) >> INFO_COUNTER_SHIFT
+
+#define POINT_RANK_MACRO(POINT)		(POINT & POINT_RANK_MASK) >> POINT_RANK_SHIFT
+#define POINT_FILE_MACRO(POINT)		(POINT & POINT_FILE_MASK) >> POINT_FILE_SHIFT
+
+#define PIECE_TEAM_MACRO(PIECE)		(PIECE & PIECE_TEAM_MASK) >> PIECE_TEAM_SHIFT
+#define PIECE_TYPE_MACRO(PIECE)		(PIECE & PIECE_TYPE_MASK) >> PIECE_TYPE_SHIFT
 
 // ==========================================
 
