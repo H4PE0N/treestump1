@@ -126,31 +126,6 @@ extern const char CASTLES_NONE[];
 
 // ==========================================
 
-extern const signed short PAWN_MOVE_DIRS[];
-extern const signed short KNIGHT_MOVE_DIRS[];
-extern const signed short BISHOP_MOVE_DIRS[];
-extern const signed short ROOK_MOVE_DIRS[];
-extern const signed short QUEEN_MOVE_DIRS[];
-extern const signed short KING_MOVE_DIRS[];
-
-extern const signed short CATSLE_MOVE_DIRS[];
-extern const signed short PAWN_TAKE_DIRS[];
-extern const signed short PAWN_DOUBLE_DIR;
-
-// ==========================================
-
-extern const unsigned short PAWN_DIRS_AMOUNT;
-extern const unsigned short KNIGHT_DIRS_AMOUNT;
-extern const unsigned short BISHOP_DIRS_AMOUNT;
-extern const unsigned short ROOK_DIRS_AMOUNT;
-extern const unsigned short QUEEN_DIRS_AMOUNT;
-extern const unsigned short KING_DIRS_AMOUNT;
-
-extern const unsigned short TAKE_DIRS_AMOUNT; // Pawn take (PAWN_TAKE_DIRS)
-extern const unsigned short CASTLE_DIRS_AMOUNT;
-
-// ==========================================
-
 extern const signed short BLACK_MOVE_VALUE;
 extern const signed short WHITE_MOVE_VALUE;
 
@@ -165,5 +140,8 @@ extern const unsigned short BLACK_PAWN_RANK;
 // These values are set knowing that WHITE is at the bottom and BLACK is at the top of the board:
 
 extern const unsigned short KING_START_FILE;
+
+extern const unsigned short KING_CASTLE_PAT;
+extern const unsigned short QUEEN_CASTLE_PAT;
 
 #endif

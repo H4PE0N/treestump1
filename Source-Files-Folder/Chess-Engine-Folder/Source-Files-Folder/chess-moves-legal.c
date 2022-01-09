@@ -27,16 +27,29 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 	Point startPoint = MOVE_START_MACRO(move);
 	Piece startPiece = board[startPoint];
 
+	// This function checks:
+	// - if the moving pattern and flag matches the piece
 	if(!move_pattern_valid(move, startPiece))
 	{
 		return false;
 	}
 
+	// This function checks:
+	// - if the move can be done, if it has the ability (castling)
+	if(!move_ability_valid(move, startPiece, info))
+	{
+
+	}
+
+	// This function checks:
+	// - if the move pattern fits on the board and iteracts with the pieces that it needs
 	if(!move_pattern_fits(board, info, move))
 	{
 		return false;
 	}
 
+	// This function checks:
+	// - if the path between the start point and the stop point is clear
 	if(!clear_moving_path(board, move))
 	{
 		return false;
@@ -50,8 +63,83 @@ bool clear_moving_path(const Piece board[], Move move)
 	return true;
 }
 
+bool move_ability_valid(Move move, Piece piece, Info info)
+{
+	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
+
+	Move moveFlag = move & MOVE_FLAG_MASK;
+
+	if(moveFlag == MOVE_FLAG_CASTLE)
+	{
+		// If the move flag is saying that the move is a castle:
+		// - we have to check if the ability at that side is valid
+
+		Piece pieceTeam = piece & PIECE_TEAM_MASK;
+
+		signed short movePattern = stopPoint - startPoint;
+
+		Info castles = info & INFO_CASTLES_MASK;
+
+		if(pieceTeam == PIECE_TEAM_WHITE)
+		{
+			if(movePattern == KING_CASTLE_PAT)
+			{
+				if(!(castles & INFO_WHITE_KING))
+				{
+					return false;
+				}
+			}
+			else if(movePattern == QUEEN_CASTLE_PAT)
+			{
+				if(!(castles & INFO_WHITE_QUEEN))
+				{
+					return false;
+				}
+			}
+			else
+			{
+				// The move pattern is not castling!
+				return false;
+			}
+		}
+		else if(pieceTeam == PIECE_TEAM_BLACK)
+		{
+			if(movePattern == KING_CASTLE_PAT)
+			{
+				if(!(castles & INFO_BLACK_KING))
+				{
+					return false;
+				}
+			}
+			else if(movePattern == QUEEN_CASTLE_PAT)
+			{
+				if(!(castles & INFO_BLACK_QUEEN))
+				{
+					return false;
+				}
+			}
+			else
+			{
+				// The move pattern is not castling!
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+		
+	}
+
+	return true;
+}
+
 // This function is going to check if the move-pattern
 // fits inside the board (pawn-takes, castling, pawn double jump)
+// - the stop piece can't be of same team
+// - the stop piece must be empty if the pawn moves forward
+// - it must be a rook in the corner, if it is castle
 bool move_pattern_fits(const Piece board[], Info info, Move move)
 {
 	if(!move_inside_board(move))
@@ -62,14 +150,22 @@ bool move_pattern_fits(const Piece board[], Info info, Move move)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
+	Move moveFlag = move & MOVE_FLAG_MASK;
+
+
+
 	Piece startPiece = board[startPoint];
 	Piece stopPiece = board[stopPoint];
+
+
 
 	Piece startTeam = startPiece & PIECE_TEAM_MASK;
 	Piece stopTeam = stopPiece & PIECE_TEAM_MASK;
 
 	Piece startType = startPiece & PIECE_TYPE_MASK;
+	//Piece stopType = stopPiece & PIECE_TYPE_MASK;
 
+	
 
 	signed short moveValue = 1;
 
@@ -81,195 +177,45 @@ bool move_pattern_fits(const Piece board[], Info info, Move move)
 	{
 		moveValue = BLACK_MOVE_VALUE;
 	}
-	else // PIECE_TEAM_NONE
+	else
 	{
+		// No team
 		return false;
 	}
 
+	signed short movePattern = (stopPoint - startPoint) * moveValue;
 
 
 
-
-	if(startTeam == stopTeam)
+	if(moveFlag == MOVE_FLAG_CASTLE)
 	{
-		// You cant move a piece into a piece in the same team
-		return false;
+		// This checks if the king is the one moving, and if the rook is in its place
+
 	}
 
 	if(startType == PIECE_TYPE_PAWN)
 	{
-		// If the piece is a pawn, we have to check for:
-		// - pawn takes (they are diagonal)
-		// - double jumps (they move two steps)
-
-		if(pattern_list_valid(PAWN_TAKE_DIRS, TAKE_DIRS_AMOUNT, move, startTeam))
+		if(movePattern == +8 || movePattern == +16)
 		{
-			// If the pawn is "attacking" / "taking", we have to check if the other piece is the enemy
+			// Going straight
+
+			if(stopTeam != PIECE_TEAM_NONE)
+			{
+				return false;
+			}
+		}
+
+		else if(movePattern == +7 || movePattern == +9)
+		{
+			// Pawn take
 
 			if(!board_teams_enemy(startTeam, stopTeam))
 			{
-				// If the pieces is not enemy, the pawn should not move that way
 				return false;
 			}
 		}
-		else
-		{
-			// If the pawn is not "attacking" / "taking", we have to check if the other piece is the team
 
-			if(!board_teams_team(startTeam, stopTeam))
-			{
-				// If the pieces is not enemy, the pawn should not move that way
-				return false;
-			}
-		}
-		
-		if((PAWN_DOUBLE_DIR * moveValue) == (stopPoint - startPoint))
-		{
-			// If the pawn is making a double jump
-
-			if(startTeam == PIECE_TEAM_WHITE)
-			{
-				if(POINT_RANK_MACRO(startPoint) != WHITE_PAWN_RANK)
-				{
-					return false;
-				}
-			}
-			else if(startTeam == PIECE_TEAM_BLACK)
-			{
-				if(POINT_RANK_MACRO(startPoint) != BLACK_PAWN_RANK)
-				{
-					return false;
-				}
-			}
-			else
-			{
-				// If there is no team
-				return false;
-			}
-		}
-	}
-
-	if(startType == PIECE_TYPE_KING)
-	{
-		// If the piece is a king, we have to check for:
-		// - castling (it moves two squares)
-
-		if(pattern_list_valid(CATSLE_MOVE_DIRS, CASTLE_DIRS_AMOUNT, move, startTeam))
-		{
-			// If the king is castling, we have to check:
-			// - if the king is at its starting point
-			// - if the rook is standing at its starting point
-			// - if it has castle ability
-
-			if(POINT_FILE_MACRO(startPoint) != KING_START_FILE)
-			{
-				return false;
-			}
-			if(startTeam == PIECE_TEAM_WHITE)
-			{
-				if(POINT_RANK_MACRO(startPoint) != WHITE_START_RANK)
-				{
-					return false;
-				}
-			}
-			else if(startTeam == PIECE_TEAM_BLACK)
-			{
-				if(POINT_RANK_MACRO(startPoint) != BLACK_START_RANK)
-				{
-					return false;
-				}
-			}
-			else
-			{
-				// If there is no team
-				return false;
-			}
-		}
 	}
 
 	return true;
-}
-
-// This function is going to check if the move-pattern
-// can be done for the moving piece
-bool move_pattern_valid(Move move, Piece piece)
-{
-	Piece pieceTeam = piece & PIECE_TEAM_MASK;
-	Piece pieceType = piece & PIECE_TYPE_MASK;
-
-
-
-	if(pieceType == PIECE_TYPE_PAWN)
-	{
-		return pattern_list_valid(PAWN_MOVE_DIRS, PAWN_DIRS_AMOUNT, move, pieceTeam);
-	}
-	else if(pieceType == PIECE_TYPE_KNIGHT)
-	{
-		return pattern_list_valid(KNIGHT_MOVE_DIRS, KNIGHT_DIRS_AMOUNT, move, pieceTeam);
-	}
-	else if(pieceType == PIECE_TYPE_BISHOP)
-	{
-		return pattern_list_valid(BISHOP_MOVE_DIRS, BISHOP_DIRS_AMOUNT, move, pieceTeam);
-	}
-	else if(pieceType == PIECE_TYPE_ROOK)
-	{
-		return pattern_list_valid(ROOK_MOVE_DIRS, ROOK_DIRS_AMOUNT, move, pieceTeam);
-	}
-	else if(pieceType == PIECE_TYPE_QUEEN)
-	{
-		return pattern_list_valid(QUEEN_MOVE_DIRS, QUEEN_DIRS_AMOUNT, move, pieceTeam);
-	}
-	else if(pieceType == PIECE_TYPE_KING)
-	{
-		return pattern_list_valid(KING_MOVE_DIRS, KING_DIRS_AMOUNT, move, pieceTeam);
-	}
-	else
-	{
-		return false;
-	}
-}
-
-bool pattern_list_valid(const signed short patternList[], unsigned short length, Move move, Piece pieceTeam)
-{
-	Point startPoint = MOVE_START_MACRO(move);
-	Point stopPoint = MOVE_STOP_MACRO(move);
-
-	signed short movePattern = stopPoint - startPoint;
-
-
-
-	signed short moveValue = 1;
-
-	if(pieceTeam == PIECE_TEAM_WHITE)
-	{
-		moveValue = WHITE_MOVE_VALUE;
-	}
-	else if(pieceTeam == PIECE_TEAM_BLACK)
-	{
-		moveValue = BLACK_MOVE_VALUE;
-	}
-	else // PIECE_TEAM_NONE
-	{
-		return false;
-	}
-
-
-
-	for(unsigned short index = 0; index < length; index += 1)
-	{
-		signed short pattern = patternList[index];
-
-		if((pattern * moveValue) != movePattern) continue;
-
-
-		// This checks if the pattern can 
-		
-		printf("The piece could move: %d\n", movePattern);
-
-		return true;
-	}
-
-	printf("The piece could not move: %d\n", movePattern);
-
-	return false;
 }

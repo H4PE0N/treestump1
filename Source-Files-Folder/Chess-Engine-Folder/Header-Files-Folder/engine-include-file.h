@@ -12,6 +12,7 @@
 #include "chess-engine-defines.h"
 #include "chess-board-handler.h"
 #include "chess-game-logic.h"
+#include "move-patterns-valid.h"
 #include "chess-moves-legal.h"
 #include "execute-chess-moves.h"
 #include "chess-game-actions.h"
