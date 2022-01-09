@@ -118,15 +118,18 @@ const signed short WHITE_MOVE_VALUE 	= -1;
 
 // ==========================================
 
-const unsigned short WHITE_START_RANK	= 7; // This is the index rank, not the notation rank
-const unsigned short BLACK_START_RANK	= 0; // This is the index rank, not the notation rank
+const Rank WHITE_START_RANK	= 7; // This is the index rank, not the notation rank
+const Rank BLACK_START_RANK	= 0; // This is the index rank, not the notation rank
 
-const unsigned short WHITE_PAWN_RANK	= 6;
-const unsigned short BLACK_PAWN_RANK	= 1;
+const Rank WHITE_PAWN_RANK	= 6;
+const Rank BLACK_PAWN_RANK	= 1;
 
 // These values are set knowing that WHITE is at the bottom and BLACK is at the top of the board:
 
-const unsigned short KING_START_FILE	= 4; // This is the index file, not the notation file
+const File KING_START_FILE	= 4; // This is the index file, not the notation file
 
-const unsigned short KING_CASTLE_PAT	= +2;
-const unsigned short QUEEN_CASTLE_PAT	= -2;
+const signed short KING_CASTLE_PAT	= +2;
+const signed short QUEEN_CASTLE_PAT	= -2;
+
+
+const unsigned short SHORT_BITS = 16;

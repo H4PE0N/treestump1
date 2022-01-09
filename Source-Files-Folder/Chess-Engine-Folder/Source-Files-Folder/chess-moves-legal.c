@@ -38,7 +38,7 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 	// - if the move can be done, if it has the ability (castling)
 	if(!move_ability_valid(move, startPiece, info))
 	{
-
+		return false;
 	}
 
 	// This function checks:
@@ -195,6 +195,7 @@ bool move_pattern_fits(const Piece board[], Info info, Move move)
 
 	if(startType == PIECE_TYPE_PAWN)
 	{
+
 		if(movePattern == +8 || movePattern == +16)
 		{
 			// Going straight
@@ -211,6 +212,8 @@ bool move_pattern_fits(const Piece board[], Info info, Move move)
 
 			if(!board_teams_enemy(startTeam, stopTeam))
 			{
+				printf("tjo!\n");
+
 				return false;
 			}
 		}

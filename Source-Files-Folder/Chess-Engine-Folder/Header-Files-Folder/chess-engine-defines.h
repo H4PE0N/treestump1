@@ -131,17 +131,19 @@ extern const signed short WHITE_MOVE_VALUE;
 
 // ==========================================
 
-extern const unsigned short WHITE_START_RANK; // This is the index rank, not the notation rank
-extern const unsigned short BLACK_START_RANK; // This is the index rank, not the notation rank
+extern const Rank WHITE_START_RANK; // This is the index rank, not the notation rank
+extern const Rank BLACK_START_RANK; // This is the index rank, not the notation rank
 
-extern const unsigned short WHITE_PAWN_RANK;
-extern const unsigned short BLACK_PAWN_RANK;
+extern const Rank WHITE_PAWN_RANK;
+extern const Rank BLACK_PAWN_RANK;
 
 // These values are set knowing that WHITE is at the bottom and BLACK is at the top of the board:
 
-extern const unsigned short KING_START_FILE;
+extern const File KING_START_FILE;
 
-extern const unsigned short KING_CASTLE_PAT;
-extern const unsigned short QUEEN_CASTLE_PAT;
+extern const signed short KING_CASTLE_PAT;
+extern const signed short QUEEN_CASTLE_PAT;
+
+extern const unsigned short SHORT_BITS;
 
 #endif
