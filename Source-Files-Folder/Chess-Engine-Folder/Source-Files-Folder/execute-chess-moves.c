@@ -83,6 +83,19 @@ bool execute_passant_move(Piece* board, Info* info, Move move)
 bool execute_double_move(Piece* board, Info* info, Move move)
 {
 	printf("execute_double_move\n");
-	
+
+	// This has to be changed!:
+
+	if(!move_inside_board(move))
+	{
+		return false;
+	}
+
+	Point start = MOVE_START_MACRO(move);
+	Point stop = MOVE_STOP_MACRO(move);
+
+	board[stop] = board[start];
+	board[start] = POINT_NONE;
+
 	return true;
 }

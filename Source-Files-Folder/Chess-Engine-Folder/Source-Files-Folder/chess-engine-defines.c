@@ -20,8 +20,8 @@ const Piece PIECE_TYPE_MASK 	= 0b00111;
 
 // ==========================================
 
-const Point POINT_RANK_MASK 	= 0b000111;
-const Point POINT_FILE_MASK 	= 0b111000;
+const Point POINT_RANK_MASK 	= 0b111000;
+const Point POINT_FILE_MASK 	= 0b000111;
 
 // ==========================================
 
@@ -64,8 +64,8 @@ const Info INFO_TEAM_BLACK		= 0b00000000000000000000010;
 const unsigned short PIECE_TEAM_SHIFT 	= 3;
 const unsigned short PIECE_TYPE_SHIFT 	= 0;
 
-const unsigned short POINT_FILE_SHIFT 	= 3;
-const unsigned short POINT_RANK_SHIFT 	= 0;
+const unsigned short POINT_FILE_SHIFT 	= 0;
+const unsigned short POINT_RANK_SHIFT 	= 3;
 
 const unsigned short INFO_TEAM_SHIFT 	= 0;
 const unsigned short INFO_PASSANT_SHIFT = 6;
@@ -89,6 +89,8 @@ const Point POINT_NONE 			= -1;
 const Piece PIECE_NONE 			= 0b00000;
 const Move MOVE_NONE 			= 0b000000000000000;
 const Info INFO_NONE 			= 0b00000000000000000000000;
+
+const signed short SHORT_NONE = -32768;
 
 // ==========================================
 
@@ -131,5 +133,6 @@ const File KING_START_FILE	= 4; // This is the index file, not the notation file
 const signed short KING_CASTLE_PAT	= +2;
 const signed short QUEEN_CASTLE_PAT	= -2;
 
+// ==========================================
 
-const unsigned short SHORT_BITS = 16;
+const unsigned short SHORT_ABS = 15;

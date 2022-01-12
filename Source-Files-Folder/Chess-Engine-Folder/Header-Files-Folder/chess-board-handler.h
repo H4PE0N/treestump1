@@ -2,8 +2,6 @@
 #ifndef CHESS_BOARD_HANDLER_H
 #define CHESS_BOARD_HANDLER_H
 
-bool short_inside_bounds(short, short, short);
-
 bool move_inside_board(Move);
 
 bool point_inside_board(Point);
@@ -16,16 +14,10 @@ bool board_teams_team(Piece, Piece);
 
 bool board_teams_enemy(Piece, Piece);
 
-short positive_short_value(short);
+short move_rank_offset(Move, Piece);
 
-bool team_move_value(short*, Piece);
+short move_file_offset(Move, Piece);
 
-bool team_starting_rank(Rank*, Piece);
-
-bool team_pawn_rank(Rank*, Piece);
-
-bool team_rank_offset(short*, Point, Point, Piece);
-
-bool team_file_offset(short*, Point, Point, Piece);
+bool chess_piece_empty(Piece);
 
 #endif

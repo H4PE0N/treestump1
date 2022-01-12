@@ -75,61 +75,38 @@ bool move_ability_valid(Move move, Piece piece, Info info)
 		// If the move flag is saying that the move is a castle:
 		// - we have to check if the ability at that side is valid
 
-		Piece pieceTeam = piece & PIECE_TEAM_MASK;
+		Piece pieceTeam = (piece & PIECE_TEAM_MASK);
 
-		signed short movePattern = stopPoint - startPoint;
+		signed short movePattern = (stopPoint - startPoint);
 
-		Info castles = info & INFO_CASTLES_MASK;
+		Info castles = (info & INFO_CASTLES_MASK);
+
 
 		if(pieceTeam == PIECE_TEAM_WHITE)
 		{
 			if(movePattern == KING_CASTLE_PAT)
 			{
-				if(!(castles & INFO_WHITE_KING))
-				{
-					return false;
-				}
+				if(!(castles & INFO_WHITE_KING)) return false;
 			}
 			else if(movePattern == QUEEN_CASTLE_PAT)
 			{
-				if(!(castles & INFO_WHITE_QUEEN))
-				{
-					return false;
-				}
+				if(!(castles & INFO_WHITE_QUEEN)) return false;
 			}
-			else
-			{
-				// The move pattern is not castling!
-				return false;
-			}
+			else return false;
 		}
 		else if(pieceTeam == PIECE_TEAM_BLACK)
 		{
 			if(movePattern == KING_CASTLE_PAT)
 			{
-				if(!(castles & INFO_BLACK_KING))
-				{
-					return false;
-				}
+				if(!(castles & INFO_BLACK_KING)) return false;
 			}
 			else if(movePattern == QUEEN_CASTLE_PAT)
 			{
-				if(!(castles & INFO_BLACK_QUEEN))
-				{
-					return false;
-				}
+				if(!(castles & INFO_BLACK_QUEEN)) return false;
 			}
-			else
-			{
-				// The move pattern is not castling!
-				return false;
-			}
+			else return false;
 		}
-		else
-		{
-			return false;
-		}
-		
+		else return false;
 	}
 
 	return true;
@@ -142,50 +119,23 @@ bool move_ability_valid(Move move, Piece piece, Info info)
 // - it must be a rook in the corner, if it is castle
 bool move_pattern_fits(const Piece board[], Info info, Move move)
 {
-	if(!move_inside_board(move))
-	{
-		return false;
-	}
-
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
+	
+	Piece startTeam = (board[startPoint] & PIECE_TEAM_MASK);
+	Piece startType = (board[startPoint] & PIECE_TYPE_MASK);
 
-	Move moveFlag = move & MOVE_FLAG_MASK;
-
-
-
-	Piece startPiece = board[startPoint];
-	Piece stopPiece = board[stopPoint];
-
-
-
-	Piece startTeam = startPiece & PIECE_TEAM_MASK;
-	Piece stopTeam = stopPiece & PIECE_TEAM_MASK;
-
-	Piece startType = startPiece & PIECE_TYPE_MASK;
-	//Piece stopType = stopPiece & PIECE_TYPE_MASK;
+	Piece stopTeam = (board[stopPoint] & PIECE_TEAM_MASK);
 
 	
-
-	signed short moveValue = 1;
-
-	if(startTeam == PIECE_TEAM_WHITE)
-	{
-		moveValue = WHITE_MOVE_VALUE;
-	}
-	else if(startTeam == PIECE_TEAM_BLACK)
-	{
-		moveValue = BLACK_MOVE_VALUE;
-	}
-	else
-	{
-		// No team
-		return false;
-	}
-
-	signed short movePattern = (stopPoint - startPoint) * moveValue;
+	short fileOffset = move_file_offset(move, startTeam);
+	short rankOffset = move_rank_offset(move, startTeam);
 
 
+	Move moveFlag = (move & MOVE_FLAG_MASK);
+
+
+	if(board_teams_team(startTeam, stopTeam)) return false;
 
 	if(moveFlag == MOVE_FLAG_CASTLE)
 	{
@@ -195,30 +145,63 @@ bool move_pattern_fits(const Piece board[], Info info, Move move)
 
 	if(startType == PIECE_TYPE_PAWN)
 	{
-
-		if(movePattern == +8 || movePattern == +16)
+		if(fileOffset == 0 && (rankOffset == 1 || rankOffset == 2))
 		{
-			// Going straight
-
-			if(stopTeam != PIECE_TEAM_NONE)
-			{
-				return false;
-			}
+			if(!chess_piece_empty(board[stopPoint])) return false;
 		}
 
-		else if(movePattern == +7 || movePattern == +9)
+		else if(fileOffset == 1 && rankOffset == 1)
 		{
-			// Pawn take
-
-			if(!board_teams_enemy(startTeam, stopTeam))
-			{
-				printf("tjo!\n");
-
-				return false;
-			}
+			if(!board_teams_enemy(startTeam, stopTeam)) return false;
 		}
 
 	}
+
+	return true;
+}
+
+// This function should give the move its correct flag
+// To do that, it checks for patterns, but the move don't have to be legal,
+// this function just sets the flag that it would have had to have.
+bool correct_move_flag(Move* move, Piece piece, Info info)
+{
+	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
+	Piece pieceType = (piece & PIECE_TYPE_MASK);
+
+	Point stopPoint = MOVE_STOP_MACRO(*move);
+
+	File stopFile = POINT_FILE_MACRO(stopPoint);
+	Rank stopRank = POINT_RANK_MACRO(stopPoint);
+
+	short fileOffset = ABS_SHORT_NUMBER(move_file_offset(*move, pieceTeam));
+	short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(*move, pieceTeam));
+
+	Passant passantFile = INFO_PASSANT_MACRO(info);
+
+	Move moveFlag = MOVE_FLAG_NONE;
+
+	if(pieceType == PIECE_TYPE_PAWN && rankOffset == 2 && fileOffset == 0)
+	{
+		moveFlag = MOVE_FLAG_DOUBLE;
+	}
+	else if(pieceType == PIECE_TYPE_KING && rankOffset == 0 && fileOffset == 2)
+	{
+		moveFlag = MOVE_FLAG_CASTLE;
+	}
+	else if((pieceType == PIECE_TYPE_PAWN) && ((stopFile + 1) == passantFile) &&
+		((pieceTeam == PIECE_TEAM_WHITE && stopRank == BLACK_PAWN_RANK + BLACK_MOVE_VALUE) ||
+		(pieceTeam == PIECE_TEAM_BLACK && stopRank == WHITE_PAWN_RANK + WHITE_MOVE_VALUE)))
+	{
+		moveFlag = MOVE_FLAG_PASSANT;
+	}
+	else if((pieceType == PIECE_TYPE_PAWN) &&
+		((pieceTeam == PIECE_TEAM_WHITE && stopRank == BLACK_START_RANK) ||
+		(pieceTeam == PIECE_TEAM_BLACK && stopRank == WHITE_START_RANK)))
+	{
+		moveFlag = MOVE_FLAG_QUEEN;
+	}
+
+	*move |= (moveFlag & MOVE_FLAG_MASK);
 
 	return true;
 }

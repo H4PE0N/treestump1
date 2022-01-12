@@ -12,4 +12,6 @@ bool clear_moving_path(const Piece[], Move);
 
 bool move_ability_valid(Move, Piece, Info);
 
+bool correct_move_flag(Move*, Piece, Info);
+
 #endif
