@@ -46,6 +46,7 @@ int main(int argAmount, char* arguments[])
 	board[33] = PIECE_TEAM_WHITE | PIECE_TYPE_ROOK;
 	board[50] = PIECE_TEAM_WHITE | PIECE_TYPE_PAWN;
 	board[35] = PIECE_TEAM_WHITE | PIECE_TYPE_KING;
+	board[42] = PIECE_TEAM_WHITE | PIECE_TYPE_KING;
 
 
 	Info info = INFO_NONE;

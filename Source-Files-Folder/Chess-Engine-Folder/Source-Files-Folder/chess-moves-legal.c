@@ -21,7 +21,7 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 {
 	if(!move_inside_board(move))
 	{
-		return false;
+		return false;	
 	}
 
 	Point startPoint = MOVE_START_MACRO(move);
@@ -50,7 +50,7 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 
 	// This function checks:
 	// - if the path between the start point and the stop point is clear
-	if(!clear_moving_path(board, move))
+	if(!clear_moving_path(board, move, startPiece))
 	{
 		return false;
 	}
@@ -58,8 +58,55 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 	return true;
 }
 
-bool clear_moving_path(const Piece board[], Move move)
+bool clear_moving_path(const Piece board[], Move move, Piece piece)
 {
+	//Piece pieceTeam = PIECE_TEAM_MACRO(piece);
+	Piece pieceType = PIECE_TYPE_MACRO(piece);
+
+	if(pieceType == PIECE_TYPE_KNIGHT) return true;
+
+
+	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
+
+	Rank startRank = POINT_RANK_MACRO(startPoint);
+	File startFile = POINT_FILE_MACRO(startPoint);
+
+	File stopFile = POINT_FILE_MACRO(stopPoint);
+	Rank stopRank = POINT_RANK_MACRO(stopPoint);
+
+	short rankOffset = (stopRank - startRank);
+	short fileOffset = (stopFile - startFile);
+
+	unsigned short absRankOffset = ABS_SHORT_NUMBER(rankOffset);
+	unsigned short absFileOffset = ABS_SHORT_NUMBER(fileOffset);
+
+
+	// If both are 0, or both are not 0; return false
+	if((absRankOffset == 0 && absFileOffset == 0) || 
+		(absRankOffset != 0 && absFileOffset != 0)) return false;
+
+
+	unsigned short moveSteps = (absRankOffset > absFileOffset) ? absRankOffset : absFileOffset;
+
+
+	short rankFactor = (absRankOffset == 0) ? 0 : (rankOffset / absRankOffset);
+	short fileFactor = (absFileOffset == 0) ? 0 : (fileOffset / absFileOffset);
+
+
+	for(unsigned short index = 1; index < moveSteps; index = index + 1)
+	{
+		File currentFile = startFile + (index * fileFactor);
+		Rank currentRank = startRank + (index * rankFactor);
+
+		Point point = (currentFile << POINT_FILE_SHIFT) | (currentRank << POINT_RANK_SHIFT);
+
+		Piece currentTeam = (board[point] & PIECE_TEAM_MASK);
+		Piece currentType = (board[point] & PIECE_TYPE_MASK);
+
+		if(currentType != PIECE_TYPE_NONE || currentTeam != PIECE_TEAM_NONE) return false;
+	}
+
 	return true;
 }
 
