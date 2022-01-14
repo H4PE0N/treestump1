@@ -20,4 +20,10 @@ short move_file_offset(Move, Piece);
 
 bool chess_piece_empty(Piece);
 
+bool board_piece_exists(Piece);
+
+bool piece_team_exists(Piece);
+
+bool piece_type_exists(Piece);
+
 #endif

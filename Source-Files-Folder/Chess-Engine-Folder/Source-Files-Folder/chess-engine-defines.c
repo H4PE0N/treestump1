@@ -87,7 +87,7 @@ const signed short INDEX_NONE 	= -1;
 const Point POINT_NONE 			= -1;
 
 const Piece PIECE_NONE 			= 0b00000;
-const Move MOVE_NONE 			= 0b000000000000000;
+const Move MOVE_NONE 			= -1;
 const Info INFO_NONE 			= 0b00000000000000000000000;
 
 const signed short SHORT_NONE = -32768;

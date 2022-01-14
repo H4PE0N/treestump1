@@ -27,7 +27,7 @@ typedef signed short Point; 	// 000  000
 typedef unsigned int Info;		// 0000000	000000	0000	0000	00
 								// turns 	counter passant castles team
 
-typedef unsigned short Move;	// 000 	000000 000000
+typedef signed short Move;		// 000 	000000 000000
 								// flag	point  point
 
 // board: Piece[64] or Piece* board

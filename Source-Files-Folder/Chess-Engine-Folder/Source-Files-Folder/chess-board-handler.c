@@ -3,6 +3,10 @@
 
 bool move_inside_board(Move move)
 {
+	if(move == MOVE_NONE) return false;
+
+	if(move < 0) return false;
+
 	Point start = MOVE_START_MACRO(move);
 	Point stop = MOVE_STOP_MACRO(move);
 
@@ -14,7 +18,33 @@ bool move_inside_board(Move move)
 
 bool point_inside_board(Point point)
 {
+	if(point == POINT_NONE) return false;
+
+	if(point < 0) return false;
+
 	return NUMBER_IN_BOUNDS(point, 0, BOARD_LENGTH);
+}
+
+bool piece_team_exists(Piece pieceTeam)
+{
+	Team team = PIECE_TEAM_MACRO(pieceTeam);
+
+	return NUMBER_IN_BOUNDS(team, 1, 2);
+}
+
+bool piece_type_exists(Piece pieceType)
+{
+	Type type = PIECE_TYPE_MACRO(pieceType);
+
+	return NUMBER_IN_BOUNDS(type, 1, 6);
+}
+
+bool board_piece_exists(Piece piece)
+{
+	bool teamExists = piece_team_exists(piece);
+	bool typeExists = piece_type_exists(piece);
+
+	return (teamExists && typeExists);
 }
 
 bool board_points_team(const Piece board[], Point first, Point second)
