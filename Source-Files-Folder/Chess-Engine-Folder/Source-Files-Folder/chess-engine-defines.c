@@ -97,7 +97,7 @@ const signed short SHORT_NONE = -32768;
 const char WHITE_SYMBOLS[] = {'X', 'P', 'N', 'B', 'R', 'Q', 'K'};
 const char BLACK_SYMBOLS[] = {'x', 'p', 'n', 'b', 'r', 'q', 'k'};
 
-const unsigned short TEAM_AMOUNT = 7;
+const unsigned short SYMBOL_AMOUNT = 7;
 
 const char RANK_SYMBOLS[] = {'8', '7', '6', '5', '4', '3', '2', '1'};
 const char FILE_SYMBOLS[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};

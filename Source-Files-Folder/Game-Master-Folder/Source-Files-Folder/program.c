@@ -32,28 +32,34 @@ void print_chess_board(const Piece board[])
 
 int main(int argAmount, char* arguments[])
 {
-	Piece* board = malloc(sizeof(Piece) * BOARD_LENGTH);
+	if(argAmount < 2) return false;
 
-	for(unsigned short index = 0; index < BOARD_LENGTH; index += 1)
+	Piece* board;
+	Info info;
+
+	char* gameString = arguments[1];
+
+	if(!parse_game_string(&board, &info, gameString))
 	{
-		board[index] = PIECE_TEAM_NONE | PIECE_TYPE_NONE;
+		printf("Could not parse game string!\n");
+
+		return false;
 	}
 
-	
-	board[25] = PIECE_TEAM_WHITE | PIECE_TYPE_PAWN;
-	board[26] = PIECE_TEAM_BLACK | PIECE_TYPE_KNIGHT;
-	board[27] = PIECE_TEAM_BLACK | PIECE_TYPE_BISHOP;
-	board[33] = PIECE_TEAM_WHITE | PIECE_TYPE_ROOK;
-	board[50] = PIECE_TEAM_WHITE | PIECE_TYPE_PAWN;
-	board[35] = PIECE_TEAM_WHITE | PIECE_TYPE_KING;
-	board[42] = PIECE_TEAM_WHITE | PIECE_TYPE_KING;
+	for(Rank rank = 0; rank < BOARD_RANKS; rank += 1)
+	{
+		for(File file = 0; file < BOARD_FILES; file += 1)
+		{
+			printf("%02d ", (rank * BOARD_FILES) + file);
+		}
+		printf("\n");
+	}
 
-
-	Info info = INFO_NONE;
+	board[50] = PIECE_TEAM_NONE | PIECE_TYPE_NONE;
 
 	Move move = MOVE_NONE;
-	Point start = 50;
-	Point stop = 34;
+	Point start = 59;
+	Point stop = 32;
 
 	move |= (start << MOVE_START_SHIFT);
 	move |= (stop << MOVE_STOP_SHIFT);

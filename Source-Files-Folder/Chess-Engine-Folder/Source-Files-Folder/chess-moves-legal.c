@@ -81,11 +81,12 @@ bool clear_moving_path(const Piece board[], Move move, Piece piece)
 	unsigned short absRankOffset = ABS_SHORT_NUMBER(rankOffset);
 	unsigned short absFileOffset = ABS_SHORT_NUMBER(fileOffset);
 
+	// If both rank- and file-offset is 0, then its not moving
+	if(absRankOffset == 0 && absFileOffset == 0) return false;
 
-	// If both are 0, or both are not 0; return false
-	if((absRankOffset == 0 && absFileOffset == 0) || 
-		(absRankOffset != 0 && absFileOffset != 0)) return false;
+	// Either it can go straight (one is 0), or it can go diagonal (both the same)
 
+	if( (absRankOffset != 0 && absFileOffset != 0) && absRankOffset != absFileOffset) return false;
 
 	unsigned short moveSteps = (absRankOffset > absFileOffset) ? absRankOffset : absFileOffset;
 
