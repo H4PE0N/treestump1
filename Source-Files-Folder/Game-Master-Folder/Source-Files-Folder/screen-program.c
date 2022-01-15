@@ -60,11 +60,13 @@ int main(int argAmount, char* arguments[])
 
 	for(unsigned short index = 0; index < 16; index += 1)
 	{
-		for(int rank = 0; rank < 8; rank += 1)
+
+
+		for(unsigned short rank = 0; rank < 8; rank += 1)
 		{
-			for(int file = 0; file < 8; file++)
+			for(unsigned short file = 0; file < 8; file++)
 			{
-				int point = rank * 8 + file;
+				unsigned short point = rank * 8 + file;
 				printf("%02d ", PIECE_TEAM_MACRO(board[point]));
 			}
 			printf("\n");
@@ -81,11 +83,9 @@ int main(int argAmount, char* arguments[])
 			break;
 		}
 
-		info &= INFO_TEAM_NONE; // Zero'ing the team bits;
+		if(infoTeam == INFO_TEAM_WHITE) info = ALLOC_INFO_TEAM(info, INFO_TEAM_BLACK);
 
-		if(infoTeam == INFO_TEAM_WHITE) info |= INFO_TEAM_BLACK;
-
-		if(infoTeam == INFO_TEAM_BLACK) info |= INFO_TEAM_WHITE;
+		if(infoTeam == INFO_TEAM_BLACK)  info = ALLOC_INFO_TEAM(info, INFO_TEAM_WHITE);
 
 	}
 
