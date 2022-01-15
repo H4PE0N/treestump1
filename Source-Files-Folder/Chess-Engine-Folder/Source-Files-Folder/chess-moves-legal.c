@@ -176,19 +176,18 @@ bool move_pattern_fits(const Piece board[], Info info, Move move)
 	Piece stopTeam = (board[stopPoint] & PIECE_TEAM_MASK);
 
 
-	signed short fileOffset = move_file_offset(move, startTeam);
+	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, startTeam));
 	signed short rankOffset = move_rank_offset(move, startTeam);
 
 
 	Move moveFlag = (move & MOVE_FLAG_MASK);
-
 
 	if(board_teams_team(startTeam, stopTeam)) return false;
 
 	if(moveFlag == MOVE_FLAG_CASTLE)
 	{
 		// This checks if the king is the one moving, and if the rook is in its place
-
+		return false; // just for now
 	}
 
 	if(startType == PIECE_TYPE_PAWN)
@@ -202,7 +201,6 @@ bool move_pattern_fits(const Piece board[], Info info, Move move)
 		{
 			if(!board_teams_enemy(startTeam, stopTeam)) return false;
 		}
-
 	}
 
 	return true;

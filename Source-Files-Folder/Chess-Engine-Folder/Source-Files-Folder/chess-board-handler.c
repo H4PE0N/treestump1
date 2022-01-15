@@ -69,10 +69,10 @@ bool board_teams_team(Piece firstTeam, Piece secondTeam)
 
 bool board_teams_enemy(Piece firstTeam, Piece secondTeam)
 {
-	bool bothBlack = (firstTeam == PIECE_TEAM_BLACK && secondTeam == PIECE_TEAM_BLACK);
-	bool bothWhite = (firstTeam == PIECE_TEAM_WHITE && secondTeam == PIECE_TEAM_WHITE);
+	bool enemyWhite = (firstTeam == PIECE_TEAM_BLACK && secondTeam == PIECE_TEAM_WHITE);
+	bool enemyBlack = (firstTeam == PIECE_TEAM_WHITE && secondTeam == PIECE_TEAM_BLACK);
 
-	return (!bothBlack && !bothWhite);
+	return (enemyWhite || enemyBlack);
 }
 
 // bool board_points_enemy()

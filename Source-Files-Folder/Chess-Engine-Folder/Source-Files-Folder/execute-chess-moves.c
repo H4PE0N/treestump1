@@ -55,7 +55,7 @@ bool execute_normal_move(Piece* board, Info* info, Move move)
 bool execute_castle_move(Piece* board, Info* info, Move move)
 {
 	printf("execute_castle_move\n");
-	
+
 	return true;
 }
 
@@ -65,7 +65,18 @@ bool execute_castle_move(Piece* board, Info* info, Move move)
 bool execute_promote_move(Piece* board, Info* info, Move move)
 {
 	printf("execute_promote_move\n");
-	
+
+	if(!move_inside_board(move))
+	{
+		return false;
+	}
+
+	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
+
+	board[stopPoint] = ALLOC_PIECE_TYPE(board[startPoint], PIECE_TYPE_QUEEN);
+	board[startPoint] = PIECE_NONE;
+
 	return true;
 }
 
@@ -74,7 +85,18 @@ bool execute_promote_move(Piece* board, Info* info, Move move)
 bool execute_passant_move(Piece* board, Info* info, Move move)
 {
 	printf("execute_passant_move\n");
-	
+
+	if(!move_inside_board(move))
+	{
+		return false;
+	}
+
+	Point start = MOVE_START_MACRO(move);
+	Point stop = MOVE_STOP_MACRO(move);
+
+	board[stop] = board[start];
+	board[start] = PIECE_NONE;
+
 	return true;
 }
 

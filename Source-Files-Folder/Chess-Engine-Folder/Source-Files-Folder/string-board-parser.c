@@ -29,7 +29,7 @@ bool parse_game_string(Piece** board, Info* info, char gameString[])
 		return false;
 	}
 
-	Info currentTeam;
+	Info currentTeam = INFO_BLANK;
 
 	if(!parse_string_current(&currentTeam, stringArray[1]))
 	{
@@ -44,7 +44,7 @@ bool parse_game_string(Piece** board, Info* info, char gameString[])
 
 	*info |= (currentTeam & INFO_TEAM_MASK);
 
-	Info castles;
+	Info castles = INFO_BLANK;
 
 	if(!parse_string_castles(&castles, stringArray[2]))
 	{
@@ -59,7 +59,7 @@ bool parse_game_string(Piece** board, Info* info, char gameString[])
 
 	*info |= (castles & INFO_CASTLES_MASK);
 
-	unsigned short passant;
+	unsigned short passant = 0;
 
 	if(!parse_string_passant(&passant, stringArray[3]))
 	{
@@ -74,7 +74,7 @@ bool parse_game_string(Piece** board, Info* info, char gameString[])
 
 	*info |= PASSANT_INFO_MACRO(passant);
 
-	unsigned short turns;
+	unsigned short turns = 0;
 
 	if(!parse_string_turns(&turns, stringArray[4]))
 	{
@@ -89,7 +89,7 @@ bool parse_game_string(Piece** board, Info* info, char gameString[])
 
 	*info |= TURNS_INFO_MACRO(turns);
 
-	unsigned short counter;
+	unsigned short counter = 0;
 
 	if(!parse_string_counter(&counter, stringArray[5]))
 	{
