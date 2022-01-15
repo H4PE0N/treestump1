@@ -46,10 +46,7 @@ int main(int argAmount, char* arguments[])
 		return false;
 	}
 
-	board[50] = ALLOC_PIECE_TEAM(board[50], PIECE_TEAM_BLACK);
-	board[50] = ALLOC_PIECE_TYPE(board[50], PIECE_TYPE_QUEEN);
-
-	Move move = MOVE_NONE;
+	Move move = MOVE_BLANK;
 	Point start = 59;
 	Point stop = 32;
 
@@ -64,23 +61,6 @@ int main(int argAmount, char* arguments[])
 
 		return false;
 	}
-	else
-	{
-		printf("Corrected flag: %d\n", move & MOVE_FLAG_MASK);
-	}
-
-	board[50] = board[50] & ~PIECE_TYPE_MASK;
-
-	for(unsigned short rank = 0; rank < BOARD_RANKS; rank += 1)
-	{
-		for(unsigned short file = 0; file < BOARD_FILES; file += 1)
-		{
-			printf("%02d ", PIECE_TYPE_MACRO(board[(rank * BOARD_FILES) + file]) );
-		}
-		printf("\n");
-	}
-
-
 
 	print_chess_board(board);
 

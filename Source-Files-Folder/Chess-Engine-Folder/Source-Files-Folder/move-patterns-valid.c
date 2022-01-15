@@ -44,11 +44,13 @@ bool move_pattern_valid(Move move, Piece piece)
 // - moving flags: [NONE, QUEEN, ROOK, BISHOP, KNIGHT, DOUBLE, PASSANT]
 bool pawn_pattern_valid(Move move, Piece pieceTeam)
 {
+	// Check if pieceTeam is either WHITE or BLACK
+	
 	Point startPoint = MOVE_START_MACRO(move);
 	unsigned short startRank = POINT_RANK_MACRO(startPoint);
 
-	short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, pieceTeam));
-	short rankOffset = move_rank_offset(move, pieceTeam);
+	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, pieceTeam));
+	signed short rankOffset = move_rank_offset(move, pieceTeam);
 
 	Move moveFlag = (move & MOVE_FLAG_MASK);
 
@@ -83,6 +85,7 @@ bool pawn_pattern_valid(Move move, Piece pieceTeam)
 
 		else if(fileOffset == 0 && rankOffset == 1) return true;
 
+
 		else return false;
 	}
 	else return false;
@@ -93,10 +96,13 @@ bool pawn_pattern_valid(Move move, Piece pieceTeam)
 // - moving flags: [NONE, PASSANT]
 bool knight_pattern_valid(Move move, Piece pieceTeam)
 {
-	short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, pieceTeam));
-	short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(move, pieceTeam));
+	// Check if pieceTeam is either WHITE or BLACK
+
+	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, pieceTeam));
+	unsigned short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(move, pieceTeam));
 
 	Move moveFlag = (move & MOVE_FLAG_MASK);
+
 
 	if(moveFlag == MOVE_FLAG_NONE || moveFlag == MOVE_FLAG_PASSANT)
 	{
@@ -105,6 +111,7 @@ bool knight_pattern_valid(Move move, Piece pieceTeam)
 		if(fileOffset == 1 && rankOffset == 2) return true;
 
 		else if(fileOffset == 2 && rankOffset == 1) return true;
+
 
 		else return false;
 	}
@@ -116,16 +123,20 @@ bool knight_pattern_valid(Move move, Piece pieceTeam)
 // - moving flags: [NONE, PASSANT]
 bool bishop_pattern_valid(Move move, Piece pieceTeam)
 {
-	short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, pieceTeam));
-	short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(move, pieceTeam));
+	// Check if pieceTeam is either WHITE or BLACK
+
+	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, pieceTeam));
+	unsigned short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(move, pieceTeam));
 
 	Move moveFlag = (move & MOVE_FLAG_MASK);
+
 
 	if(moveFlag == MOVE_FLAG_NONE || moveFlag == MOVE_FLAG_PASSANT)
 	{
 		// The bishop can only have the move flags: NONE, PASSANT
 
 		if(fileOffset == rankOffset) return true;
+
 
 		else return false;
 	}
@@ -138,16 +149,20 @@ bool bishop_pattern_valid(Move move, Piece pieceTeam)
 // - moving flags: [PASSANT, NONE]
 bool rook_pattern_valid(Move move, Piece pieceTeam)
 {
-	short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, pieceTeam));
-	short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(move, pieceTeam));
+	// Check if pieceTeam is either WHITE or BLACK
+
+	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, pieceTeam));
+	unsigned short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(move, pieceTeam));
 
 	Move moveFlag = (move & MOVE_FLAG_MASK);
+
 
 	if(moveFlag == MOVE_FLAG_NONE || moveFlag == MOVE_FLAG_PASSANT)
 	{
 		// The rook can only have the move flags: NONE, PASSANT
 
 		if(fileOffset == 0 || rankOffset == 0) return true;
+
 
 		else return false;
 	}
@@ -160,10 +175,13 @@ bool rook_pattern_valid(Move move, Piece pieceTeam)
 // - moving flags: [NONE, PASSANT]
 bool queen_pattern_valid(Move move, Piece pieceTeam)
 {
-	short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, pieceTeam));
-	short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(move, pieceTeam));
+	// Check if pieceTeam is either WHITE or BLACK
+
+	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, pieceTeam));
+	unsigned short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(move, pieceTeam));
 
 	Move moveFlag = (move & MOVE_FLAG_MASK);
+
 
 	if(moveFlag == MOVE_FLAG_NONE || moveFlag == MOVE_FLAG_PASSANT)
 	{
@@ -172,6 +190,7 @@ bool queen_pattern_valid(Move move, Piece pieceTeam)
 		if(fileOffset == rankOffset) return true;
 
 		else if(fileOffset == 0 || rankOffset == 0) return true;
+
 
 		else return false;
 	}
@@ -183,30 +202,39 @@ bool queen_pattern_valid(Move move, Piece pieceTeam)
 // - moving flags: [NONE, CASTLE, PASSANT]
 bool king_pattern_valid(Move move, Piece pieceTeam)
 {
+	// Check if pieceTeam is either WHITE or BLACK
+
 	Point startPoint = MOVE_START_MACRO(move);
 
 	unsigned short startFile = POINT_FILE_MACRO(startPoint);
 	unsigned short startRank = POINT_RANK_MACRO(startPoint);
 
-	short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, pieceTeam));
-	short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(move, pieceTeam));
+	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, pieceTeam));
+	unsigned short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(move, pieceTeam));
 
 	Move moveFlag = (move & MOVE_FLAG_MASK);
+
 
 	if(moveFlag == MOVE_FLAG_CASTLE)
 	{
 		// This should control that the king is in its starting position,
-		// and that it moves only sideways 2 steps
 
 		if(startFile != KING_START_FILE) return false;
 
 
-		if(pieceTeam == PIECE_TEAM_WHITE && startRank != WHITE_START_RANK) return false;
+		if(pieceTeam == PIECE_TEAM_WHITE)
+		{
+			if(startRank != WHITE_START_RANK) return false;
+		}
 
-		if(pieceTeam == PIECE_TEAM_BLACK && startRank != BLACK_START_RANK) return false;
+		else if(pieceTeam == PIECE_TEAM_BLACK)
+		{
+			if(startRank != BLACK_START_RANK) return false;
+		}
 
-		if(pieceTeam != PIECE_TEAM_WHITE && pieceTeam != PIECE_TEAM_BLACK) return false;
+		else return false;
 
+		// and that it moves only sideways 2 steps
 
 		if(rankOffset != 0) return false;
 
@@ -220,6 +248,7 @@ bool king_pattern_valid(Move move, Piece pieceTeam)
 		// The rook can only have the move flags: NONE, PASSANT
 
 		if(fileOffset <= 1 && rankOffset <= 1) return true;
+
 
 		else return false;
 	}

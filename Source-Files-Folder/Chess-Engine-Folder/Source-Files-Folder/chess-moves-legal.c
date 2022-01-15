@@ -75,8 +75,8 @@ bool clear_moving_path(const Piece board[], Move move, Piece piece)
 	unsigned short stopFile = POINT_FILE_MACRO(stopPoint);
 	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
 
-	short rankOffset = (stopRank - startRank);
-	short fileOffset = (stopFile - startFile);
+	signed short rankOffset = (stopRank - startRank);
+	signed short fileOffset = (stopFile - startFile);
 
 	unsigned short absRankOffset = ABS_SHORT_NUMBER(rankOffset);
 	unsigned short absFileOffset = ABS_SHORT_NUMBER(fileOffset);
@@ -91,8 +91,8 @@ bool clear_moving_path(const Piece board[], Move move, Piece piece)
 	unsigned short moveSteps = (absRankOffset > absFileOffset) ? absRankOffset : absFileOffset;
 
 
-	short rankFactor = (absRankOffset == 0) ? 0 : (rankOffset / absRankOffset);
-	short fileFactor = (absFileOffset == 0) ? 0 : (fileOffset / absFileOffset);
+	signed short rankFactor = (absRankOffset == 0) ? 0 : (rankOffset / absRankOffset);
+	signed short fileFactor = (absFileOffset == 0) ? 0 : (fileOffset / absFileOffset);
 
 
 	for(unsigned short index = 1; index < moveSteps; index = index + 1)
@@ -176,8 +176,8 @@ bool move_pattern_fits(const Piece board[], Info info, Move move)
 	Piece stopTeam = (board[stopPoint] & PIECE_TEAM_MASK);
 
 
-	short fileOffset = move_file_offset(move, startTeam);
-	short rankOffset = move_rank_offset(move, startTeam);
+	signed short fileOffset = move_file_offset(move, startTeam);
+	signed short rankOffset = move_rank_offset(move, startTeam);
 
 
 	Move moveFlag = (move & MOVE_FLAG_MASK);
@@ -221,8 +221,8 @@ bool correct_move_flag(Move* move, Piece piece, Info info)
 	unsigned short stopFile = POINT_FILE_MACRO(stopPoint);
 	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
 
-	short fileOffset = ABS_SHORT_NUMBER(move_file_offset(*move, pieceTeam));
-	short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(*move, pieceTeam));
+	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(*move, pieceTeam));
+	unsigned short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(*move, pieceTeam));
 
 	unsigned short passantFile = INFO_PASSANT_MACRO(info);
 

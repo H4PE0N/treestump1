@@ -3,9 +3,7 @@
 
 bool move_inside_board(Move move)
 {
-	if(move == MOVE_NONE) return false;
-
-	if(move < 0) return false;
+	if(move == MOVE_NONE || move < 0) return false;
 
 	Point start = MOVE_START_MACRO(move);
 	Point stop = MOVE_STOP_MACRO(move);
@@ -18,9 +16,7 @@ bool move_inside_board(Move move)
 
 bool point_inside_board(Point point)
 {
-	if(point == POINT_NONE) return false;
-
-	if(point < 0) return false;
+	if(point == POINT_NONE || point < 0) return false;
 
 	return NUMBER_IN_BOUNDS(point, 0, BOARD_LENGTH);
 }

@@ -18,12 +18,7 @@ bool parse_game_string(Piece** board, Info* info, char gameString[])
 		return false;
 	}
 
-	for(unsigned short index = 0; index < amount; index += 1)
-	{
-		printf("stringArray[%d]: (%s)\n", index, stringArray[index]);
-	}
-
-	*info = INFO_NONE;
+	*info = INFO_BLANK;
 
 	if(!parse_string_board(board, stringArray[0]))
 	{
@@ -122,8 +117,6 @@ bool parse_string_current(Info* currentTeam, char stringToken[])
 
 	strcpy(stringCopy, stringToken);
 
-	printf("Current: %s\n", stringCopy);
-
 	if(stringLength != 1) return false;
 
 	if(stringCopy[0] == WHITE_SYMBOL)
@@ -193,7 +186,7 @@ bool parse_string_short(unsigned short* number, char string[])
 		unsigned short value = pow(10, (stringLength - index - 1));
 
 		// potential number
-		short potentNumber = stringCopy[index] - '0';
+		signed short potentNumber = stringCopy[index] - '0';
 
 		if(NUMBER_IN_BOUNDS(potentNumber, 0, 9)) // if 'potentNumber' is a number, not a letter
 		{
@@ -361,7 +354,7 @@ bool parse_string_board(Piece** board, char stringToken[])
 				{
 					Point point = (rank * BOARD_FILES) + file;
 
-					(*board)[point] = PIECE_TEAM_NONE | PIECE_TYPE_NONE;
+					(*board)[point] = PIECE_NONE;
 				}
 			}
 			else
