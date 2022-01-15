@@ -7,11 +7,11 @@ void print_chess_board(const Piece board[])
 	{
 		for(unsigned short file = 0; file < BOARD_FILES; file += 1)
 		{
-			Point point = (rank << POINT_RANK_SHIFT) | (file << POINT_FILE_SHIFT);
+			Point point = RANK_POINT_MACRO(rank) | FILE_POINT_MACRO(file);
 
 			Piece piece = board[point];
 
-			Type type = (piece & PIECE_TYPE_MASK) >> PIECE_TYPE_SHIFT;
+			unsigned short type = PIECE_TYPE_MACRO(piece);
 
 			char symbol = '.';
 
@@ -46,9 +46,9 @@ int main(int argAmount, char* arguments[])
 		return false;
 	}
 
-	for(Rank rank = 0; rank < BOARD_RANKS; rank += 1)
+	for(unsigned short rank = 0; rank < BOARD_RANKS; rank += 1)
 	{
-		for(File file = 0; file < BOARD_FILES; file += 1)
+		for(unsigned short file = 0; file < BOARD_FILES; file += 1)
 		{
 			printf("%02d ", (rank * BOARD_FILES) + file);
 		}
@@ -91,6 +91,6 @@ int main(int argAmount, char* arguments[])
 	print_chess_board(board);
 
 	free(board);
-	
+
 	return 0;
 }

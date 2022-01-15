@@ -27,14 +27,14 @@ bool point_inside_board(Point point)
 
 bool piece_team_exists(Piece pieceTeam)
 {
-	Team team = PIECE_TEAM_MACRO(pieceTeam);
+	unsigned short team = PIECE_TEAM_MACRO(pieceTeam);
 
 	return NUMBER_IN_BOUNDS(team, 1, 2);
 }
 
 bool piece_type_exists(Piece pieceType)
 {
-	Type type = PIECE_TYPE_MACRO(pieceType);
+	unsigned short type = PIECE_TYPE_MACRO(pieceType);
 
 	return NUMBER_IN_BOUNDS(type, 1, 6);
 }
@@ -81,7 +81,7 @@ bool board_teams_enemy(Piece firstTeam, Piece secondTeam)
 
 // bool board_points_enemy()
 // {
-// 
+//
 // }
 
 short move_file_offset(Move move, Piece pieceTeam)
@@ -89,8 +89,8 @@ short move_file_offset(Move move, Piece pieceTeam)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	File startFile = POINT_FILE_MACRO(startPoint);
-	File stopFile = POINT_FILE_MACRO(stopPoint);
+	unsigned short startFile = POINT_FILE_MACRO(startPoint);
+	unsigned short stopFile = POINT_FILE_MACRO(stopPoint);
 
 	short fileOffset = (stopFile - startFile);
 
@@ -106,8 +106,8 @@ short move_rank_offset(Move move, Piece pieceTeam)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	Rank startRank = POINT_RANK_MACRO(startPoint);
-	Rank stopRank = POINT_RANK_MACRO(stopPoint);
+	unsigned short startRank = POINT_RANK_MACRO(startPoint);
+	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
 
 	short rankOffset = (stopRank - startRank);
 

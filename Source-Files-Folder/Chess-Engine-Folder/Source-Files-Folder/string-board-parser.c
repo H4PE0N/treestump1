@@ -47,7 +47,7 @@ bool parse_game_string(Piece** board, Info* info, char gameString[])
 		return false;
 	}
 
-	*info |= currentTeam & INFO_TEAM_MASK;
+	*info |= (currentTeam & INFO_TEAM_MASK);
 
 	Info castles;
 
@@ -62,9 +62,9 @@ bool parse_game_string(Piece** board, Info* info, char gameString[])
 		return false;
 	}
 
-	*info |= castles & INFO_CASTLES_MASK;
+	*info |= (castles & INFO_CASTLES_MASK);
 
-	Passant passant;
+	unsigned short passant;
 
 	if(!parse_string_passant(&passant, stringArray[3]))
 	{
@@ -77,9 +77,9 @@ bool parse_game_string(Piece** board, Info* info, char gameString[])
 		return false;
 	}
 
-	*info |= (passant << INFO_PASSANT_SHIFT) & INFO_PASSANT_MASK;
+	*info |= PASSANT_INFO_MACRO(passant);
 
-	Turns turns;
+	unsigned short turns;
 
 	if(!parse_string_turns(&turns, stringArray[4]))
 	{
@@ -92,9 +92,9 @@ bool parse_game_string(Piece** board, Info* info, char gameString[])
 		return false;
 	}
 
-	*info |= (turns << INFO_TURNS_SHIFT) & INFO_TURNS_MASK;
+	*info |= TURNS_INFO_MACRO(turns);
 
-	Counter counter;
+	unsigned short counter;
 
 	if(!parse_string_counter(&counter, stringArray[5]))
 	{
@@ -107,7 +107,7 @@ bool parse_game_string(Piece** board, Info* info, char gameString[])
 		return false;
 	}
 
-	*info |= (counter << INFO_COUNTER_SHIFT) & INFO_COUNTER_MASK;
+	*info |= COUNTER_INFO_MACRO(counter);
 
 	free_array_strings(stringArray, amount);
 
@@ -142,7 +142,7 @@ bool parse_string_current(Info* currentTeam, char stringToken[])
 	return true;
 }
 
-bool parse_string_counter(Counter* counter, char stringToken[])
+bool parse_string_counter(unsigned short* counter, char stringToken[])
 {
 	unsigned short stringLength = strlen(stringToken);
 
@@ -158,19 +158,19 @@ bool parse_string_counter(Counter* counter, char stringToken[])
 	return true;
 }
 
-bool parse_string_turns(Turns* turns, char stringToken[])
+bool parse_string_turns(unsigned short* turns, char stringToken[])
 {
 	unsigned short stringLength = strlen(stringToken);
 
 	char stringCopy[stringLength];
 
 	strcpy(stringCopy, stringToken);
-	
+
 	if(!parse_string_short(turns, stringCopy))
 	{
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -185,7 +185,7 @@ bool parse_string_short(unsigned short* number, char string[])
 	strcpy(stringCopy, string);
 
 
-	unsigned int dummyNumber = 0;
+	unsigned short dummyNumber = 0;
 
 
 	for(unsigned int index = 0; index < stringLength; index += 1)
@@ -212,7 +212,7 @@ bool parse_string_short(unsigned short* number, char string[])
 	return true;
 }
 
-bool parse_string_passant(Passant* passant, char stringToken[])
+bool parse_string_passant(unsigned short* passant, char stringToken[])
 {
 	return true;
 }
@@ -306,7 +306,7 @@ bool parse_string_board(Piece** board, char stringToken[])
 
 	strcpy(stringCopy, stringToken);
 
-	
+
 	*board = malloc(sizeof(Piece) * BOARD_LENGTH);
 
 
@@ -382,7 +382,7 @@ bool parse_string_board(Piece** board, char stringToken[])
 
 				(*board)[point] = piece;
 
-				file += 1;				
+				file += 1;
 			}
 		}
 	}

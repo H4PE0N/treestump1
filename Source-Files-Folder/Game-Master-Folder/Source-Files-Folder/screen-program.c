@@ -11,7 +11,7 @@ void print_chess_board(const Piece board[])
 
 			Piece piece = board[point];
 
-			Type type = (piece & PIECE_TYPE_MASK) >> PIECE_TYPE_SHIFT;
+			unsigned short type = (piece & PIECE_TYPE_MASK) >> PIECE_TYPE_SHIFT;
 
 			char symbol = '.';
 
@@ -38,7 +38,7 @@ int main(int argAmount, char* arguments[])
 
 	screen.width = 800;
 	screen.height = 800;
-	
+
 	if(!setup_display_screen(&screen, "treestump\0"))
 	{
 		printf("Could not setup screen!\n");
@@ -60,9 +60,19 @@ int main(int argAmount, char* arguments[])
 
 	for(unsigned short index = 0; index < 16; index += 1)
 	{
+		for(int rank = 0; rank < 8; rank += 1)
+		{
+			for(int file = 0; file < 8; file++)
+			{
+				int point = rank * 8 + file;
+				printf("%02d ", PIECE_TEAM_MACRO(board[point]));
+			}
+			printf("\n");
+		}
+
 		Info infoTeam = (info & INFO_TEAM_MASK);
 
-		
+
 		printf("[%d] is moving!\n", infoTeam);
 
 		if(!screen_user_handler(board, &info, screen))
@@ -76,14 +86,14 @@ int main(int argAmount, char* arguments[])
 		if(infoTeam == INFO_TEAM_WHITE) info |= INFO_TEAM_BLACK;
 
 		if(infoTeam == INFO_TEAM_BLACK) info |= INFO_TEAM_WHITE;
-		
+
 	}
 
 	printf("free(board); free_display_screen(screen);\n");
 	free(board);
 
 	free_display_screen(screen);
-	
+
 	return 0;
 }
 

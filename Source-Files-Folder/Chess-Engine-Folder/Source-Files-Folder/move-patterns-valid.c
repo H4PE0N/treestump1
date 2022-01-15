@@ -9,7 +9,7 @@ bool move_pattern_valid(Move move, Piece piece)
 	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
 
 	if(pieceType == PIECE_TYPE_NONE) return false;
-	
+
 	else if(pieceType == PIECE_TYPE_PAWN)
 	{
 		return pawn_pattern_valid(move, pieceTeam);
@@ -45,25 +45,25 @@ bool move_pattern_valid(Move move, Piece piece)
 bool pawn_pattern_valid(Move move, Piece pieceTeam)
 {
 	Point startPoint = MOVE_START_MACRO(move);
-	Rank startRank = POINT_RANK_MACRO(startPoint);
+	unsigned short startRank = POINT_RANK_MACRO(startPoint);
 
 	short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, pieceTeam));
 	short rankOffset = move_rank_offset(move, pieceTeam);
 
 	Move moveFlag = (move & MOVE_FLAG_MASK);
 
-	
+
 	if(moveFlag == MOVE_FLAG_DOUBLE)
 	{
 		// If it moves double, it has to be at pawn rank
 
 		if(fileOffset != 0 || rankOffset != 2) return false;
-		
+
 
 		if(pieceTeam == PIECE_TEAM_WHITE && startRank == WHITE_PAWN_RANK) return true;
-		
+
 		else if(pieceTeam == PIECE_TEAM_BLACK && startRank == BLACK_PAWN_RANK) return true;
-		
+
 
 		else return false;
 	}
@@ -101,7 +101,7 @@ bool knight_pattern_valid(Move move, Piece pieceTeam)
 	if(moveFlag == MOVE_FLAG_NONE || moveFlag == MOVE_FLAG_PASSANT)
 	{
 		// The knight can only have the move flags: NONE, PASSANT
-		
+
 		if(fileOffset == 1 && rankOffset == 2) return true;
 
 		else if(fileOffset == 2 && rankOffset == 1) return true;
@@ -185,8 +185,8 @@ bool king_pattern_valid(Move move, Piece pieceTeam)
 {
 	Point startPoint = MOVE_START_MACRO(move);
 
-	File startFile = POINT_FILE_MACRO(startPoint);
-	Rank startRank = POINT_RANK_MACRO(startPoint);
+	unsigned short startFile = POINT_FILE_MACRO(startPoint);
+	unsigned short startRank = POINT_RANK_MACRO(startPoint);
 
 	short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, pieceTeam));
 	short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(move, pieceTeam));
@@ -212,7 +212,7 @@ bool king_pattern_valid(Move move, Piece pieceTeam)
 
 		if(fileOffset != KING_CASTLE_PAT || fileOffset != QUEEN_CASTLE_PAT) return false;
 
-		
+
 		return true;
 	}
 	else if(moveFlag == MOVE_FLAG_NONE || moveFlag == MOVE_FLAG_PASSANT)

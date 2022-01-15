@@ -8,11 +8,11 @@ bool parse_string_board(Piece**, char[]);
 
 bool parse_board_piece(Piece*, char);
 
-bool parse_string_counter(Counter*, char[]);
+bool parse_string_counter(unsigned short*, char[]);
 
-bool parse_string_turns(Turns*, char[]);
+bool parse_string_turns(unsigned short*, char[]);
 
-bool parse_string_passant(Passant*, char[]);
+bool parse_string_passant(unsigned short*, char[]);
 
 //bool parse_string_point(Point*, char[]);
 

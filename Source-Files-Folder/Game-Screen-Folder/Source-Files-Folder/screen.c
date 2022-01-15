@@ -66,7 +66,7 @@ bool create_window_surface(Surface** surface, Window* window)
 	return (*surface != NULL);
 }
 
-bool create_screen_window(Window** window, short height, short width, char title[])
+bool create_screen_window(Window** window, unsigned short height, unsigned short width, char title[])
 {
   *window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, 0);
 
@@ -135,8 +135,8 @@ bool extract_piece_file(char** filename, Piece piece)
 {
 	*filename = malloc(sizeof(char) * 128);
 
-	Team team = PIECE_TEAM_MACRO(piece);
-	Type type = PIECE_TYPE_MACRO(piece);
+	unsigned short team = PIECE_TEAM_MACRO(piece);
+	unsigned short type = PIECE_TYPE_MACRO(piece);
 
 	const char* teamWord = teamWords[team];
 	const char* typeWord = typeWords[type];
@@ -203,7 +203,7 @@ bool render_check_squares(Screen screen, const Piece board[], Info info)
 bool board_point_position(Rect* position, Screen screen, Point point)
 {
 	if(!point_inside_board(point)) return false;
-	
+
 	unsigned short rank = POINT_RANK_MACRO(point);
 	unsigned short file = POINT_FILE_MACRO(point);
 
@@ -220,7 +220,7 @@ bool board_point_position(Rect* position, Screen screen, Point point)
 
 bool render_board_pieces(Screen screen, const Piece board[])
 {
-	for(Point point = 0; point < 64; point += 1)
+	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
 		if(!board_piece_exists(board[point])) continue;
 

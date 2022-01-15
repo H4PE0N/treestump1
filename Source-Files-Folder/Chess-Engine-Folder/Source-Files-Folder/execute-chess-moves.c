@@ -45,7 +45,7 @@ bool execute_normal_move(Piece* board, Info* info, Move move)
 	Point stop = MOVE_STOP_MACRO(move);
 
 	board[stop] = board[start];
-	board[start] = POINT_NONE;
+	board[start] = PIECE_NONE;
 
 	return true;
 }
@@ -95,7 +95,7 @@ bool execute_double_move(Piece* board, Info* info, Move move)
 	Point stop = MOVE_STOP_MACRO(move);
 
 	board[stop] = board[start];
-	board[start] = POINT_NONE;
+	board[start] = PIECE_NONE;
 
 	return true;
 }

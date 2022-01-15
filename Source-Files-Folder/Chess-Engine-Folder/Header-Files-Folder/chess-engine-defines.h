@@ -76,19 +76,35 @@ extern const unsigned short MOVE_START_SHIFT;
 
 // ==========================================
 
-#define MOVE_STOP_MACRO(MOVE) 		(MOVE & MOVE_STOP_MASK) >> MOVE_STOP_SHIFT
-#define MOVE_START_MACRO(MOVE) 		(MOVE & MOVE_START_MASK) >> MOVE_START_SHIFT
+#define MOVE_STOP_MACRO(MOVE) 		( (MOVE & MOVE_STOP_MASK) >> MOVE_STOP_SHIFT)
+#define MOVE_START_MACRO(MOVE) 		( (MOVE & MOVE_START_MASK) >> MOVE_START_SHIFT)
 
-#define INFO_TEAM_MACRO(INFO) 		(INFO & INFO_TEAM_MASK) >> INFO_TEAM_SHIFT
-#define INFO_PASSANT_MACRO(INFO) 	(INFO & INFO_PASSANT_MASK) >> INFO_PASSANT_SHIFT
-#define INFO_TURNS_MACRO(INFO) 		(INFO & INFO_TURNS_MASK) >> INFO_TURNS_SHIFT
-#define INFO_COUNTER_MACRO(INFO) 	(INFO & INFO_COUNTER_MASK) >> INFO_COUNTER_SHIFT
+#define INFO_TEAM_MACRO(INFO) 		( (INFO & INFO_TEAM_MASK) >> INFO_TEAM_SHIFT)
+#define INFO_PASSANT_MACRO(INFO) 	( (INFO & INFO_PASSANT_MASK) >> INFO_PASSANT_SHIFT)
+#define INFO_TURNS_MACRO(INFO) 		( (INFO & INFO_TURNS_MASK) >> INFO_TURNS_SHIFT)
+#define INFO_COUNTER_MACRO(INFO) 	( (INFO & INFO_COUNTER_MASK) >> INFO_COUNTER_SHIFT)
 
-#define POINT_RANK_MACRO(POINT)		(POINT & POINT_RANK_MASK) >> POINT_RANK_SHIFT
-#define POINT_FILE_MACRO(POINT)		(POINT & POINT_FILE_MASK) >> POINT_FILE_SHIFT
+#define POINT_RANK_MACRO(POINT)		( (POINT & POINT_RANK_MASK) >> POINT_RANK_SHIFT)
+#define POINT_FILE_MACRO(POINT)		( (POINT & POINT_FILE_MASK) >> POINT_FILE_SHIFT)
 
-#define PIECE_TEAM_MACRO(PIECE)		(PIECE & PIECE_TEAM_MASK) >> PIECE_TEAM_SHIFT
-#define PIECE_TYPE_MACRO(PIECE)		(PIECE & PIECE_TYPE_MASK) >> PIECE_TYPE_SHIFT
+#define PIECE_TEAM_MACRO(PIECE)		( (PIECE & PIECE_TEAM_MASK) >> PIECE_TEAM_SHIFT)
+#define PIECE_TYPE_MACRO(PIECE)		( (PIECE & PIECE_TYPE_MASK) >> PIECE_TYPE_SHIFT)
+
+// ==========================================
+
+#define STOP_MOVE_MACRO(STOP)       ( (STOP << MOVE_STOP_SHIFT) & MOVE_STOP_MASK)
+#define START_MOVE_MACRO(START)     ( (START << MOVE_START_SHIFT) & MOVE_START_MASK)
+
+#define TEAM_INFO_MACRO(TEAM)       ( (TEAM << INFO_TEAM_SHIFT) & INFO_TEAM_MASK)
+#define PASSANT_INFO_MACRO(PASSANT) ( (PASSANT << INFO_PASSANT_SHIFT) & INFO_PASSANT_MASK)
+#define TURNS_INFO_MACRO(TURNS)     ( (TURNS << INFO_TURNS_SHIFT) & INFO_TURNS_MASK)
+#define COUNTER_INFO_MACRO(COUNTER) ( (COUNTER << INFO_COUNTER_SHIFT) & INFO_COUNTER_MASK)
+
+#define RANK_POINT_MACRO(RANK)      ( (RANK << POINT_RANK_SHIFT) & POINT_RANK_MASK)
+#define FILE_POINT_MACRO(FILE)      ( (FILE << POINT_FILE_SHIFT) & POINT_FILE_MASK)
+
+#define TEAM_PIECE_MACRO(TEAM)      ( (TEAM << PIECE_TEAM_SHIFT) & PIECE_TEAM_MASK)
+#define TYPE_PIECE_MACRO(TYPE)      ( (TYPE << PIECE_TYPE_SHIFT) & PIECE_TYPE_MASK)
 
 // ==========================================
 
@@ -98,14 +114,13 @@ extern const unsigned short BOARD_LENGTH;
 
 // ==========================================
 
-extern const signed short INDEX_NONE;
 extern const Point POINT_NONE;
-
 extern const Piece PIECE_NONE;
 extern const Move MOVE_NONE;
 extern const Info INFO_NONE;
 
 extern const signed short SHORT_NONE;
+extern const signed short INDEX_NONE;
 
 // ==========================================
 
@@ -133,15 +148,15 @@ extern const signed short WHITE_MOVE_VALUE;
 
 // ==========================================
 
-extern const Rank WHITE_START_RANK; // This is the index rank, not the notation rank
-extern const Rank BLACK_START_RANK; // This is the index rank, not the notation rank
+extern const unsigned short WHITE_START_RANK; // This is the index rank, not the notation rank
+extern const unsigned short BLACK_START_RANK; // This is the index rank, not the notation rank
 
-extern const Rank WHITE_PAWN_RANK;
-extern const Rank BLACK_PAWN_RANK;
+extern const unsigned short WHITE_PAWN_RANK;
+extern const unsigned short BLACK_PAWN_RANK;
 
 // These values are set knowing that WHITE is at the bottom and BLACK is at the top of the board:
 
-extern const File KING_START_FILE;
+extern const unsigned short KING_START_FILE;
 
 extern const signed short KING_CASTLE_PAT;
 extern const signed short QUEEN_CASTLE_PAT;

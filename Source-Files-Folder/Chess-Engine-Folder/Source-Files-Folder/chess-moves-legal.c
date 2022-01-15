@@ -21,7 +21,7 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 {
 	if(!move_inside_board(move))
 	{
-		return false;	
+		return false;
 	}
 
 	Point startPoint = MOVE_START_MACRO(move);
@@ -69,11 +69,11 @@ bool clear_moving_path(const Piece board[], Move move, Piece piece)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	Rank startRank = POINT_RANK_MACRO(startPoint);
-	File startFile = POINT_FILE_MACRO(startPoint);
+	unsigned short startRank = POINT_RANK_MACRO(startPoint);
+	unsigned short startFile = POINT_FILE_MACRO(startPoint);
 
-	File stopFile = POINT_FILE_MACRO(stopPoint);
-	Rank stopRank = POINT_RANK_MACRO(stopPoint);
+	unsigned short stopFile = POINT_FILE_MACRO(stopPoint);
+	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
 
 	short rankOffset = (stopRank - startRank);
 	short fileOffset = (stopFile - startFile);
@@ -97,8 +97,8 @@ bool clear_moving_path(const Piece board[], Move move, Piece piece)
 
 	for(unsigned short index = 1; index < moveSteps; index = index + 1)
 	{
-		File currentFile = startFile + (index * fileFactor);
-		Rank currentRank = startRank + (index * rankFactor);
+		unsigned short currentFile = startFile + (index * fileFactor);
+		unsigned short currentRank = startRank + (index * rankFactor);
 
 		Point point = (currentFile << POINT_FILE_SHIFT) | (currentRank << POINT_RANK_SHIFT);
 
@@ -169,13 +169,13 @@ bool move_pattern_fits(const Piece board[], Info info, Move move)
 {
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
-	
+
 	Piece startTeam = (board[startPoint] & PIECE_TEAM_MASK);
 	Piece startType = (board[startPoint] & PIECE_TYPE_MASK);
 
 	Piece stopTeam = (board[stopPoint] & PIECE_TEAM_MASK);
 
-	
+
 	short fileOffset = move_file_offset(move, startTeam);
 	short rankOffset = move_rank_offset(move, startTeam);
 
@@ -218,13 +218,13 @@ bool correct_move_flag(Move* move, Piece piece, Info info)
 
 	Point stopPoint = MOVE_STOP_MACRO(*move);
 
-	File stopFile = POINT_FILE_MACRO(stopPoint);
-	Rank stopRank = POINT_RANK_MACRO(stopPoint);
+	unsigned short stopFile = POINT_FILE_MACRO(stopPoint);
+	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
 
 	short fileOffset = ABS_SHORT_NUMBER(move_file_offset(*move, pieceTeam));
 	short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(*move, pieceTeam));
 
-	Passant passantFile = INFO_PASSANT_MACRO(info);
+	unsigned short passantFile = INFO_PASSANT_MACRO(info);
 
 	Move moveFlag = MOVE_FLAG_NONE;
 

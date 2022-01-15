@@ -2,7 +2,7 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-bool create_screen_window(Window**, short, short, char[]);
+bool create_screen_window(Window**, unsigned short, unsigned short, char[]);
 
 bool create_window_surface(Surface**, Window*);
 
@@ -22,7 +22,7 @@ bool render_board_move(Screen, Move, Surface*);
 
 bool render_check_squares(Screen, const Piece[], Info);
 
-bool render_board_pieces(Screen, const Piece[]);					
+bool render_board_pieces(Screen, const Piece[]);
 
 bool render_chess_board(Screen, const Piece[], Info, Point);
 
