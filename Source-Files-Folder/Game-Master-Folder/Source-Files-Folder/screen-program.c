@@ -1,35 +1,6 @@
 
 #include "../Header-Files-Folder/screen-program.h"
 
-void print_chess_board(const Piece board[])
-{
-	for(unsigned short rank = 0; rank < BOARD_RANKS; rank += 1)
-	{
-		for(unsigned short file = 0; file < BOARD_FILES; file += 1)
-		{
-			Point point = (rank << POINT_RANK_SHIFT) | (file << POINT_FILE_SHIFT);
-
-			Piece piece = board[point];
-
-			unsigned short type = (piece & PIECE_TYPE_MASK) >> PIECE_TYPE_SHIFT;
-
-			char symbol = '.';
-
-			if((piece & PIECE_TEAM_MASK) == PIECE_TEAM_WHITE)
-			{
-				symbol = WHITE_SYMBOLS[type];
-			}
-			else if((piece & PIECE_TEAM_MASK) == PIECE_TEAM_BLACK)
-			{
-				symbol = BLACK_SYMBOLS[type];
-			}
-
-			printf("%c ", symbol);
-		}
-		printf("\n");
-	}
-}
-
 int main(int argAmount, char* arguments[])
 {
 	if(argAmount < 2) return false;
@@ -58,35 +29,9 @@ int main(int argAmount, char* arguments[])
 		return false;
 	}
 
-	for(unsigned short index = 0; index < 16; index += 1)
+	if(!screen_single_game(board, &info, screen))
 	{
-
-
-		for(unsigned short rank = 0; rank < 8; rank += 1)
-		{
-			for(unsigned short file = 0; file < 8; file++)
-			{
-				unsigned short point = rank * 8 + file;
-				printf("%02d ", PIECE_TEAM_MACRO(board[point]));
-			}
-			printf("\n");
-		}
-
-		Info infoTeam = (info & INFO_TEAM_MASK);
-
-
-		printf("[%d] is moving!\n", infoTeam);
-
-		if(!screen_user_handler(board, &info, screen))
-		{
-			printf("Abort! Screen!\n");
-			break;
-		}
-
-		if(infoTeam == INFO_TEAM_WHITE) info = ALLOC_INFO_TEAM(info, INFO_TEAM_BLACK);
-
-		if(infoTeam == INFO_TEAM_BLACK)  info = ALLOC_INFO_TEAM(info, INFO_TEAM_WHITE);
-
+		printf("if(!screen_single_game(board, &info, screen))\n");
 	}
 
 	printf("free(board); free_display_screen(screen);\n");
@@ -95,6 +40,34 @@ int main(int argAmount, char* arguments[])
 	free_display_screen(screen);
 
 	return 0;
+}
+
+bool screen_single_game(Piece* board, Info* info, Screen screen)
+{
+	while(game_still_running(board, *info))
+	{
+
+		Info infoTeam = (*info & INFO_TEAM_MASK);
+
+
+		printf("[%d] is moving!\n", infoTeam);
+
+
+		if(!screen_user_handler(board, info, screen))
+		{
+			printf("Abort! Screen!\n");
+			break;
+		}
+
+
+		if(infoTeam == INFO_TEAM_WHITE) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_BLACK);
+
+		if(infoTeam == INFO_TEAM_BLACK)  *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_WHITE);
+
+
+	}
+
+	return true;
 }
 
 bool screen_user_handler(Piece* board, Info* info, Screen screen)

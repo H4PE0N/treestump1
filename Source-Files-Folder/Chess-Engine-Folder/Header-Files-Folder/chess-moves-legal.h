@@ -14,4 +14,6 @@ bool move_ability_valid(Move, Piece, Info);
 
 bool correct_move_flag(Move*, Piece, Info);
 
+bool move_prevent_check(const Piece[], Info, Move);
+
 #endif

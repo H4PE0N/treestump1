@@ -13,4 +13,6 @@ bool screen_move_parser(Move*, Screen, const Piece[], Info, Event);
 
 Point parse_mouse_point(Event, Screen);
 
+bool screen_single_game(Piece*, Info*, Screen);
+
 #endif

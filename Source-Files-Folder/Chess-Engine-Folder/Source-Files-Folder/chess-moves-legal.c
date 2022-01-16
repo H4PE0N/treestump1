@@ -11,6 +11,11 @@ bool move_fully_legal(const Piece board[], Info info, Move move)
 		return false;
 	}
 
+	if(!move_prevent_check(board, info, move))
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -55,6 +60,13 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 		return false;
 	}
 
+	return true;
+}
+
+// This function should check if the inputted move prevents check.
+// It can do that by executing the move, and see if the king is in check
+bool move_prevent_check(const Piece board[], Info info, Move move)
+{
 	return true;
 }
 

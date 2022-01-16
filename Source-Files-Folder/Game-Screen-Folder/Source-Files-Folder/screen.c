@@ -187,6 +187,44 @@ bool render_board_squares(Screen screen)
 
 bool render_move_squares(Screen screen, const Piece board[], Info info, Point point)
 {
+	Move* moveArray;
+
+	if(!piece_legal_moves(&moveArray, board, info, point))
+	{
+		return true;
+	}
+
+
+	Surface* moveSquare;
+
+	if(!load_filename_image(&moveSquare, "../Source-Files-Folder/Game-Screen-Folder/Screen-Images-Folder/move-square.png"))
+	{
+		free(moveArray);
+
+		return false;
+	}
+
+
+	for(unsigned short index = 0; moveArray[index] != MOVE_NONE; index += 1)
+	{
+		Point stopPoint = MOVE_STOP_MACRO(moveArray[index]);
+
+
+		Rect position;
+
+		if(!board_point_position(&position, screen, stopPoint))
+		{
+			continue;
+		}
+
+		if(!render_board_image(screen.renderer, moveSquare, position))
+		{
+			continue;
+		}
+	}
+
+	free(moveArray);
+
 	return true;
 }
 
