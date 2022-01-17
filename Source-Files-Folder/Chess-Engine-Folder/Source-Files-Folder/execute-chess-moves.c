@@ -36,16 +36,17 @@ bool execute_normal_move(Piece* board, Info* info, Move move)
 {
 	printf("execute_normal_move\n");
 
-	if(!move_inside_board(move))
-	{
-		return false;
-	}
+	if(!move_inside_board(move)) return false;
 
-	Point start = MOVE_START_MACRO(move);
-	Point stop = MOVE_STOP_MACRO(move);
+	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	board[stop] = board[start];
-	board[start] = PIECE_NONE;
+
+	board[stopPoint] = board[startPoint];
+	board[startPoint] = PIECE_NONE;
+
+
+	*info = ALLOC_INFO_PASSANT(*info, 0);
 
 	return true;
 }
@@ -55,6 +56,9 @@ bool execute_normal_move(Piece* board, Info* info, Move move)
 bool execute_castle_move(Piece* board, Info* info, Move move)
 {
 	printf("execute_castle_move\n");
+
+
+	*info = ALLOC_INFO_PASSANT(*info, 0);
 
 	return true;
 }
@@ -66,16 +70,36 @@ bool execute_promote_move(Piece* board, Info* info, Move move)
 {
 	printf("execute_promote_move\n");
 
-	if(!move_inside_board(move))
-	{
-		return false;
-	}
+	if(!move_inside_board(move)) return false;
+
 
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	board[stopPoint] = ALLOC_PIECE_TYPE(board[startPoint], PIECE_TYPE_QUEEN);
+
+	Piece pieceTeam = (board[startPoint] & PIECE_TEAM_MASK);
+	Piece pieceType = PIECE_BLANK;
+
+
+	Move moveFlag = (move & MOVE_FLAG_MASK);
+
+
+	if(moveFlag == MOVE_FLAG_ROOK) pieceType = PIECE_TYPE_ROOK;
+
+	else if(moveFlag == MOVE_FLAG_BISHOP) pieceType = PIECE_TYPE_BISHOP;
+
+	else if(moveFlag == MOVE_FLAG_KNIGHT) pieceType = PIECE_TYPE_KNIGHT;
+
+	else if(moveFlag == MOVE_FLAG_QUEEN) pieceType = PIECE_TYPE_QUEEN;
+
+	else return false;
+
+
+	board[stopPoint] = (pieceTeam | pieceType);
 	board[startPoint] = PIECE_NONE;
+
+
+	*info = ALLOC_INFO_PASSANT(*info, 0);
 
 	return true;
 }
@@ -86,16 +110,18 @@ bool execute_passant_move(Piece* board, Info* info, Move move)
 {
 	printf("execute_passant_move\n");
 
-	if(!move_inside_board(move))
-	{
-		return false;
-	}
+	if(!move_inside_board(move)) return false;
 
-	Point start = MOVE_START_MACRO(move);
-	Point stop = MOVE_STOP_MACRO(move);
 
-	board[stop] = board[start];
-	board[start] = PIECE_NONE;
+	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
+
+
+	board[stopPoint] = board[startPoint];
+	board[startPoint] = PIECE_NONE;
+
+
+	*info = ALLOC_INFO_PASSANT(*info, 0);
 
 	return true;
 }
@@ -106,18 +132,30 @@ bool execute_double_move(Piece* board, Info* info, Move move)
 {
 	printf("execute_double_move\n");
 
-	// This has to be changed!:
+	if(!move_inside_board(move)) return false;
 
-	if(!move_inside_board(move))
-	{
-		return false;
-	}
 
-	Point start = MOVE_START_MACRO(move);
-	Point stop = MOVE_STOP_MACRO(move);
+	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	board[stop] = board[start];
-	board[start] = PIECE_NONE;
+
+	unsigned short startFile = POINT_FILE_MACRO(startPoint);
+
+
+	board[stopPoint] = board[startPoint];
+	board[startPoint] = PIECE_NONE;
+
+
+	unsigned short passantFile = (startFile + 1);
+
+	Info infoPassant = PASSANT_INFO_MACRO(passantFile);
+
+	printf("Allocating %d to passant\n", passantFile);
+
+	*info = ALLOC_INFO_PASSANT(*info, infoPassant);
+
+	printf("%d is not allocated!\n", INFO_PASSANT_MACRO(*info));
+
 
 	return true;
 }

@@ -6,15 +6,16 @@
 // - the own king is not set in check
 bool move_fully_legal(const Piece board[], Info info, Move move)
 {
-	if(!move_pseudo_legal(board, info, move))
-	{
-		return false;
-	}
+	if(!move_inside_board(move)) return false;
 
-	if(!move_prevent_check(board, info, move))
-	{
-		return false;
-	}
+	// This function should check:
+	// - the piece is allowed to move that way
+	// - the move path is clear (except for the knight)
+	if(!move_pseudo_legal(board, info, move)) return false;
+
+	// This function should check if the inputted move prevents check.
+	// It can do that by executing the move, and see if the king is in check
+	if(!move_prevent_check(board, info, move)) return false;
 
 	return true;
 }
@@ -24,42 +25,27 @@ bool move_fully_legal(const Piece board[], Info info, Move move)
 // - the move path is clear (except for the knight)
 bool move_pseudo_legal(const Piece board[], Info info, Move move)
 {
-	if(!move_inside_board(move))
-	{
-		return false;
-	}
+	if(!move_inside_board(move)) return false;
 
 	Point startPoint = MOVE_START_MACRO(move);
 	Piece startPiece = board[startPoint];
 
 	// This function checks:
 	// - if the moving pattern and flag matches the piece
-	if(!move_pattern_valid(move, startPiece))
-	{
-		return false;
-	}
-
+	if(!move_pattern_valid(move, startPiece)) return false;
+	
 	// This function checks:
 	// - if the move can be done, if it has the ability (castling)
-	if(!move_ability_valid(move, startPiece, info))
-	{
-		return false;
-	}
-
+	if(!move_ability_valid(move, startPiece, info)) return false;
+	
 	// This function checks:
 	// - if the move pattern fits on the board and iteracts with the pieces that it needs
-	if(!move_pattern_fits(board, info, move))
-	{
-		return false;
-	}
-
+	if(!move_pattern_fits(board, info, move)) return false;
+	
 	// This function checks:
 	// - if the path between the start point and the stop point is clear
-	if(!clear_moving_path(board, move, startPiece))
-	{
-		return false;
-	}
-
+	if(!clear_moving_path(board, move, startPiece)) return false;
+	
 	return true;
 }
 
@@ -67,11 +53,15 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 // It can do that by executing the move, and see if the king is in check
 bool move_prevent_check(const Piece board[], Info info, Move move)
 {
+	if(!move_inside_board(move)) return false;
+
 	return true;
 }
 
 bool clear_moving_path(const Piece board[], Move move, Piece piece)
 {
+	if(!move_inside_board(move)) return false;
+
 	//Piece pieceTeam = PIECE_TEAM_MACRO(piece);
 	Piece pieceType = PIECE_TYPE_MACRO(piece);
 
@@ -125,6 +115,8 @@ bool clear_moving_path(const Piece board[], Move move, Piece piece)
 
 bool move_ability_valid(Move move, Piece piece, Info info)
 {
+	if(!move_inside_board(move)) return false;
+
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
@@ -179,8 +171,14 @@ bool move_ability_valid(Move move, Piece piece, Info info)
 // - it must be a rook in the corner, if it is castle
 bool move_pattern_fits(const Piece board[], Info info, Move move)
 {
+	if(!move_inside_board(move)) return false;
+
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
+
+	unsigned short stopFile = POINT_FILE_MACRO(stopPoint);
+
+	unsigned short passantFile = INFO_PASSANT_MACRO(info);
 
 	Piece startTeam = (board[startPoint] & PIECE_TEAM_MASK);
 	Piece startType = (board[startPoint] & PIECE_TYPE_MASK);
@@ -194,7 +192,9 @@ bool move_pattern_fits(const Piece board[], Info info, Move move)
 
 	Move moveFlag = (move & MOVE_FLAG_MASK);
 
+
 	if(board_teams_team(startTeam, stopTeam)) return false;
+
 
 	if(moveFlag == MOVE_FLAG_CASTLE)
 	{
@@ -211,55 +211,16 @@ bool move_pattern_fits(const Piece board[], Info info, Move move)
 
 		else if(fileOffset == 1 && rankOffset == 1)
 		{
-			if(!board_teams_enemy(startTeam, stopTeam)) return false;
+			if(moveFlag == MOVE_FLAG_PASSANT && (stopFile + 1) == passantFile)
+			{
+				// This is the exeption
+			}
+			else
+			{
+				if(!board_teams_enemy(startTeam, stopTeam)) return false;
+			}
 		}
 	}
-
-	return true;
-}
-
-// This function should give the move its correct flag
-// To do that, it checks for patterns, but the move don't have to be legal,
-// this function just sets the flag that it would have had to have.
-bool correct_move_flag(Move* move, Piece piece, Info info)
-{
-	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
-	Piece pieceType = (piece & PIECE_TYPE_MASK);
-
-	Point stopPoint = MOVE_STOP_MACRO(*move);
-
-	unsigned short stopFile = POINT_FILE_MACRO(stopPoint);
-	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
-
-	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(*move, pieceTeam));
-	unsigned short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(*move, pieceTeam));
-
-	unsigned short passantFile = INFO_PASSANT_MACRO(info);
-
-	Move moveFlag = MOVE_FLAG_NONE;
-
-	if(pieceType == PIECE_TYPE_PAWN && rankOffset == 2 && fileOffset == 0)
-	{
-		moveFlag = MOVE_FLAG_DOUBLE;
-	}
-	else if(pieceType == PIECE_TYPE_KING && rankOffset == 0 && fileOffset == 2)
-	{
-		moveFlag = MOVE_FLAG_CASTLE;
-	}
-	else if((pieceType == PIECE_TYPE_PAWN) && ((stopFile + 1) == passantFile) &&
-		((pieceTeam == PIECE_TEAM_WHITE && stopRank == BLACK_PAWN_RANK + BLACK_MOVE_VALUE) ||
-		(pieceTeam == PIECE_TEAM_BLACK && stopRank == WHITE_PAWN_RANK + WHITE_MOVE_VALUE)))
-	{
-		moveFlag = MOVE_FLAG_PASSANT;
-	}
-	else if((pieceType == PIECE_TYPE_PAWN) &&
-		((pieceTeam == PIECE_TEAM_WHITE && stopRank == BLACK_START_RANK) ||
-		(pieceTeam == PIECE_TEAM_BLACK && stopRank == WHITE_START_RANK)))
-	{
-		moveFlag = MOVE_FLAG_QUEEN;
-	}
-
-	*move |= (moveFlag & MOVE_FLAG_MASK);
 
 	return true;
 }

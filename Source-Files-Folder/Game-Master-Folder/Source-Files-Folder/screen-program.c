@@ -51,7 +51,7 @@ bool screen_single_game(Piece* board, Info* info, Screen screen)
 
 
 		printf("[%d] is moving!\n", infoTeam);
-
+		printf("[%d] is passant!\n", INFO_PASSANT_MACRO(*info));
 
 		if(!screen_user_handler(board, info, screen))
 		{
