@@ -4,35 +4,51 @@
 // This function is going to just move the pieces around,
 // based on what action (flag) the move has
 // This function is not going to check any validation
-bool execute_chess_move(Piece* board, Info* info, Move move)
+bool execute_chess_move(Piece* board, Info* info, Kings* kings, Move move)
 {
 	Move moveFlag = (move & MOVE_FLAG_MASK);
 
 	if(moveFlag == MOVE_FLAG_KNIGHT || moveFlag == MOVE_FLAG_BISHOP || moveFlag == MOVE_FLAG_ROOK || moveFlag == MOVE_FLAG_QUEEN)
 	{
-		return execute_promote_move(board, info, move);
+		return execute_promote_move(board, info, kings, move);
 	}
 	else if(moveFlag == MOVE_FLAG_CASTLE)
 	{
-		return execute_castle_move(board, info, move);
+		return execute_castle_move(board, info, kings, move);
 	}
 	else if(moveFlag == MOVE_FLAG_PASSANT)
 	{
-		return execute_passant_move(board, info, move);
+		return execute_passant_move(board, info, kings, move);
 	}
 	else if(moveFlag == MOVE_FLAG_DOUBLE)
 	{
-		return execute_double_move(board, info, move);
+		return execute_double_move(board, info, kings, move);
 	}
 	else
 	{
-		return execute_normal_move(board, info, move);
+		return execute_normal_move(board, info, kings, move);
 	}
+}
+
+bool update_king_point(Kings* kings, Piece pieceTeam, Point point)
+{
+	printf("update_king_point\n");
+	if(pieceTeam == PIECE_TEAM_WHITE)
+	{
+		*kings = ALLOC_KINGS_WHITE(*kings, WHITE_KINGS_MACRO(point));
+	}
+	else if(pieceTeam == PIECE_TEAM_BLACK)
+	{
+		*kings = ALLOC_KINGS_BLACK(*kings, BLACK_KINGS_MACRO(point));
+	}
+	else return false;
+
+	return true;
 }
 
 // This function is going to execute all normal moves
 // - It just moves the piece to a specific point
-bool execute_normal_move(Piece* board, Info* info, Move move)
+bool execute_normal_move(Piece* board, Info* info, Kings* kings, Move move)
 {
 	printf("execute_normal_move\n");
 
@@ -41,9 +57,18 @@ bool execute_normal_move(Piece* board, Info* info, Move move)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
+	Piece startPiece = board[startPoint];
 
-	board[stopPoint] = board[startPoint];
+	board[stopPoint] = startPiece;
 	board[startPoint] = PIECE_NONE;
+
+	if((startPiece & PIECE_TYPE_MASK) == PIECE_TYPE_KING)
+	{
+		if(!update_king_point(kings, (startPiece & PIECE_TEAM_MASK), stopPoint))
+		{
+			return false;
+		}
+	}
 
 
 	*info = ALLOC_INFO_PASSANT(*info, 0);
@@ -53,10 +78,18 @@ bool execute_normal_move(Piece* board, Info* info, Move move)
 
 // This function is going to execute a castle
 // - It has to move both the king and the rook
-bool execute_castle_move(Piece* board, Info* info, Move move)
+bool execute_castle_move(Piece* board, Info* info, Kings* kings, Move move)
 {
 	printf("execute_castle_move\n");
 
+
+	// if((startPiece & PIECE_TYPE_MASK) == PIECE_TYPE_KING)
+	// {
+	// 	if(!update_king_point(kings, (startPiece & PIECE_TEAM_MASK), stopPoint))
+	// 	{
+	// 		return false;
+	// 	}
+	// }
 
 	*info = ALLOC_INFO_PASSANT(*info, 0);
 
@@ -66,7 +99,7 @@ bool execute_castle_move(Piece* board, Info* info, Move move)
 // This function is going to execute a promotion
 // - It has to get the promotion (KNIGHT, BISHOP, ROOK, QUEEN)
 // and swap the piece at the STOP point in the move
-bool execute_promote_move(Piece* board, Info* info, Move move)
+bool execute_promote_move(Piece* board, Info* info, Kings* kings, Move move)
 {
 	printf("execute_promote_move\n");
 
@@ -106,7 +139,7 @@ bool execute_promote_move(Piece* board, Info* info, Move move)
 
 // This function is going to execute en passant take
 // - It has to update the passant point to POINT_NONE
-bool execute_passant_move(Piece* board, Info* info, Move move)
+bool execute_passant_move(Piece* board, Info* info, Kings* kings, Move move)
 {
 	printf("execute_passant_move\n");
 
@@ -128,7 +161,7 @@ bool execute_passant_move(Piece* board, Info* info, Move move)
 
 // This function is going to execute the double jump by a pawn
 // - It has to update the passant point
-bool execute_double_move(Piece* board, Info* info, Move move)
+bool execute_double_move(Piece* board, Info* info, Kings* kings, Move move)
 {
 	printf("execute_double_move\n");
 

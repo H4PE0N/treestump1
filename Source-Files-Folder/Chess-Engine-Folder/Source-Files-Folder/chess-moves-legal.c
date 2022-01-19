@@ -4,7 +4,7 @@
 // This function should check:
 // - the move is pseudo legal
 // - the own king is not set in check
-bool move_fully_legal(const Piece board[], Info info, Move move)
+bool move_fully_legal(const Piece board[], Info info, Kings kings, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
@@ -15,7 +15,18 @@ bool move_fully_legal(const Piece board[], Info info, Move move)
 
 	// This function should check if the inputted move prevents check.
 	// It can do that by executing the move, and see if the king is in check
-	if(!move_prevent_check(board, info, move)) return false;
+	if(!move_prevent_check(board, info, kings, move))
+	{
+		printf("(%d-%d) -> (%d-%d) not prevent check\n",
+			POINT_RANK_MACRO(MOVE_START_MACRO(move)),
+			POINT_FILE_MACRO(MOVE_START_MACRO(move)),
+			POINT_RANK_MACRO(MOVE_STOP_MACRO(move)),
+			POINT_FILE_MACRO(MOVE_STOP_MACRO(move)));
+
+		return false;
+	}
+
+
 
 	return true;
 }
@@ -30,30 +41,89 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 	Point startPoint = MOVE_START_MACRO(move);
 	Piece startPiece = board[startPoint];
 
+	Piece startTeam = (startPiece & PIECE_TEAM_MASK);
+
+	if(!current_team_move(info, startTeam)) return false;
+
 	// This function checks:
 	// - if the moving pattern and flag matches the piece
 	if(!move_pattern_valid(move, startPiece)) return false;
-	
+
 	// This function checks:
 	// - if the move can be done, if it has the ability (castling)
 	if(!move_ability_valid(move, startPiece, info)) return false;
-	
+
 	// This function checks:
 	// - if the move pattern fits on the board and iteracts with the pieces that it needs
 	if(!move_pattern_fits(board, info, move)) return false;
-	
+
 	// This function checks:
 	// - if the path between the start point and the stop point is clear
 	if(!clear_moving_path(board, move, startPiece)) return false;
-	
+
 	return true;
 }
 
 // This function should check if the inputted move prevents check.
 // It can do that by executing the move, and see if the king is in check
-bool move_prevent_check(const Piece board[], Info info, Move move)
+bool move_prevent_check(const Piece board[], Info info, Kings kings, Move move)
 {
 	if(!move_inside_board(move)) return false;
+
+
+	Point startPoint = MOVE_START_MACRO(move);
+	Piece pieceTeam = (board[startPoint] & PIECE_TEAM_MASK);
+
+
+	Piece* boardCopy = malloc(sizeof(Piece) * BOARD_LENGTH);
+	memcpy(boardCopy, board, sizeof(Piece) * BOARD_LENGTH);
+
+	Info infoCopy = info;
+	Kings kingsCopy = kings;
+
+	if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move))
+	{
+		free(boardCopy);
+
+		printf("if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move))\n");
+
+		return false;
+	}
+
+
+	Point kingPoint = POINT_NONE;
+
+	if(pieceTeam == PIECE_TEAM_WHITE)
+	{
+		printf("white king!\n");
+		kingPoint = KINGS_WHITE_MACRO(kingsCopy);
+	}
+
+	else if(pieceTeam == PIECE_TEAM_BLACK)
+	{
+		printf("black king!\n");
+		kingPoint = KINGS_BLACK_MACRO(kingsCopy);
+		printf("King Point: (%d-%d)\n", POINT_RANK_MACRO(kingPoint), POINT_FILE_MACRO(kingPoint));
+	}
+
+
+	printf("startTeam: %d\tstopTeam: %d\n", (board[startPoint] & PIECE_TEAM_MASK), (board[MOVE_STOP_MACRO(move)] & PIECE_TEAM_MASK));
+
+
+
+	if(king_inside_check(boardCopy, infoCopy, kingPoint))
+	{
+		free(boardCopy);
+
+		printf("king_inside_check\n");
+
+		return false;
+	}
+
+	printf("not king_inside_check\n");
+
+
+	free(boardCopy);
 
 	return true;
 }
@@ -120,16 +190,23 @@ bool move_ability_valid(Move move, Piece piece, Info info)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
+
+	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
+
+
+	signed short movePattern = (stopPoint - startPoint);
+
+
+
 	Move moveFlag = move & MOVE_FLAG_MASK;
+
 
 	if(moveFlag == MOVE_FLAG_CASTLE)
 	{
 		// If the move flag is saying that the move is a castle:
 		// - we have to check if the ability at that side is valid
 
-		Piece pieceTeam = (piece & PIECE_TEAM_MASK);
 
-		signed short movePattern = (stopPoint - startPoint);
 
 		Info castles = (info & INFO_CASTLES_MASK);
 
@@ -162,6 +239,16 @@ bool move_ability_valid(Move move, Piece piece, Info info)
 	}
 
 	return true;
+}
+
+bool current_team_move(Info info, Piece pieceTeam)
+{
+	unsigned short infoTeamValue = INFO_TEAM_MACRO(info);
+	unsigned short pieceTeamValue = PIECE_TEAM_MACRO(pieceTeam);
+
+	if(infoTeamValue == pieceTeamValue && pieceTeamValue != 0) return true;
+
+	return false;
 }
 
 // This function is going to check if the move-pattern

@@ -14,6 +14,6 @@ bool check_draw_ending(const Piece[], Info, Point);
 
 bool check_mate_ending(const Piece[], Info, Point);
 
-bool game_still_running(const Piece[], Info);
+bool game_still_running(const Piece[], Info, Kings);
 
 #endif

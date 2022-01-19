@@ -3,7 +3,7 @@
 
 // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 1 0
 
-bool parse_game_string(Piece** board, Info* info, char gameString[])
+bool parse_game_string(Piece** board, Info* info, Kings* kings, char gameString[])
 {
 	unsigned short stringLength = strlen(gameString);
 
@@ -105,6 +105,30 @@ bool parse_game_string(Piece** board, Info* info, char gameString[])
 	*info |= COUNTER_INFO_MACRO(counter);
 
 	free_array_strings(stringArray, amount);
+
+
+	if(!parse_king_points(kings, *board))
+	{
+		printf("if(!parse_king_points(kings, board))\n");
+
+		free(*board);
+
+		return false;
+	}
+
+	return true;
+}
+
+bool parse_king_points(Kings* kings, const Piece board[])
+{
+	Point whitePoint = 60;
+	Point blackPoint = 4;
+
+	Info whiteKings = WHITE_KINGS_MACRO(whitePoint);
+	Info blackKings = BLACK_KINGS_MACRO(blackPoint);
+
+	*kings = ALLOC_KINGS_WHITE(*kings, whiteKings);
+	*kings = ALLOC_KINGS_BLACK(*kings, blackKings);
 
 	return true;
 }

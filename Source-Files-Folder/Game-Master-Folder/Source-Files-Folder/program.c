@@ -1,6 +1,8 @@
 
 #include "../Header-Files-Folder/program.h"
 
+// "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 1 0"
+
 void print_chess_board(const Piece board[])
 {
 	for(unsigned short rank = 0; rank < BOARD_RANKS; rank += 1)
@@ -36,10 +38,11 @@ int main(int argAmount, char* arguments[])
 
 	Piece* board;
 	Info info;
+	Kings kings;
 
 	char* gameString = arguments[1];
 
-	if(!parse_game_string(&board, &info, gameString))
+	if(!parse_game_string(&board, &info, &kings, gameString))
 	{
 		printf("Could not parse game string!\n");
 
@@ -64,7 +67,7 @@ int main(int argAmount, char* arguments[])
 
 	print_chess_board(board);
 
-	if(!move_chess_piece(board, &info, move))
+	if(!move_chess_piece(board, &info, &kings, move))
 	{
 		printf("Could not move!\n");
 	}

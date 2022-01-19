@@ -16,15 +16,15 @@ void free_display_screen(Screen);
 
 bool render_surface_texture(Renderer*, Surface*, Rect);
 
-bool render_move_squares(Screen, const Piece[], Info, Point);
+bool render_move_squares(Screen, const Piece[], Info, Kings, Point);
 
 bool render_board_move(Screen, Move, Surface*);
 
-bool render_check_squares(Screen, const Piece[], Info);
+bool render_check_squares(Screen, const Piece[], Info, Kings);
 
 bool render_board_pieces(Screen, const Piece[]);
 
-bool render_chess_board(Screen, const Piece[], Info, Point);
+bool render_chess_board(Screen, const Piece[], Info, Kings, Point);
 
 bool extract_piece_image(Surface**, Piece);
 

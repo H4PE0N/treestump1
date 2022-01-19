@@ -60,6 +60,11 @@ extern const Info INFO_TEAM_BLACK;
 
 // ==========================================
 
+extern const Kings KINGS_WHITE_MASK;
+extern const Kings KINGS_BLACK_MASK;
+
+// ==========================================
+
 extern const unsigned short PIECE_TEAM_SHIFT;
 extern const unsigned short PIECE_TYPE_SHIFT;
 
@@ -73,6 +78,9 @@ extern const unsigned short INFO_COUNTER_SHIFT;
 
 extern const unsigned short MOVE_STOP_SHIFT;
 extern const unsigned short MOVE_START_SHIFT;
+
+extern const unsigned short KINGS_WHITE_SHIFT;
+extern const unsigned short KINGS_BLACK_SHIFT;
 
 // ==========================================
 
@@ -90,6 +98,9 @@ extern const unsigned short MOVE_START_SHIFT;
 #define PIECE_TEAM_MACRO(PIECE)           ( (PIECE & PIECE_TEAM_MASK) >> PIECE_TEAM_SHIFT)
 #define PIECE_TYPE_MACRO(PIECE)           ( (PIECE & PIECE_TYPE_MASK) >> PIECE_TYPE_SHIFT)
 
+#define KINGS_WHITE_MACRO(KINGS)          ( (KINGS & KINGS_WHITE_MASK) >> KINGS_WHITE_SHIFT)
+#define KINGS_BLACK_MACRO(KINGS)          ( (KINGS & KINGS_BLACK_MASK) >> KINGS_BLACK_SHIFT)
+
 // ==========================================
 
 #define STOP_MOVE_MACRO(STOP)             ( (STOP << MOVE_STOP_SHIFT) & MOVE_STOP_MASK)
@@ -105,6 +116,9 @@ extern const unsigned short MOVE_START_SHIFT;
 
 #define TEAM_PIECE_MACRO(TEAM)            ( (TEAM << PIECE_TEAM_SHIFT) & PIECE_TEAM_MASK)
 #define TYPE_PIECE_MACRO(TYPE)            ( (TYPE << PIECE_TYPE_SHIFT) & PIECE_TYPE_MASK)
+
+#define WHITE_KINGS_MACRO(WHITE)          ( (WHITE << KINGS_WHITE_SHIFT) & KINGS_WHITE_MASK)
+#define BLACK_KINGS_MACRO(BLACK)          ( (BLACK << KINGS_BLACK_SHIFT) & KINGS_BLACK_MASK)
 
 // ==========================================
 
@@ -122,6 +136,9 @@ extern const unsigned short MOVE_START_SHIFT;
 
 #define ALLOC_PIECE_TEAM(PIECE, TEAM)     ( (PIECE & ~PIECE_TEAM_MASK) | TEAM)
 #define ALLOC_PIECE_TYPE(PIECE, TYPE)     ( (PIECE & ~PIECE_TYPE_MASK) | TYPE)
+
+#define ALLOC_KINGS_WHITE(KINGS, WHITE)   ( (KINGS & ~KINGS_WHITE_MASK) | WHITE)
+#define ALLOC_KINGS_BLACK(KINGS, BLACK)   ( (KINGS & ~KINGS_BLACK_MASK) | BLACK)
 
 // This will set whites king-side-castle to false:
 // INFO = INFO & ~INFO_WHITE_KING
@@ -143,6 +160,7 @@ extern const Point POINT_NONE;
 extern const Piece PIECE_NONE;
 extern const Move MOVE_NONE;
 extern const Info INFO_NONE;
+extern const Kings KINGS_NONE;
 
 extern const signed short SHORT_NONE;
 extern const signed short INDEX_NONE;
@@ -151,6 +169,7 @@ extern const Point POINT_BLANK;
 extern const Piece PIECE_BLANK;
 extern const Move MOVE_BLANK;
 extern const Info INFO_BLANK;
+extern const Kings KINGS_BLANK;
 
 // ==========================================
 

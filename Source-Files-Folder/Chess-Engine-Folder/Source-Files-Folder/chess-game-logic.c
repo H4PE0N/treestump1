@@ -18,21 +18,44 @@ bool piece_does_check(const Piece board[], Info info, Point kingPoint, Point sta
 	Move move = START_MOVE_MACRO(startPoint) | STOP_MOVE_MACRO(kingPoint);
 
 	Piece startPiece = board[startPoint];
+	Piece stopPiece = board[kingPoint];
+
 
 	if(!correct_move_flag(&move, startPiece, info))
 	{
 		return false;
 	}
 
-	if(!move_pseudo_legal(board, info, move))
-	{
-		return false;
-	}
+
+	// This function checks:
+	// - if the moving pattern and flag matches the piece
+	if(!move_pattern_valid(move, startPiece)) return false;
+
+	// This function checks:
+	// - if the move can be done, if it has the ability (castling)
+	if(!move_ability_valid(move, startPiece, info)) return false;
+
+	// This function checks:
+	// - if the move pattern fits on the board and iteracts with the pieces that it needs
+	if(!move_pattern_fits(board, info, move)) return false;
+
+	// This function checks:
+	// - if the path between the start point and the stop point is clear
+	if(!clear_moving_path(board, move, startPiece)) return false;
+
+
+	printf("\npiece_does_check: (%d-%d) -> (%d-%d)",
+		POINT_RANK_MACRO(MOVE_START_MACRO(move)),
+		POINT_FILE_MACRO(MOVE_START_MACRO(move)),
+		POINT_RANK_MACRO(MOVE_STOP_MACRO(move)),
+		POINT_FILE_MACRO(MOVE_STOP_MACRO(move)));
+
+	printf("[%d %d] [%d %d]\n", PIECE_TEAM_MACRO(startPiece), PIECE_TYPE_MACRO(startPiece), PIECE_TEAM_MACRO(stopPiece), PIECE_TYPE_MACRO(stopPiece));
 
 	return true;
 }
 
-bool game_still_running(const Piece board[], Info info)
+bool game_still_running(const Piece board[], Info info, Kings kings)
 {
 	return true;
 }

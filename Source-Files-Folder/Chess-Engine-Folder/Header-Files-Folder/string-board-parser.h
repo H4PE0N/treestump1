@@ -2,7 +2,7 @@
 #ifndef BOARD_PARSER_H
 #define BOARD_PARSER_H
 
-bool parse_game_string(Piece**, Info*, char[]);
+bool parse_game_string(Piece**, Info*, Kings*, char[]);
 
 bool parse_string_board(Piece**, char[]);
 
@@ -23,5 +23,7 @@ bool parse_string_castles(Info*, char[]);
 bool parse_string_short(unsigned short*, char[]);
 
 bool parse_string_current(Info*, char[]);
+
+bool parse_king_points(Kings*, const Piece[]);
 
 #endif

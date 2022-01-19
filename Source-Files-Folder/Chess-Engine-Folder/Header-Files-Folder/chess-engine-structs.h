@@ -30,6 +30,9 @@ typedef unsigned int Info;		// 0000000	000000	0000	0000	00
 typedef signed short Move;		// 000 	000000 000000
 								// flag	point  point
 
+typedef unsigned short Kings; // 000000 000000
+                              // white  black
+
 // board: Piece[64] or Piece* board
 
 #endif

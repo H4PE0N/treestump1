@@ -185,11 +185,11 @@ bool render_board_squares(Screen screen)
   	return true;
 }
 
-bool render_move_squares(Screen screen, const Piece board[], Info info, Point point)
+bool render_move_squares(Screen screen, const Piece board[], Info info, Kings kings, Point point)
 {
 	Move* moveArray;
 
-	if(!piece_legal_moves(&moveArray, board, info, point))
+	if(!piece_legal_moves(&moveArray, board, info, kings, point))
 	{
 		return true;
 	}
@@ -233,7 +233,7 @@ bool render_board_move(Screen screen, Move move, Surface* image)
 	return true;
 }
 
-bool render_check_squares(Screen screen, const Piece board[], Info info)
+bool render_check_squares(Screen screen, const Piece board[], Info info, Kings kings)
 {
 	return true;
 }
@@ -303,7 +303,7 @@ bool render_board_piece(Screen screen, Piece piece, Point point)
 	return true;
 }
 
-bool render_chess_board(Screen screen, const Piece board[], Info info, Point point)
+bool render_chess_board(Screen screen, const Piece board[], Info info, Kings kings, Point point)
 {
 	if(!render_board_squares(screen))
 	{
@@ -313,14 +313,14 @@ bool render_chess_board(Screen screen, const Piece board[], Info info, Point poi
 
 	SDL_UpdateWindowSurface(screen.window);
 
-	if(!render_check_squares(screen, board, info))
+	if(!render_check_squares(screen, board, info, kings))
 	{
 		// I don't know...
 	}
 
 	// if(!render_board_move())
 
-	if(!render_move_squares(screen, board, info, point))
+	if(!render_move_squares(screen, board, info, kings, point))
 	{
 		// Nothing!
 	}

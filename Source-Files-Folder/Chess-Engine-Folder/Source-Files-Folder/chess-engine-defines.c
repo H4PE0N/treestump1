@@ -55,9 +55,14 @@ const Info INFO_WHITE_QUEEN 	= 0b00000000000000000010000;
 const Info INFO_BLACK_KING 		= 0b00000000000000000001000;
 const Info INFO_BLACK_QUEEN 	= 0b00000000000000000000100;
 
-const Info INFO_TEAM_NONE		= 0b00000000000000000000000;
-const Info INFO_TEAM_WHITE		= 0b00000000000000000000001;
-const Info INFO_TEAM_BLACK		= 0b00000000000000000000010;
+const Info INFO_TEAM_NONE     = 0b00000000000000000000000;
+const Info INFO_TEAM_WHITE    = 0b00000000000000000000001;
+const Info INFO_TEAM_BLACK    = 0b00000000000000000000010;
+
+// ==========================================
+
+const Kings KINGS_WHITE_MASK  = 0b111111000000;
+const Kings KINGS_BLACK_MASK  = 0b000000111111;
 
 // ==========================================
 
@@ -75,6 +80,9 @@ const unsigned short INFO_TURNS_SHIFT   = 16;
 const unsigned short MOVE_STOP_SHIFT	= 0;
 const unsigned short MOVE_START_SHIFT	= 6;
 
+const unsigned short KINGS_WHITE_SHIFT  = 6;
+const unsigned short KINGS_BLACK_SHIFT  = 0;
+
 // ==========================================
 
 const unsigned short BOARD_RANKS 	= 8;
@@ -87,6 +95,7 @@ const Piece PIECE_NONE        = 0;
 const Info INFO_NONE          = 0;
 const Move MOVE_NONE          = -1;
 const Point POINT_NONE        = -1;
+const Kings KINGS_NONE        = -1;
 
 const signed short INDEX_NONE = -1;
 const signed short SHORT_NONE = -32768;
@@ -95,6 +104,7 @@ const Point POINT_BLANK       = 0b000000;
 const Piece PIECE_BLANK       = 0b00000;
 const Move MOVE_BLANK         = 0b000000000000000;
 const Info INFO_BLANK         = 0b00000000000000000000000;
+const Kings KINGS_BLANK         = 0b000000000000000;
 
 // ==========================================
 

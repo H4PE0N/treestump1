@@ -1,14 +1,14 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool move_chess_piece(Piece* board, Info* info, Move move)
+bool move_chess_piece(Piece* board, Info* info, Kings* kings, Move move)
 {
-	if(!move_fully_legal(board, *info, move))
+	if(!move_fully_legal(board, *info, *kings, move))
 	{
 		return false;
 	}
 
-	if(!execute_chess_move(board, info, move))
+	if(!execute_chess_move(board, info, kings, move))
 	{
 		return false;
 	}
@@ -19,7 +19,7 @@ bool move_chess_piece(Piece* board, Info* info, Move move)
 // This function creates memory for an array of legal moves
 // The memory has to be freed after use!! OBS!
 // This function is trash, make it more specific for the pieces:
-bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Point startPoint)
+bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Kings kings, Point startPoint)
 {
 	if(!point_inside_board(startPoint)) return false;
 
@@ -40,7 +40,7 @@ bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Point s
 
 		if(!correct_move_flag(&currentMove, startPiece, info)) continue;
 
-		if(move_fully_legal(board, info, currentMove))
+		if(move_fully_legal(board, info, kings, currentMove))
 		{
 			(*moveArray)[moveAmount] = currentMove;
 
