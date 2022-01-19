@@ -3,6 +3,13 @@
 
 bool move_chess_piece(Piece* board, Info* info, Kings* kings, Move move)
 {
+	Piece startPiece = board[MOVE_START_MACRO(move)];
+
+	Piece startTeam = (startPiece & PIECE_TEAM_MASK);
+
+	if(!current_team_move(*info, startTeam)) return false;
+
+
 	if(!move_fully_legal(board, *info, *kings, move))
 	{
 		return false;

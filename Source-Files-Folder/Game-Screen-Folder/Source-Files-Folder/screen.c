@@ -187,6 +187,12 @@ bool render_board_squares(Screen screen)
 
 bool render_move_squares(Screen screen, const Piece board[], Info info, Kings kings, Point point)
 {
+	if(!point_inside_board(point)) return false;
+
+	Piece pieceTeam = (board[point] & PIECE_TEAM_MASK);
+
+	if(!current_team_move(info, pieceTeam)) return false;
+
 	Move* moveArray;
 
 	if(!piece_legal_moves(&moveArray, board, info, kings, point))
@@ -235,6 +241,45 @@ bool render_board_move(Screen screen, Move move, Surface* image)
 
 bool render_check_squares(Screen screen, const Piece board[], Info info, Kings kings)
 {
+	Point whiteKing = KINGS_WHITE_MACRO(kings);
+	Point blackKing = KINGS_BLACK_MACRO(kings);
+
+	if(!render_check_square(screen, board, info, whiteKing)) return false;
+
+	if(!render_check_square(screen, board, info, blackKing)) return false;
+
+	return true;
+}
+
+bool render_check_square(Screen screen, const Piece board[], Info info, Point kingPoint)
+{
+	if(!king_inside_check(board, info, kingPoint))
+	{
+		return true;
+	}
+
+
+	Surface* checkSquare;
+
+	if(!load_filename_image(&checkSquare, "../Source-Files-Folder/Game-Screen-Folder/Screen-Images-Folder/check-square.png"))
+	{
+		return false;
+	}
+
+
+	Rect position;
+
+	if(!board_point_position(&position, screen, kingPoint))
+	{
+		return false;
+	}
+
+	if(!render_board_image(screen.renderer, checkSquare, position))
+	{
+		return false;
+	}
+
+
 	return true;
 }
 

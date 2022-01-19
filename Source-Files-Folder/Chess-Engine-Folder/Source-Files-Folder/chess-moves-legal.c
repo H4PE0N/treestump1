@@ -17,12 +17,6 @@ bool move_fully_legal(const Piece board[], Info info, Kings kings, Move move)
 	// It can do that by executing the move, and see if the king is in check
 	if(!move_prevent_check(board, info, kings, move))
 	{
-		printf("(%d-%d) -> (%d-%d) not prevent check\n",
-			POINT_RANK_MACRO(MOVE_START_MACRO(move)),
-			POINT_FILE_MACRO(MOVE_START_MACRO(move)),
-			POINT_RANK_MACRO(MOVE_STOP_MACRO(move)),
-			POINT_FILE_MACRO(MOVE_STOP_MACRO(move)));
-
 		return false;
 	}
 
@@ -40,10 +34,6 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 
 	Point startPoint = MOVE_START_MACRO(move);
 	Piece startPiece = board[startPoint];
-
-	Piece startTeam = (startPiece & PIECE_TEAM_MASK);
-
-	if(!current_team_move(info, startTeam)) return false;
 
 	// This function checks:
 	// - if the moving pattern and flag matches the piece
@@ -85,8 +75,6 @@ bool move_prevent_check(const Piece board[], Info info, Kings kings, Move move)
 	{
 		free(boardCopy);
 
-		printf("if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move))\n");
-
 		return false;
 	}
 
@@ -95,33 +83,21 @@ bool move_prevent_check(const Piece board[], Info info, Kings kings, Move move)
 
 	if(pieceTeam == PIECE_TEAM_WHITE)
 	{
-		printf("white king!\n");
 		kingPoint = KINGS_WHITE_MACRO(kingsCopy);
 	}
 
 	else if(pieceTeam == PIECE_TEAM_BLACK)
 	{
-		printf("black king!\n");
 		kingPoint = KINGS_BLACK_MACRO(kingsCopy);
-		printf("King Point: (%d-%d)\n", POINT_RANK_MACRO(kingPoint), POINT_FILE_MACRO(kingPoint));
 	}
-
-
-	printf("startTeam: %d\tstopTeam: %d\n", (board[startPoint] & PIECE_TEAM_MASK), (board[MOVE_STOP_MACRO(move)] & PIECE_TEAM_MASK));
-
 
 
 	if(king_inside_check(boardCopy, infoCopy, kingPoint))
 	{
 		free(boardCopy);
 
-		printf("king_inside_check\n");
-
 		return false;
 	}
-
-	printf("not king_inside_check\n");
-
 
 	free(boardCopy);
 

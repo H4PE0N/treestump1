@@ -36,4 +36,6 @@ bool render_board_piece(Screen, Piece, Point);
 
 bool load_filename_image(Surface**, char[]);
 
+bool render_check_square(Screen, const Piece[], Info, Point);
+
 #endif
