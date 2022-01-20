@@ -57,19 +57,66 @@ bool execute_normal_move(Piece* board, Info* info, Kings* kings, Move move)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
+
+	unsigned short startFile = POINT_FILE_MACRO(startPoint);
+	unsigned short startRank = POINT_RANK_MACRO(startPoint);
+
+	unsigned short stopFile = POINT_FILE_MACRO(stopPoint);
+	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
+
+
+	Piece startType = (board[startPoint] & PIECE_TYPE_MASK);
+	Piece stopType = (board[stopPoint] & PIECE_TYPE_MASK);
+
 	Piece startPiece = board[startPoint];
+
+	Piece startTeam = (startPiece & PIECE_TEAM_MASK);
 
 	board[stopPoint] = startPiece;
 	board[startPoint] = PIECE_NONE;
 
-	if((startPiece & PIECE_TYPE_MASK) == PIECE_TYPE_KING)
+	if(startType == PIECE_TYPE_KING)
 	{
 		if(!update_king_point(kings, (startPiece & PIECE_TEAM_MASK), stopPoint))
 		{
 			return false;
 		}
+
+		if(startTeam == PIECE_TEAM_WHITE)
+		{
+			// Resets the bits of white king and queen
+			*info = (*info & ~INFO_WHITE_KING & ~INFO_WHITE_QUEEN);
+		}
+		else if(startTeam == PIECE_TEAM_BLACK)
+		{
+			// Resets the bits of black king and queen
+			*info = (*info & ~INFO_BLACK_KING & ~INFO_BLACK_QUEEN);
+		}
 	}
 
+	// If a rook is moving, or a rook is taken: The castle ability must be set to false
+	if(startType == PIECE_TYPE_ROOK || stopType == PIECE_TYPE_ROOK)
+	{
+		unsigned short rookRank = (startType == PIECE_TYPE_ROOK) ? startRank : stopRank;
+		unsigned short rookFile = (startType == PIECE_TYPE_ROOK) ? startFile : stopFile;
+
+		if(rookRank == WHITE_START_RANK && rookFile == 0)
+		{
+			*info = (*info & ~INFO_WHITE_QUEEN);
+		}
+		else if(rookRank == WHITE_START_RANK && rookFile == (BOARD_FILES - 1))
+		{
+			*info = (*info & ~INFO_WHITE_KING);
+		}
+		if(rookRank == BLACK_START_RANK && rookFile == 0)
+		{
+			*info = (*info & ~INFO_BLACK_QUEEN);
+		}
+		else if(rookRank == BLACK_START_RANK && rookFile == (BOARD_FILES - 1))
+		{
+			*info = (*info & ~INFO_BLACK_KING);
+		}
+	}
 
 	*info = ALLOC_INFO_PASSANT(*info, 0);
 
@@ -116,6 +163,19 @@ bool execute_castle_move(Piece* board, Info* info, Kings* kings, Move move)
 	}
 
 	*info = ALLOC_INFO_PASSANT(*info, 0);
+
+
+	if(kingTeam == PIECE_TEAM_WHITE)
+	{
+		// Resets the bits of white king and queen
+		*info = (*info & ~INFO_WHITE_KING & ~INFO_WHITE_QUEEN);
+	}
+	else if(kingTeam == PIECE_TEAM_BLACK)
+	{
+		// Resets the bits of black king and queen
+		*info = (*info & ~INFO_BLACK_KING & ~INFO_BLACK_QUEEN);
+	}
+
 
 	return true;
 }
@@ -210,9 +270,6 @@ bool execute_double_move(Piece* board, Info* info, Kings* kings, Move move)
 	printf("Allocating %d to passant\n", passantFile);
 
 	*info = ALLOC_INFO_PASSANT(*info, infoPassant);
-
-	printf("%d is not allocated!\n", INFO_PASSANT_MACRO(*info));
-
 
 	return true;
 }

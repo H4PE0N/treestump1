@@ -54,10 +54,18 @@ bool screen_single_game(Piece* board, Info* info, Kings* kings, Screen screen)
 
 
 		printf("[%d] is moving!\n", (unsigned short) infoTeam);
-		printf("[%d] is passant!\n", (unsigned short) INFO_PASSANT_MACRO(*info));
 
 		printf("\nWhite King (%d-%d)\n", (unsigned short) POINT_RANK_MACRO(KINGS_WHITE_MACRO(*kings)), (unsigned short) POINT_FILE_MACRO(KINGS_WHITE_MACRO(*kings)));
 		printf("Black King (%d-%d)\n\n", (unsigned short) POINT_RANK_MACRO(KINGS_BLACK_MACRO(*kings)), (unsigned short) POINT_FILE_MACRO(KINGS_BLACK_MACRO(*kings)));
+
+		printf("Castles: ");
+
+		for(unsigned short index = 0; index < 4; index += 1)
+		{
+			printf("%d", ( ((*info & INFO_CASTLES_MASK) >> 2) & (1 << index)) >> index);
+		}
+
+		printf("\n");
 
 		if(!screen_user_handler(board, info, kings, screen))
 		{
