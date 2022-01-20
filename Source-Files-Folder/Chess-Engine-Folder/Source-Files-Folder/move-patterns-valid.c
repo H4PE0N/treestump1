@@ -45,7 +45,7 @@ bool move_pattern_valid(Move move, Piece piece)
 bool pawn_pattern_valid(Move move, Piece pieceTeam)
 {
 	// Check if pieceTeam is either WHITE or BLACK
-	
+
 	Point startPoint = MOVE_START_MACRO(move);
 	unsigned short startRank = POINT_RANK_MACRO(startPoint);
 
@@ -238,8 +238,7 @@ bool king_pattern_valid(Move move, Piece pieceTeam)
 
 		if(rankOffset != 0) return false;
 
-		if(fileOffset != KING_CASTLE_PAT || fileOffset != QUEEN_CASTLE_PAT) return false;
-
+		if(fileOffset != KING_CASTLE_PAT && fileOffset != QUEEN_CASTLE_PAT) return false;
 
 		return true;
 	}

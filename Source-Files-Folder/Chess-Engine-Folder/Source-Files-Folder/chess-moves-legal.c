@@ -258,11 +258,24 @@ bool move_pattern_fits(const Piece board[], Info info, Move move)
 
 	if(board_teams_team(startTeam, stopTeam)) return false;
 
-
 	if(moveFlag == MOVE_FLAG_CASTLE)
 	{
 		// This checks if the king is the one moving, and if the rook is in its place
-		return false; // just for now
+
+		if(startType != PIECE_TYPE_KING) return false;
+
+		Point rookPoint = castle_rook_point(move, startTeam);
+
+		if(rookPoint == POINT_NONE) return false;
+
+		Piece rookType = (board[rookPoint] & PIECE_TYPE_MASK);
+		Piece rookTeam = (board[rookPoint] & PIECE_TEAM_MASK);
+
+		if(rookType != PIECE_TYPE_ROOK || rookTeam != startTeam) return false;
+
+		printf("move_pattern_fits castle valid\n");
+
+		return true;
 	}
 
 	if(startType == PIECE_TYPE_PAWN)
@@ -286,4 +299,32 @@ bool move_pattern_fits(const Piece board[], Info info, Move move)
 	}
 
 	return true;
+}
+
+Point castle_rook_point(Move move, Piece pieceTeam)
+{
+	Point kingPoint = MOVE_START_MACRO(move);
+	unsigned short kingRank = POINT_RANK_MACRO(kingPoint);
+
+	signed short fileOffset = move_file_offset(move, pieceTeam);
+
+	Point rookPoint = POINT_NONE;
+
+	if(kingRank == WHITE_START_RANK && fileOffset == KING_CASTLE_PAT)
+	{
+		rookPoint = FILE_POINT_MACRO((BOARD_FILES - 1)) | RANK_POINT_MACRO(WHITE_START_RANK);
+	}
+	else if(kingRank == WHITE_START_RANK && fileOffset == QUEEN_CASTLE_PAT)
+	{
+		rookPoint = FILE_POINT_MACRO(0) | RANK_POINT_MACRO(WHITE_START_RANK);
+	}
+	else if(kingRank == BLACK_START_RANK && fileOffset == KING_CASTLE_PAT)
+	{
+		rookPoint = FILE_POINT_MACRO((BOARD_FILES - 1)) | RANK_POINT_MACRO(BLACK_START_RANK);
+	}
+	else if(kingRank == BLACK_START_RANK && fileOffset == QUEEN_CASTLE_PAT)
+	{
+		rookPoint = FILE_POINT_MACRO(0) | RANK_POINT_MACRO(BLACK_START_RANK);
+	}
+	return rookPoint;
 }

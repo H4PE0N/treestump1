@@ -16,4 +16,6 @@ bool move_prevent_check(const Piece[], Info, Kings, Move);
 
 bool current_team_move(Info, Piece);
 
+Point castle_rook_point(Move, Piece);
+
 #endif

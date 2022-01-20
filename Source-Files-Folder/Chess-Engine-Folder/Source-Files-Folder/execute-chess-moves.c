@@ -82,14 +82,38 @@ bool execute_castle_move(Piece* board, Info* info, Kings* kings, Move move)
 {
 	printf("execute_castle_move\n");
 
+	Point kingPoint = MOVE_START_MACRO(move);
 
-	// if((startPiece & PIECE_TYPE_MASK) == PIECE_TYPE_KING)
-	// {
-	// 	if(!update_king_point(kings, (startPiece & PIECE_TEAM_MASK), stopPoint))
-	// 	{
-	// 		return false;
-	// 	}
-	// }
+	Piece kingPiece = board[kingPoint];
+
+	Piece kingTeam = (kingPiece & PIECE_TEAM_MASK);
+
+	Point rookPoint = castle_rook_point(move, kingTeam);
+
+	if(rookPoint == POINT_NONE) return false;
+
+
+	Piece rookPiece = board[rookPoint];
+
+
+	signed short fileOffset = move_file_offset(move, kingTeam);
+
+	Point newKingPoint = MOVE_STOP_MACRO(move);
+	Point newRookPoint = (fileOffset == KING_CASTLE_PAT) ? (newKingPoint - 1) : (newKingPoint + 1);
+
+	printf("Rook Point: %d\n", rookPoint);
+
+	board[newKingPoint] = kingPiece;
+	board[kingPoint] = PIECE_NONE;
+
+	board[newRookPoint] = rookPiece;
+	board[rookPoint] = PIECE_NONE;
+
+
+	if(!update_king_point(kings, kingTeam, newKingPoint))
+	{
+		return false;
+	}
 
 	*info = ALLOC_INFO_PASSANT(*info, 0);
 
