@@ -1,7 +1,7 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool move_chess_piece(Piece* board, Info* info, Kings* kings, Move move)
+bool move_chess_piece(Piece* board, Info* info, Kings* kings, Move* moves, Move move)
 {
 	Piece startPiece = board[MOVE_START_MACRO(move)];
 
@@ -19,6 +19,11 @@ bool move_chess_piece(Piece* board, Info* info, Kings* kings, Move move)
 	{
 		return false;
 	}
+
+
+	unsigned short movesAmount = move_array_amount(moves);
+	moves[movesAmount] = move;
+
 
 	return true;
 }

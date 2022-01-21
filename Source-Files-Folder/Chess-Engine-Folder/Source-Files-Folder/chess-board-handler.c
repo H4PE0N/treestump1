@@ -1,6 +1,18 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
+unsigned short move_array_amount(const Move moves[])
+{
+	unsigned short movesAmount = 0;
+
+	while(moves[movesAmount] != MOVE_NONE && moves[movesAmount] >= 0)
+	{
+		movesAmount += 1;
+	}
+
+	return movesAmount;
+}
+
 bool move_inside_board(Move move)
 {
 	if(move == MOVE_NONE || move < 0) return false;

@@ -233,9 +233,29 @@ bool execute_passant_move(Piece* board, Info* info, Kings* kings, Move move)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
+	Piece startTeam = (board[startPoint] & PIECE_TEAM_MASK);
+
+	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
+
+
+	unsigned short pawnRank = 0;
+
+	if(startTeam == PIECE_TEAM_WHITE) pawnRank = (stopRank + BLACK_MOVE_VALUE);
+
+	else if(startTeam == PIECE_TEAM_BLACK) pawnRank = (stopRank + WHITE_MOVE_VALUE);
+
+	else return false;
+
+
+	unsigned short pawnFile = (INFO_PASSANT_MACRO(*info) - 1);
+
+
+	Point pawnPoint = RANK_POINT_MACRO(pawnRank) | FILE_POINT_MACRO(pawnFile);
+
 
 	board[stopPoint] = board[startPoint];
 	board[startPoint] = PIECE_NONE;
+	board[pawnPoint] = PIECE_NONE;
 
 
 	*info = ALLOC_INFO_PASSANT(*info, 0);

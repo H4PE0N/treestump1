@@ -26,4 +26,6 @@ bool piece_team_exists(Piece);
 
 bool piece_type_exists(Piece);
 
+unsigned short move_array_amount(const Move[]);
+
 #endif

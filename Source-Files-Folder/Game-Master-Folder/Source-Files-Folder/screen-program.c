@@ -32,20 +32,28 @@ int main(int argAmount, char* arguments[])
 		return false;
 	}
 
-	if(!screen_single_game(board, &info, &kings, screen))
+	Move* moves = malloc(sizeof(Move) * 128);
+
+	for(unsigned short index = 0; index < 128; index += 1)
+	{
+		moves[index] = MOVE_NONE;
+	}
+
+	if(!screen_single_game(board, &info, &kings, moves, screen))
 	{
 		printf("if(!screen_single_game(board, &info, screen))\n");
 	}
 
-	printf("free(board); free_display_screen(screen);\n");
-	free(board);
+	printf("free(board);\nfree(moves);\nfree_display_screen(screen);\n");
 
+	free(board);
+	free(moves);
 	free_display_screen(screen);
 
 	return 0;
 }
 
-bool screen_single_game(Piece* board, Info* info, Kings* kings, Screen screen)
+bool screen_single_game(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen)
 {
 	while(game_still_running(board, *info, *kings))
 	{
@@ -67,7 +75,7 @@ bool screen_single_game(Piece* board, Info* info, Kings* kings, Screen screen)
 
 		printf("\n");
 
-		if(!screen_user_handler(board, info, kings, screen))
+		if(!screen_user_handler(board, info, kings, moves, screen))
 		{
 			printf("Abort! Screen!\n");
 			break;
@@ -84,13 +92,13 @@ bool screen_single_game(Piece* board, Info* info, Kings* kings, Screen screen)
 	return true;
 }
 
-bool screen_user_handler(Piece* board, Info* info, Kings* kings, Screen screen)
+bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen)
 {
 	Move move = MOVE_NONE;
 
 	while(!move_inside_board(move))
 	{
-		if(!render_chess_board(screen, board, *info, *kings, -1))
+		if(!render_chess_board(screen, board, *info, *kings, moves, -1))
 		{
 			printf("if(!render_chess_board(screen, board, *info, -1))\n");
 
@@ -99,25 +107,25 @@ bool screen_user_handler(Piece* board, Info* info, Kings* kings, Screen screen)
 
 		SDL_UpdateWindowSurface(screen.window);
 
-		if(!input_screen_move(&move, screen, board, *info, *kings)) return false;
+		if(!input_screen_move(&move, screen, board, *info, *kings, moves)) return false;
 	}
 
 	Point startPoint = MOVE_START_MACRO(move);
 
 	if(!correct_move_flag(&move, board[startPoint], *info))
 	{
-		return screen_user_handler(board, info, kings, screen);
+		return screen_user_handler(board, info, kings, moves, screen);
 	}
 
-	if(!move_chess_piece(board, info, kings, move))
+	if(!move_chess_piece(board, info, kings, moves, move))
 	{
-		return screen_user_handler(board, info, kings, screen);
+		return screen_user_handler(board, info, kings, moves, screen);
 	}
 
 	return true;
 }
 
-bool input_screen_move(Move* move, Screen screen, const Piece board[], Info info, Kings kings)
+bool input_screen_move(Move* move, Screen screen, const Piece board[], Info info, Kings kings, const Move moves[])
 {
 	Move inputMove = MOVE_NONE;
 	Event event;
@@ -131,7 +139,7 @@ bool input_screen_move(Move* move, Screen screen, const Piece board[], Info info
 			printf("Quitting inpu!\n");
 		  return false;
 		}
-		else if(!screen_move_parser(&inputMove, screen, board, info, kings, event)) continue;
+		else if(!screen_move_parser(&inputMove, screen, board, info, kings, moves, event)) continue;
 	}
 
 	*move = inputMove;
@@ -139,7 +147,7 @@ bool input_screen_move(Move* move, Screen screen, const Piece board[], Info info
 	return true;
 }
 
-bool screen_move_parser(Move* move, Screen screen, const Piece board[], Info info, Kings kings, Event event)
+bool screen_move_parser(Move* move, Screen screen, const Piece board[], Info info, Kings kings, const Move moves[], Event event)
 {
 
 	if(event.type == SDL_MOUSEBUTTONDOWN)
@@ -147,7 +155,7 @@ bool screen_move_parser(Move* move, Screen screen, const Piece board[], Info inf
 		Point startPoint = parse_mouse_point(event, screen);
 
 
-		if(!render_chess_board(screen, board, info, kings, startPoint)) return false;
+		if(!render_chess_board(screen, board, info, kings, moves, startPoint)) return false;
 
 		SDL_UpdateWindowSurface(screen.window);
 

@@ -42,7 +42,9 @@ bool parse_game_string(Piece** board, Info* info, Kings* kings, char gameString[
 		return false;
 	}
 
-	*info |= (currentTeam & INFO_TEAM_MASK);
+
+	*info = ALLOC_INFO_TEAM(*info, currentTeam);
+
 
 	Info castles = INFO_BLANK;
 
@@ -57,7 +59,9 @@ bool parse_game_string(Piece** board, Info* info, Kings* kings, char gameString[
 		return false;
 	}
 
-	*info |= (castles & INFO_CASTLES_MASK);
+
+	*info = ALLOC_INFO_CASTLES(*info, castles);
+
 
 	unsigned short passant = 0;
 
@@ -72,7 +76,9 @@ bool parse_game_string(Piece** board, Info* info, Kings* kings, char gameString[
 		return false;
 	}
 
-	*info |= PASSANT_INFO_MACRO(passant);
+
+	*info = ALLOC_INFO_PASSANT(*info, PASSANT_INFO_MACRO(passant));
+
 
 	unsigned short turns = 0;
 
@@ -87,7 +93,9 @@ bool parse_game_string(Piece** board, Info* info, Kings* kings, char gameString[
 		return false;
 	}
 
-	*info |= TURNS_INFO_MACRO(turns);
+
+	*info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO(turns));
+
 
 	unsigned short counter = 0;
 
@@ -102,7 +110,9 @@ bool parse_game_string(Piece** board, Info* info, Kings* kings, char gameString[
 		return false;
 	}
 
-	*info |= COUNTER_INFO_MACRO(counter);
+
+	*info = ALLOC_INFO_COUNTER(*info, COUNTER_INFO_MACRO(counter));
+
 
 	free_array_strings(stringArray, amount);
 
@@ -274,7 +284,7 @@ bool parse_string_castles(Info* castles, char stringToken[])
 	if(stringLength > 4) return false;
 
 
-	*castles = MOVE_NONE; // Setting all castle abilities to false;
+	*castles = INFO_NONE; // Setting all castle abilities to false;
 
 
 	if(strcmp(stringCopy, CASTLES_NONE) == 0)

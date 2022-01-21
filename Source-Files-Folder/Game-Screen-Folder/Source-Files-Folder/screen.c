@@ -84,7 +84,7 @@ void free_display_screen(Screen screen)
 	SDL_Quit();
 }
 
-bool render_board_image(Renderer* renderer, Surface* surface, Rect position)
+bool render_board_image(Renderer* renderer, Surface* surface, Rect position, Uint8 opacity)
 {
 	Texture* texture = NULL;
 
@@ -93,7 +93,11 @@ bool render_board_image(Renderer* renderer, Surface* surface, Rect position)
 		return false;
 	}
 
+	SDL_SetTextureAlphaMod(texture, opacity);
+
+
 	SDL_RenderCopy(renderer, texture, NULL, &position);
+
 
 	SDL_DestroyTexture(texture);
 
@@ -162,19 +166,12 @@ bool render_board_squares(Screen screen)
 
 	for(Point point = 0; point < 64; point += 1)
 	{
-		Rect position;
-
-		if(!board_point_position(&position, screen, point))
-		{
-			return false;
-		}
-
 		unsigned short rank = POINT_RANK_MACRO(point);
 		unsigned short file = POINT_FILE_MACRO(point);
 
 		Surface* image = (rank + file) % 2 == 0 ? whiteSquare : blackSquare;
 
-		if(!render_board_image(screen.renderer, image, position))
+		if(!render_point_image(screen, image, point, 255))
 		{
 			return false;
 		}
@@ -216,14 +213,7 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Kings ki
 		Point stopPoint = MOVE_STOP_MACRO(moveArray[index]);
 
 
-		Rect position;
-
-		if(!board_point_position(&position, screen, stopPoint))
-		{
-			continue;
-		}
-
-		if(!render_board_image(screen.renderer, moveSquare, position))
+		if(!render_point_image(screen, moveSquare, stopPoint, 255))
 		{
 			continue;
 		}
@@ -234,8 +224,74 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Kings ki
 	return true;
 }
 
-bool render_board_move(Screen screen, Move move, Surface* image)
+bool render_board_moves(Screen screen, const Move moves[])
 {
+	printf("render_board_moves:\n");
+
+	Surface* movedSquare;
+
+	if(!load_filename_image(&movedSquare, "../Source-Files-Folder/Game-Screen-Folder/Screen-Images-Folder/moved-square.png"))
+	{
+		printf("Could not render image\n");
+		return false;
+	}
+
+
+	unsigned short movesAmount = move_array_amount(moves);
+
+	printf("movesAmount: %d\n", movesAmount);
+
+	if(movesAmount <= 0) return true;
+
+
+	float opacityFactor = 0.5;
+
+
+	for(unsigned short index = 0; index < movesAmount; index += 1)
+	{
+		unsigned short arrayIndex = (movesAmount - index - 1);
+
+		Move currentMove = moves[arrayIndex];
+
+		if(currentMove == MOVE_NONE || currentMove < 0) continue;
+
+
+		Point stopPoint = MOVE_STOP_MACRO(currentMove);
+		Point startPoint = MOVE_START_MACRO(currentMove);
+
+
+		Uint8 opacity = (255.0 * pow(opacityFactor, index));
+
+
+		if(!render_point_image(screen, movedSquare, stopPoint, opacity))
+		{
+			continue;
+		}
+
+		if(!render_point_image(screen, movedSquare, startPoint, opacity))
+		{
+			continue;
+		}
+
+	}
+
+	return true;
+}
+
+bool render_point_image(Screen screen, Surface* image, Point point, Uint8 opacity)
+{
+	Rect position;
+
+	if(!board_point_position(&position, screen, point))
+	{
+		return false;
+	}
+
+	if(!render_board_image(screen.renderer, image, position, opacity))
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -267,14 +323,7 @@ bool render_check_square(Screen screen, const Piece board[], Info info, Point ki
 	}
 
 
-	Rect position;
-
-	if(!board_point_position(&position, screen, kingPoint))
-	{
-		return false;
-	}
-
-	if(!render_board_image(screen.renderer, checkSquare, position))
+	if(!render_point_image(screen, checkSquare, kingPoint, 255))
 	{
 		return false;
 	}
@@ -329,15 +378,7 @@ bool render_board_piece(Screen screen, Piece piece, Point point)
 		return false;
 	}
 
-	Rect position;
-
-	if(!board_point_position(&position, screen, point))
-	{
-		printf("Could not board_point_position!\n");
-		return false;
-	}
-
-	if(!render_board_image(screen.renderer, pieceImage, position))
+	if(!render_point_image(screen, pieceImage, point, 255))
 	{
 		printf("Could not render_board_image!\n");
 		return false;
@@ -348,7 +389,7 @@ bool render_board_piece(Screen screen, Piece piece, Point point)
 	return true;
 }
 
-bool render_chess_board(Screen screen, const Piece board[], Info info, Kings kings, Point point)
+bool render_chess_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moves[], Point point)
 {
 	if(!render_board_squares(screen))
 	{
@@ -363,7 +404,10 @@ bool render_chess_board(Screen screen, const Piece board[], Info info, Kings kin
 		// I don't know...
 	}
 
-	// if(!render_board_move())
+	if(!render_board_moves(screen, moves))
+	{
+		// I don't know...
+	}
 
 	if(!render_move_squares(screen, board, info, kings, point))
 	{
