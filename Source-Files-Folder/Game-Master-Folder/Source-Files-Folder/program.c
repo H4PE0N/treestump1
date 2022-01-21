@@ -40,6 +40,7 @@ int main(int argAmount, char* arguments[])
 	Info info;
 	Kings kings;
 
+
 	char* gameString = arguments[1];
 
 	if(!parse_game_string(&board, &info, &kings, gameString))
@@ -49,36 +50,35 @@ int main(int argAmount, char* arguments[])
 		return false;
 	}
 
-	Move move = MOVE_BLANK;
-	Point start = 59;
-	Point stop = 32;
+	Move* moves = malloc(sizeof(Move) * 128);
 
-	move |= (start << MOVE_START_SHIFT);
-	move |= (stop << MOVE_STOP_SHIFT);
-
-	if(!correct_move_flag(&move, board[start], info))
+	for(unsigned short index = 0; index < 128; index += 1)
 	{
-		printf("Could not correct flag\n");
-
-		free(board);
-
-		return false;
+		moves[index] = MOVE_NONE;
 	}
+
 
 	print_chess_board(board);
 
-	if(!move_chess_piece(board, &info, &kings, move))
+
+	Move* moveArray;
+
+	if(piece_legal_moves(&moveArray, board, info, kings, 57))
 	{
-		printf("Could not move!\n");
-	}
-	else
-	{
-		printf("Moved chess piece!\n");
+		unsigned short moveAmount = move_array_amount(moveArray);
+
+		for(unsigned short index = 0; index < moveAmount; index += 1)
+		{
+			printf("MoveArray[%d] = [%d -> %d]\n", index, MOVE_START_MACRO(moveArray[index]), MOVE_STOP_MACRO(moveArray[index]));
+		}
+
+		free(moveArray);
 	}
 
-	print_chess_board(board);
 
 	free(board);
+
+	free(moves);
 
 	return 0;
 }

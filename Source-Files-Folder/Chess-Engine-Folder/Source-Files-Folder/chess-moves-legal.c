@@ -101,6 +101,10 @@ bool move_prevent_check(const Piece board[], Info info, Kings kings, Move move)
 
 	free(boardCopy);
 
+	// If it is a king that is castling, you have to check
+	// that the king does not pass through check (the point
+	// where the rook later lands, should not be in check)
+
 	return true;
 }
 
