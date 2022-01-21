@@ -110,7 +110,40 @@ bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Sc
 		if(!input_screen_move(&move, screen, board, *info, *kings, moves)) return false;
 	}
 
+	// Now a move on the board has been inputted
 	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
+
+	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
+
+	Piece startTeam = (board[startPoint] & PIECE_TEAM_MASK);
+	Piece startType = (board[startPoint] & PIECE_TYPE_MASK);
+
+	if(startType == PIECE_TYPE_PAWN) // This can be a promote move
+	{
+		if(
+			(startTeam == PIECE_TEAM_WHITE && stopRank == BLACK_START_RANK) ||
+			(startTeam == PIECE_TEAM_BLACK && stopRank == WHITE_START_RANK)
+		)
+		{
+			if(move_fully_legal(board, *info, *kings, move))
+			{
+
+				printf("INputting promote move!\n");
+
+				Move promoteMove = MOVE_NONE;
+				if(input_promote_move(&promoteMove, screen, startTeam))
+				{
+					if(promoteMove != MOVE_NONE)
+					{
+						move = ALLOC_MOVE_FLAG(move, promoteMove);
+					}
+				}
+			}
+		}
+
+	}
+
 
 	if(!correct_move_flag(&move, board[startPoint], *info))
 	{
@@ -177,23 +210,4 @@ bool screen_move_parser(Move* move, Screen screen, const Piece board[], Info inf
 	}
 
 	return false;
-}
-
-Point parse_mouse_point(Event event, Screen screen)
-{
-  	float squareWidth = (screen.width / BOARD_FILES);
-	float squareHeight = (screen.height / BOARD_RANKS);
-
-	unsigned short file = (unsigned short) floor( (float) event.motion.x / squareWidth);
-	unsigned short rank = (unsigned short) floor( (float) event.motion.y / squareHeight);
-
-	if(!NUMBER_IN_BOUNDS(file, 0, BOARD_FILES)) return POINT_NONE;
-
-	if(!NUMBER_IN_BOUNDS(rank, 0, BOARD_RANKS)) return POINT_NONE;
-
-	Point point = 0;
-	point |= (file << POINT_FILE_SHIFT) & POINT_FILE_MASK;
-	point |= (rank << POINT_RANK_SHIFT) & POINT_RANK_MASK;
-
-	return point;
 }

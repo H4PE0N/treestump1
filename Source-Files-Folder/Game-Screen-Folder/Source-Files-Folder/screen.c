@@ -244,35 +244,124 @@ bool render_board_moves(Screen screen, const Move moves[])
 	if(movesAmount <= 0) return true;
 
 
-	float opacityFactor = 0.5;
+	Move lastMove = moves[movesAmount - 1];
 
-
-	for(unsigned short index = 0; index < movesAmount; index += 1)
+	if(!render_board_move(screen, movedSquare, lastMove, 255))
 	{
-		unsigned short arrayIndex = (movesAmount - index - 1);
+		return false;
+	}
 
-		Move currentMove = moves[arrayIndex];
+	// float opacityFactor = 0.5;
+	//
+	// for(unsigned short index = 0; index < movesAmount; index += 1)
+	// {
+	// 	unsigned short arrayIndex = (movesAmount - index - 1);
+	//
+	// 	Move currentMove = moves[arrayIndex];
+	//
+	// 	if(currentMove == MOVE_NONE || currentMove < 0) continue;
+	//
+	//
+	// 	Uint8 opacity = (255.0 * pow(opacityFactor, index));
+	//
+	//
+	// 	if(!render_board_move(screen, movedSquare, currentMove, opacity))
+	// 	{
+	// 		continue;
+	// 	}
+	//
+	// }
 
-		if(currentMove == MOVE_NONE || currentMove < 0) continue;
+	return true;
+}
+
+Point knightPoint = 18;
+Point bishopPoint = 21;
+Point rookPoint = 42;
+Point queenPoint = 45;
+
+bool input_promote_move(Move* promoMove, Screen screen, Piece pieceTeam)
+{
+	*promoMove = MOVE_BLANK;
+
+	if(!render_board_squares(screen))
+	{
+		printf("if(!render_board_squares(screen))\n");
+		return false;
+	}
 
 
-		Point stopPoint = MOVE_STOP_MACRO(currentMove);
-		Point startPoint = MOVE_START_MACRO(currentMove);
+
+	if(!render_board_piece(screen, (PIECE_TYPE_KNIGHT | pieceTeam), knightPoint))
+	{
+		return false;
+	}
+
+	if(!render_board_piece(screen, (PIECE_TYPE_BISHOP | pieceTeam), bishopPoint))
+	{
+		return false;
+	}
+
+	if(!render_board_piece(screen, (PIECE_TYPE_ROOK | pieceTeam), rookPoint))
+	{
+		return false;
+	}
+
+	if(!render_board_piece(screen, (PIECE_TYPE_QUEEN | pieceTeam), queenPoint))
+	{
+		return false;
+	}
+
+	SDL_UpdateWindowSurface(screen.window);
 
 
-		Uint8 opacity = (255.0 * pow(opacityFactor, index));
+	Event event;
+
+	while(event.type != SDL_MOUSEBUTTONDOWN)
+	{
+		SDL_PollEvent(&event);
+	}
+
+	Point piecePoint = parse_mouse_point(event, screen);
 
 
-		if(!render_point_image(screen, movedSquare, stopPoint, opacity))
-		{
-			continue;
-		}
+	if(piecePoint == knightPoint)
+	{
+		*promoMove = ALLOC_MOVE_FLAG(*promoMove, MOVE_FLAG_KNIGHT);
+	}
+	else if(piecePoint == bishopPoint)
+	{
+		*promoMove = ALLOC_MOVE_FLAG(*promoMove, MOVE_FLAG_BISHOP);
+	}
+	else if(piecePoint == rookPoint)
+	{
+		*promoMove = ALLOC_MOVE_FLAG(*promoMove, MOVE_FLAG_ROOK);
+	}
+	else if(piecePoint == queenPoint)
+	{
+		*promoMove = ALLOC_MOVE_FLAG(*promoMove, MOVE_FLAG_QUEEN);
+	}
+	else return false;
 
-		if(!render_point_image(screen, movedSquare, startPoint, opacity))
-		{
-			continue;
-		}
 
+	return true;
+}
+
+//bool render_promo_pieces(Screen screen, )
+
+bool render_board_move(Screen screen, Surface* moveImage, Move move, Uint8 opacity)
+{
+	Point stopPoint = MOVE_STOP_MACRO(move);
+	Point startPoint = MOVE_START_MACRO(move);
+
+	if(!render_point_image(screen, moveImage, stopPoint, opacity))
+	{
+		return false;
+	}
+
+	if(!render_point_image(screen, moveImage, startPoint, opacity))
+	{
+		return false;
 	}
 
 	return true;
@@ -421,4 +510,23 @@ bool render_chess_board(Screen screen, const Piece board[], Info info, Kings kin
 	}
 
 	return true;
+}
+
+Point parse_mouse_point(Event event, Screen screen)
+{
+  	float squareWidth = (screen.width / BOARD_FILES);
+	float squareHeight = (screen.height / BOARD_RANKS);
+
+	unsigned short file = (unsigned short) floor( (float) event.motion.x / squareWidth);
+	unsigned short rank = (unsigned short) floor( (float) event.motion.y / squareHeight);
+
+	if(!NUMBER_IN_BOUNDS(file, 0, BOARD_FILES)) return POINT_NONE;
+
+	if(!NUMBER_IN_BOUNDS(rank, 0, BOARD_RANKS)) return POINT_NONE;
+
+	Point point = 0;
+	point |= (file << POINT_FILE_SHIFT) & POINT_FILE_MASK;
+	point |= (rank << POINT_RANK_SHIFT) & POINT_RANK_MASK;
+
+	return point;
 }

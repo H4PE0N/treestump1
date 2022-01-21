@@ -42,4 +42,10 @@ bool render_point_image(Screen, Surface*, Point, Uint8);
 
 bool render_board_image(Renderer*, Surface*, Rect, Uint8);
 
+bool render_board_move(Screen, Surface*, Move, Uint8);
+
+bool input_promote_move(Move*, Screen, Piece);
+
+Point parse_mouse_point(Event, Screen);
+
 #endif

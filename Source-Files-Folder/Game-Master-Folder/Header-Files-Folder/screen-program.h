@@ -11,8 +11,6 @@ bool input_screen_move(Move*, Screen, const Piece[], Info, Kings, const Move[]);
 
 bool screen_move_parser(Move*, Screen, const Piece[], Info, Kings, const Move[], Event);
 
-Point parse_mouse_point(Event, Screen);
-
 bool screen_single_game(Piece*, Info*, Kings*, Move*, Screen);
 
 #endif
