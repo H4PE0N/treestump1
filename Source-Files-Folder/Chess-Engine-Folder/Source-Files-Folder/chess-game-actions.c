@@ -10,6 +10,12 @@ bool move_chess_piece(Piece* board, Info* info, Kings* kings, Move* moves, Move 
 	if(!current_team_move(*info, startTeam)) return false;
 
 
+
+	if(!correct_move_flag(&move, startPiece, *info))
+	{
+		return false;
+	}
+
 	if(!move_fully_legal(board, *info, *kings, move))
 	{
 		return false;
@@ -70,46 +76,102 @@ bool correct_move_flag(Move* move, Piece piece, Info info)
 {
 	if(!move_inside_board(*move)) return false;
 
-	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
-	Piece pieceType = (piece & PIECE_TYPE_MASK);
-
-	Point stopPoint = MOVE_STOP_MACRO(*move);
-
-	unsigned short stopFile = POINT_FILE_MACRO(stopPoint);
-	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
-
-	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(*move, pieceTeam));
-	unsigned short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(*move, pieceTeam));
-
-	unsigned short passantFile = INFO_PASSANT_MACRO(info);
-
 	Move moveFlag = (*move & MOVE_FLAG_MASK);
 
-	if(pieceType == PIECE_TYPE_PAWN && rankOffset == 2 && fileOffset == 0)
+	if(double_move_ident(info, *move, piece))
 	{
 		moveFlag = MOVE_FLAG_DOUBLE;
 	}
-	else if(pieceType == PIECE_TYPE_KING && rankOffset == 0 && fileOffset == 2)
+	else if(castle_move_ident(info, *move, piece))
 	{
 		moveFlag = MOVE_FLAG_CASTLE;
 	}
-	else if((pieceType == PIECE_TYPE_PAWN) && ((stopFile + 1) == passantFile) &&
-		((pieceTeam == PIECE_TEAM_WHITE && stopRank == BLACK_PAWN_RANK + BLACK_MOVE_VALUE) ||
-		(pieceTeam == PIECE_TEAM_BLACK && stopRank == WHITE_PAWN_RANK + WHITE_MOVE_VALUE)))
+	else if(passant_move_ident(info, *move, piece))
 	{
 		moveFlag = MOVE_FLAG_PASSANT;
 	}
-	else if((pieceType == PIECE_TYPE_PAWN) &&
-		((pieceTeam == PIECE_TEAM_WHITE && stopRank == BLACK_START_RANK) ||
-		(pieceTeam == PIECE_TEAM_BLACK && stopRank == WHITE_START_RANK)))
+	else if(promote_move_ident(info, *move, piece))
 	{
 		if(moveFlag != MOVE_FLAG_KNIGHT && moveFlag != MOVE_FLAG_BISHOP && moveFlag != MOVE_FLAG_ROOK && moveFlag != MOVE_FLAG_QUEEN)
 		{
 			moveFlag = MOVE_FLAG_QUEEN; // This is the default value;
 		}
 	}
+	else
+	{
+		moveFlag = MOVE_FLAG_NONE;
+	}
 
 	*move = ALLOC_MOVE_FLAG(*move, moveFlag);
 
 	return true;
+}
+
+bool castle_move_ident(Info info, Move move, Piece piece)
+{
+	Piece pieceType = (piece & PIECE_TYPE_MASK);
+	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
+
+	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, pieceTeam));
+
+	if(pieceType != PIECE_TYPE_KING) return false;
+
+	if(fileOffset == KING_CASTLE_PAT || fileOffset == QUEEN_CASTLE_PAT) return true;
+
+	return false;
+}
+
+bool passant_move_ident(Info info, Move move, Piece piece)
+{
+	Point stopPoint = MOVE_STOP_MACRO(move);
+
+	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
+	Piece pieceType = (piece & PIECE_TYPE_MASK);
+
+	unsigned short stopFile = POINT_FILE_MACRO(stopPoint);
+	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
+
+	unsigned short passantFile = INFO_PASSANT_MACRO(info);
+
+	if(pieceType != PIECE_TYPE_PAWN) return false;
+
+	if((stopFile + 1) != passantFile) return false;
+
+	// Piece is pawn, and stopFile is passant file
+
+	if(pieceTeam == PIECE_TEAM_WHITE && stopRank == (BLACK_PAWN_RANK + BLACK_MOVE_VALUE) ) return true;
+
+	if(pieceTeam == PIECE_TEAM_BLACK && stopRank == (WHITE_PAWN_RANK + WHITE_MOVE_VALUE) ) return true;
+
+	return false;
+}
+
+bool promote_move_ident(Info info, Move move, Piece piece)
+{
+	Point stopPoint = MOVE_STOP_MACRO(move);
+
+	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
+	Piece pieceType = (piece & PIECE_TYPE_MASK);
+
+	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
+
+	if(pieceType != PIECE_TYPE_PAWN) return false;
+
+	if(pieceTeam == PIECE_TEAM_WHITE && stopRank == BLACK_START_RANK) return true;
+
+	if(pieceTeam == PIECE_TEAM_BLACK && stopRank == WHITE_START_RANK) return true;
+
+	return false;
+}
+
+bool double_move_ident(Info info, Move move, Piece piece)
+{
+	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
+	Piece pieceType = (piece & PIECE_TYPE_MASK);
+
+	unsigned short rankOffset = move_rank_offset(move, pieceTeam);
+
+	if(pieceType == PIECE_TYPE_PAWN && rankOffset == 2) return true;
+
+	return false;
 }

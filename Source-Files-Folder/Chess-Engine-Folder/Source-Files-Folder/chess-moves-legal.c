@@ -32,8 +32,7 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	Point startPoint = MOVE_START_MACRO(move);
-	Piece startPiece = board[startPoint];
+	Piece startPiece = board[MOVE_START_MACRO(move)];
 
 	// This function checks:
 	// - if the moving pattern and flag matches the piece
@@ -45,11 +44,36 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 
 	// This function checks:
 	// - if the move pattern fits on the board and iteracts with the pieces that it needs
-	if(!move_pattern_fits(board, info, move)) return false;
+	if(!move_pattern_fits(board, move)) return false;
 
 	// This function checks:
 	// - if the path between the start point and the stop point is clear
 	if(!clear_moving_path(board, move, startPiece)) return false;
+
+	return true;
+}
+
+bool passant_pseudo_legal(const Piece board[], Info info, Move passantMove)
+{
+	if(!move_inside_board(passantMove)) return false;
+
+	Piece startPiece = board[MOVE_START_MACRO(passantMove)];
+
+	// This function checks:
+	// - if the moving pattern and flag matches the piece
+	if(!passant_pattern_valid(passantMove, startPiece)) return false;
+
+	// This function checks:
+	// - if the move can be done, if it has the ability (castling)
+	if(!passant_ability_valid(passantMove, info)) return false;
+
+	// This function checks:
+	// - if the move pattern fits on the board and iteracts with the pieces that it needs
+	if(!passant_pattern_fits(board, passantMove)) return false;
+
+	// This function checks:
+	// - if the path between the start point and the stop point is clear
+	if(!clear_moving_path(board, passantMove, startPiece)) return false;
 
 	return true;
 }
@@ -81,15 +105,9 @@ bool move_prevent_check(const Piece board[], Info info, Kings kings, Move move)
 
 	Point kingPoint = POINT_NONE;
 
-	if(pieceTeam == PIECE_TEAM_WHITE)
-	{
-		kingPoint = KINGS_WHITE_MACRO(kingsCopy);
-	}
+	if(pieceTeam == PIECE_TEAM_WHITE) kingPoint = KINGS_WHITE_MACRO(kingsCopy);
 
-	else if(pieceTeam == PIECE_TEAM_BLACK)
-	{
-		kingPoint = KINGS_BLACK_MACRO(kingsCopy);
-	}
+	else if(pieceTeam == PIECE_TEAM_BLACK) kingPoint = KINGS_BLACK_MACRO(kingsCopy);
 
 
 	if(king_inside_check(boardCopy, infoCopy, kingPoint))
@@ -167,58 +185,64 @@ bool move_ability_valid(Move move, Piece piece, Info info)
 {
 	if(!move_inside_board(move)) return false;
 
-	Point startPoint = MOVE_START_MACRO(move);
-	Point stopPoint = MOVE_STOP_MACRO(move);
-
-
 	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
-
-
-	signed short movePattern = (stopPoint - startPoint);
-
-
 
 	Move moveFlag = move & MOVE_FLAG_MASK;
 
 
 	if(moveFlag == MOVE_FLAG_CASTLE)
 	{
-		// If the move flag is saying that the move is a castle:
-		// - we have to check if the ability at that side is valid
+		return castle_ability_valid(move, info, pieceTeam);
+	}
 
-
-
-		Info castles = (info & INFO_CASTLES_MASK);
-
-
-		if(pieceTeam == PIECE_TEAM_WHITE)
-		{
-			if(movePattern == KING_CASTLE_PAT)
-			{
-				if(!(castles & INFO_WHITE_KING)) return false;
-			}
-			else if(movePattern == QUEEN_CASTLE_PAT)
-			{
-				if(!(castles & INFO_WHITE_QUEEN)) return false;
-			}
-			else return false;
-		}
-		else if(pieceTeam == PIECE_TEAM_BLACK)
-		{
-			if(movePattern == KING_CASTLE_PAT)
-			{
-				if(!(castles & INFO_BLACK_KING)) return false;
-			}
-			else if(movePattern == QUEEN_CASTLE_PAT)
-			{
-				if(!(castles & INFO_BLACK_QUEEN)) return false;
-			}
-			else return false;
-		}
-		else return false;
+	else if(moveFlag == MOVE_FLAG_PASSANT)
+	{
+		return passant_ability_valid(move, info);
 	}
 
 	return true;
+}
+
+bool castle_ability_valid(Move move, Info info, Piece pieceTeam)
+{
+	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
+
+	signed short movePattern = (stopPoint - startPoint);
+
+	Info castles = (info & INFO_CASTLES_MASK);
+
+
+	if(pieceTeam == PIECE_TEAM_WHITE && movePattern == KING_CASTLE_PAT)
+	{
+		if(!(castles & INFO_WHITE_KING)) return false;
+	}
+	else if(pieceTeam == PIECE_TEAM_WHITE && movePattern == QUEEN_CASTLE_PAT)
+	{
+		if(!(castles & INFO_WHITE_QUEEN)) return false;
+	}
+	else if(pieceTeam == PIECE_TEAM_BLACK && movePattern == KING_CASTLE_PAT)
+	{
+		if(!(castles & INFO_BLACK_KING)) return false;
+	}
+	else if(pieceTeam == PIECE_TEAM_BLACK && movePattern == QUEEN_CASTLE_PAT)
+	{
+		if(!(castles & INFO_BLACK_QUEEN)) return false;
+	}
+	else return false;
+
+	return true;
+}
+
+bool passant_ability_valid(Move move, Info info)
+{
+	unsigned short stopFile = POINT_FILE_MACRO(MOVE_STOP_MACRO(move));
+
+	unsigned short passantFile = INFO_PASSANT_MACRO(info);
+
+	if( (stopFile + 1) == passantFile) return true;
+
+	else return false;
 }
 
 bool current_team_move(Info info, Piece pieceTeam)
@@ -236,70 +260,110 @@ bool current_team_move(Info info, Piece pieceTeam)
 // - the stop piece can't be of same team
 // - the stop piece must be empty if the pawn moves forward
 // - it must be a rook in the corner, if it is castle
-bool move_pattern_fits(const Piece board[], Info info, Move move)
+bool move_pattern_fits(const Piece board[], Move move)
 {
 	if(!move_inside_board(move)) return false;
 
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	unsigned short stopFile = POINT_FILE_MACRO(stopPoint);
+	Piece startType = (board[startPoint] & PIECE_TYPE_MASK);
 
-	unsigned short passantFile = INFO_PASSANT_MACRO(info);
+
+	if(board_points_team(board, startPoint, stopPoint)) return false;
+
+
+	Move moveFlag = (move & MOVE_FLAG_MASK);
+
+	if(moveFlag == MOVE_FLAG_CASTLE)
+	{
+		return castle_pattern_fits(board, move);
+	}
+	else if(startType == PIECE_TYPE_PAWN && moveFlag == MOVE_FLAG_PASSANT)
+	{
+		return passant_pattern_fits(board, move);
+	}
+	else if(startType == PIECE_TYPE_PAWN)
+	{
+		return pawn_pattern_fits(board, move);
+	}
+
+	return true;
+}
+
+
+
+
+
+bool passant_pattern_fits(const Piece board[], Move move)
+{
+	// unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, startTeam));
+	// signed short rankOffset = move_rank_offset(move, startTeam);
+
+	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
+
+	Piece startType = (board[startPoint] & PIECE_TYPE_MASK);
+
+
+	if(startType != PIECE_TYPE_PAWN) return false;
+
+	if(!chess_piece_empty(board[stopPoint])) return false;
+
+	// ememy pawn must be at its place
+
+	return true;
+}
+
+bool castle_pattern_fits(const Piece board[], Move move)
+{
+	Point startPoint = MOVE_START_MACRO(move);
+
+	Piece startType = (board[startPoint] & PIECE_TYPE_MASK);
+	Piece startTeam = (board[startPoint] & PIECE_TEAM_MASK);
+
+
+	if(startType != PIECE_TYPE_KING) return false;
+
+
+	Point rookPoint = castle_rook_point(move, startTeam);
+
+	if(rookPoint == POINT_NONE) return false;
+
+
+	Piece rookType = (board[rookPoint] & PIECE_TYPE_MASK);
+	Piece rookTeam = (board[rookPoint] & PIECE_TEAM_MASK);
+
+	if(rookType != PIECE_TYPE_ROOK || rookTeam != startTeam) return false;
+
+	return true;
+}
+
+bool pawn_pattern_fits(const Piece board[], Move move)
+{
+	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
 
 	Piece startTeam = (board[startPoint] & PIECE_TEAM_MASK);
 	Piece startType = (board[startPoint] & PIECE_TYPE_MASK);
 
 	Piece stopTeam = (board[stopPoint] & PIECE_TEAM_MASK);
 
-
 	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, startTeam));
 	signed short rankOffset = move_rank_offset(move, startTeam);
 
 
-	Move moveFlag = (move & MOVE_FLAG_MASK);
+	if(startType != PIECE_TYPE_PAWN) return false;
 
 
-	if(board_teams_team(startTeam, stopTeam)) return false;
-
-	if(moveFlag == MOVE_FLAG_CASTLE)
+	if(fileOffset == 0 && (rankOffset == 1 || rankOffset == 2))
 	{
-		// This checks if the king is the one moving, and if the rook is in its place
-
-		if(startType != PIECE_TYPE_KING) return false;
-
-		Point rookPoint = castle_rook_point(move, startTeam);
-
-		if(rookPoint == POINT_NONE) return false;
-
-		Piece rookType = (board[rookPoint] & PIECE_TYPE_MASK);
-		Piece rookTeam = (board[rookPoint] & PIECE_TEAM_MASK);
-
-		if(rookType != PIECE_TYPE_ROOK || rookTeam != startTeam) return false;
-
-		printf("move_pattern_fits castle valid\n");
-
-		return true;
+		if(!chess_piece_empty(board[stopPoint])) return false;
 	}
 
-	if(startType == PIECE_TYPE_PAWN)
+	else if(fileOffset == 1 && rankOffset == 1)
 	{
-		if(fileOffset == 0 && (rankOffset == 1 || rankOffset == 2))
-		{
-			if(!chess_piece_empty(board[stopPoint])) return false;
-		}
-
-		else if(fileOffset == 1 && rankOffset == 1)
-		{
-			if(moveFlag == MOVE_FLAG_PASSANT && (stopFile + 1) == passantFile)
-			{
-				// This is the exeption
-			}
-			else
-			{
-				if(!board_teams_enemy(startTeam, stopTeam)) return false;
-			}
-		}
+		if(!board_teams_enemy(startTeam, stopTeam)) return false;
 	}
 
 	return true;

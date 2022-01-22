@@ -119,6 +119,13 @@ bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Sc
 	Piece startTeam = (board[startPoint] & PIECE_TEAM_MASK);
 	Piece startType = (board[startPoint] & PIECE_TYPE_MASK);
 
+
+	if(!current_team_move(*info, startTeam))
+	{
+		return screen_user_handler(board, info, kings, moves, screen);
+	}
+
+
 	if(startType == PIECE_TYPE_PAWN) // This can be a promote move
 	{
 		if(
@@ -132,22 +139,17 @@ bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Sc
 				printf("INputting promote move!\n");
 
 				Move promoteMove = MOVE_NONE;
-				if(input_promote_move(&promoteMove, screen, startTeam))
+				if(!input_promote_move(&promoteMove, screen, startTeam))
 				{
-					if(promoteMove != MOVE_NONE)
-					{
-						move = ALLOC_MOVE_FLAG(move, promoteMove);
-					}
+					return screen_user_handler(board, info, kings, moves, screen);
+				}
+				else if(promoteMove != MOVE_NONE)
+				{
+					printf("move = ALLOC_MOVE_FLAG(move, promoteMove);\n");
+					move = ALLOC_MOVE_FLAG(move, promoteMove);
 				}
 			}
 		}
-
-	}
-
-
-	if(!correct_move_flag(&move, board[startPoint], *info))
-	{
-		return screen_user_handler(board, info, kings, moves, screen);
 	}
 
 	if(!move_chess_piece(board, info, kings, moves, move))
@@ -202,9 +204,8 @@ bool screen_move_parser(Move* move, Screen screen, const Piece board[], Info inf
 
 		Point stopPoint = parse_mouse_point(upEvent, screen);
 
-		*move = 0;
-		*move |= (startPoint << MOVE_START_SHIFT) & MOVE_START_MASK;
-		*move |= (stopPoint << MOVE_STOP_SHIFT) & MOVE_STOP_MASK;
+
+		*move = START_MOVE_MACRO(startPoint) | STOP_MOVE_MACRO(stopPoint);
 
 		return true;
 	}
