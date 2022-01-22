@@ -18,5 +18,8 @@
 #include "chess-game-actions.h"
 #include "string-modify-help.h"
 #include "string-board-parser.h"
+#include "board-value-defines.h"
+#include "create-board-value.h"
+#include "create-computer-move.h"
 
 #endif

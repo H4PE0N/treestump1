@@ -86,8 +86,6 @@ bool check_draw_ending(const Piece board[], Info info, Kings kings, Piece pieceT
 
 	else return false;
 
-	printf("Checking for %d\n", pieceTeam);
-
 	if(king_inside_check(board, info, kingPoint))
 	{
 		return false;
