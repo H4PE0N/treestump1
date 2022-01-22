@@ -50,35 +50,26 @@ int main(int argAmount, char* arguments[])
 		return false;
 	}
 
-	Move* moves = malloc(sizeof(Move) * 128);
-
-	for(unsigned short index = 0; index < 128; index += 1)
-	{
-		moves[index] = MOVE_NONE;
-	}
-
-
 	print_chess_board(board);
 
-
-	Move* moveArray;
-
-	if(piece_legal_moves(&moveArray, board, info, kings, 57))
+	for(unsigned short rank = 0; rank < BOARD_RANKS; rank += 1)
 	{
-		unsigned short moveAmount = move_array_amount(moveArray);
-
-		for(unsigned short index = 0; index < moveAmount; index += 1)
+		for(unsigned short file = 0; file < BOARD_FILES; file += 1)
 		{
-			printf("MoveArray[%d] = [%d -> %d]\n", index, MOVE_START_MACRO(moveArray[index]), MOVE_STOP_MACRO(moveArray[index]));
+			printf("%02d ", (rank * BOARD_FILES) + file);
 		}
+		printf("\n");
+	}
 
-		free(moveArray);
+	Move bestMove;
+
+	if(best_computer_move(&bestMove, board, info, kings, TEAM_WHITE, 1))
+	{
+		printf("BestMove: [%d -> %d]\n", MOVE_START_MACRO(bestMove), MOVE_STOP_MACRO(bestMove));
 	}
 
 
 	free(board);
-
-	free(moves);
 
 	return 0;
 }

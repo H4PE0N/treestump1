@@ -1,7 +1,7 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool move_chess_piece(Piece* board, Info* info, Kings* kings, Move* moves, Move move)
+bool move_chess_piece(Piece* board, Info* info, Kings* kings, Move move)
 {
 	Piece startPiece = board[MOVE_START_MACRO(move)];
 
@@ -26,11 +26,6 @@ bool move_chess_piece(Piece* board, Info* info, Kings* kings, Move* moves, Move 
 		return false;
 	}
 
-
-	unsigned short movesAmount = move_array_amount(moves);
-	moves[movesAmount] = move;
-
-
 	return true;
 }
 
@@ -43,7 +38,10 @@ bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Kings k
 
 
 	*moveArray = malloc(sizeof(Move) * 64);
-	memset(*moveArray, MOVE_NONE, 64);
+	for(unsigned short index = 0; index < 64; index += 1)
+	{
+		(*moveArray)[index] = MOVE_NONE;
+	}
 
 
 	Piece startPiece = board[startPoint];
@@ -64,6 +62,57 @@ bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Kings k
 
 			moveAmount += 1;
 		}
+	}
+
+	return true;
+}
+
+bool team_legal_moves(Move** moveArray, const Piece board[], Info info, Kings kings, Piece pieceTeam)
+{
+	*moveArray = malloc(sizeof(Move) * 1024);
+
+	for(unsigned short index = 0; index < 1024; index += 1)
+	{
+		(*moveArray)[index] = MOVE_NONE;
+	}
+
+
+
+	// if(!piece_team_exists(team)) return false;
+
+	unsigned short movesAmount = 0;
+
+
+	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	{
+		Piece currentTeam = (board[point] & PIECE_TEAM_MASK);
+
+		if(currentTeam != pieceTeam) continue;
+
+
+		Move* addingMoves;
+
+		if(!piece_legal_moves(&addingMoves, board, info, kings, point))
+		{
+			continue;
+		}
+
+
+		unsigned short addingAmount = 0;
+
+		while(addingMoves[addingAmount] != MOVE_NONE && addingMoves[addingAmount] >= 0)
+		{
+			addingAmount += 1;
+		}
+
+		for(unsigned short index = 0; index < addingAmount; index += 1)
+		{
+			(*moveArray)[movesAmount] = addingMoves[index];
+
+			movesAmount += 1;
+		}
+
+		free(addingMoves);
 	}
 
 	return true;
@@ -174,4 +223,156 @@ bool double_move_ident(Info info, Move move, Piece piece)
 	if(pieceType == PIECE_TYPE_PAWN && rankOffset == 2) return true;
 
 	return false;
+}
+
+bool best_computer_move(Move* move, const Piece board[], Info info, Kings kings, unsigned short team, signed short depth)
+{
+	if(depth <= 0) return false;
+
+	// if(!piece_team_exists(pieceTeam)) return false;
+
+	Move* moveArray;
+	if(!team_legal_moves(&moveArray, board, info, kings, TEAM_PIECE_MACRO(team)))
+	{
+		printf("if(!team_legal_moves(&moves, board, info, kings, pieceTeam))\n");
+
+		return false;
+	}
+
+
+	unsigned short movesAmount = move_array_amount(moveArray);
+
+	if(movesAmount <= 0)
+	{
+		free(moveArray);
+
+		return false;
+	}
+
+	Move bestMove = moveArray[0];
+	signed short bestValue = MIN_BOARD_VALUE;
+
+	for(unsigned short index = 0; index < movesAmount; index += 1)
+	{
+		Move currentMove = moveArray[index];
+
+
+
+		Info infoCopy = info;
+		infoCopy = ALLOC_INFO_TEAM(infoCopy, TEAM_INFO_MACRO(team));
+
+		Kings kingsCopy = kings;
+
+		Piece* boardCopy = malloc(sizeof(Piece) * BOARD_LENGTH);
+		memcpy(boardCopy, board, sizeof(Piece) * BOARD_LENGTH);
+
+
+		if(!move_chess_piece(boardCopy, &infoCopy, &kingsCopy, currentMove))
+		{
+			// For some reson, the computer cant move!
+
+			free(boardCopy);
+
+			continue;
+		}
+
+		unsigned short nextTeam = normal_team_enemy(team);
+
+		signed short currentValue = board_depth_value(boardCopy, infoCopy, kingsCopy, (depth - 1), MIN_BOARD_VALUE, MAX_BOARD_VALUE, team, nextTeam);
+
+		printf("CurrentMove: [%d -> %d]\tCurrentValue: %d\n", MOVE_START_MACRO(currentMove), MOVE_STOP_MACRO(currentMove), currentValue);
+
+		free(boardCopy);
+
+
+		if(currentValue > bestValue)
+		{
+			bestMove = currentMove;
+			bestValue = currentValue;
+		}
+	}
+
+	free(moveArray);
+
+	*move = bestMove;
+
+	return true;
+}
+
+unsigned short board_depth_value(const Piece board[], Info info, Kings kings, signed short depth, signed short alpha, signed short beta, unsigned short team, unsigned short currentTeam)
+{
+	if(!normal_team_exists(team) || !normal_team_exists(currentTeam)) return 0;
+
+	// Base-case, Should return the v alue of the board
+	if(depth <= 0) return team_state_value(board, info, kings, team);
+
+
+	Info infoCopy = info;
+	infoCopy = ALLOC_INFO_TEAM(infoCopy, TEAM_INFO_MACRO(currentTeam));
+
+	Move* moveArray;
+
+	if(!team_legal_moves(&moveArray, board, infoCopy, kings, TEAM_PIECE_MACRO(currentTeam)))
+	{
+		printf("if(!team_legal_moves(&moves, board, info, kings, pieceTeam))\n");
+
+		return false;
+	}
+
+
+	unsigned short movesAmount = move_array_amount(moveArray);
+
+	if(movesAmount <= 0)
+	{
+		free(moveArray);
+
+		return team_state_value(board, info, kings, team);
+	}
+
+	signed short bestValue = (currentTeam == team) ? MIN_BOARD_VALUE : MAX_BOARD_VALUE;
+
+	// This is very slow, and makes the program run MUCH SLOWER (3s vs 73s)
+	//sort_pruning_moves(moves, amount, board, info, currentTeam);
+
+	for(unsigned short index = 0; index < movesAmount; index += 1)
+	{
+		Move currentMove = moveArray[index];
+
+		infoCopy = info;
+		infoCopy = ALLOC_INFO_TEAM(infoCopy, TEAM_INFO_MACRO(currentTeam));
+
+		Kings kingsCopy = kings;
+
+		Piece* boardCopy = malloc(sizeof(Piece) * BOARD_LENGTH);
+		memcpy(boardCopy, board, sizeof(Piece) * BOARD_LENGTH);
+
+		if(!move_chess_piece(boardCopy, &infoCopy, &kingsCopy, currentMove))
+		{
+			free(boardCopy);
+
+			continue;
+		}
+
+		unsigned short nextTeam = normal_team_enemy(currentTeam);
+		signed short currentValue = board_depth_value(boardCopy, infoCopy, kingsCopy, (depth - 1), alpha, beta, team, nextTeam);
+
+		free(boardCopy);
+
+		if(currentTeam == team && currentValue > bestValue)	bestValue = currentValue;
+		if(currentTeam != team && currentValue < bestValue)	bestValue = currentValue;
+
+		if(currentTeam == team && currentValue > alpha)			alpha = currentValue;
+		if(currentTeam != team && currentValue < beta)			beta = currentValue;
+
+		if(beta <= alpha) break;
+	}
+
+	free(moveArray);
+
+	return bestValue;
+}
+
+signed short team_state_value(const Piece board[], Info info, Kings kings, unsigned short team)
+{
+	return 0;
 }

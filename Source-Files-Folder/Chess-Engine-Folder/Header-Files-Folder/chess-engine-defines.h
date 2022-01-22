@@ -2,6 +2,10 @@
 #ifndef CHESS_ENGINE_DEFINES_H
 #define CHESS_ENGINE_DEFINES_H
 
+extern const unsigned short TEAM_NONE;
+extern const unsigned short TEAM_WHITE;
+extern const unsigned short TEAM_BLACK;
+
 // ==========================================
 
 extern const Piece PIECE_TYPE_NONE;
@@ -171,6 +175,9 @@ extern const Piece PIECE_BLANK;
 extern const Move MOVE_BLANK;
 extern const Info INFO_BLANK;
 extern const Kings KINGS_BLANK;
+
+extern const signed short MIN_BOARD_VALUE;
+extern const signed short MAX_BOARD_VALUE;
 
 // ==========================================
 

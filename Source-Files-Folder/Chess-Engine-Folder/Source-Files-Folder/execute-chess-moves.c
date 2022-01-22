@@ -32,7 +32,6 @@ bool execute_chess_move(Piece* board, Info* info, Kings* kings, Move move)
 
 bool update_king_point(Kings* kings, Piece pieceTeam, Point point)
 {
-	printf("update_king_point\n");
 	if(pieceTeam == PIECE_TEAM_WHITE)
 	{
 		*kings = ALLOC_KINGS_WHITE(*kings, WHITE_KINGS_MACRO(point));
@@ -50,8 +49,6 @@ bool update_king_point(Kings* kings, Piece pieceTeam, Point point)
 // - It just moves the piece to a specific point
 bool execute_normal_move(Piece* board, Info* info, Kings* kings, Move move)
 {
-	printf("execute_normal_move\n");
-
 	if(!move_inside_board(move)) return false;
 
 	Point startPoint = MOVE_START_MACRO(move);
@@ -127,8 +124,6 @@ bool execute_normal_move(Piece* board, Info* info, Kings* kings, Move move)
 // - It has to move both the king and the rook
 bool execute_castle_move(Piece* board, Info* info, Kings* kings, Move move)
 {
-	printf("execute_castle_move\n");
-
 	Point kingPoint = MOVE_START_MACRO(move);
 
 	Piece kingPiece = board[kingPoint];
@@ -147,8 +142,6 @@ bool execute_castle_move(Piece* board, Info* info, Kings* kings, Move move)
 
 	Point newKingPoint = MOVE_STOP_MACRO(move);
 	Point newRookPoint = (fileOffset == KING_CASTLE_PAT) ? (newKingPoint - 1) : (newKingPoint + 1);
-
-	printf("Rook Point: %d\n", rookPoint);
 
 	board[newKingPoint] = kingPiece;
 	board[kingPoint] = PIECE_NONE;
@@ -185,8 +178,6 @@ bool execute_castle_move(Piece* board, Info* info, Kings* kings, Move move)
 // and swap the piece at the STOP point in the move
 bool execute_promote_move(Piece* board, Info* info, Kings* kings, Move move)
 {
-	printf("execute_promote_move\n");
-
 	if(!move_inside_board(move)) return false;
 
 
@@ -225,8 +216,6 @@ bool execute_promote_move(Piece* board, Info* info, Kings* kings, Move move)
 // - It has to update the passant point to POINT_NONE
 bool execute_passant_move(Piece* board, Info* info, Kings* kings, Move move)
 {
-	printf("execute_passant_move\n");
-
 	if(!move_inside_board(move)) return false;
 
 
@@ -267,8 +256,6 @@ bool execute_passant_move(Piece* board, Info* info, Kings* kings, Move move)
 // - It has to update the passant point
 bool execute_double_move(Piece* board, Info* info, Kings* kings, Move move)
 {
-	printf("execute_double_move\n");
-
 	if(!move_inside_board(move)) return false;
 
 
@@ -286,8 +273,6 @@ bool execute_double_move(Piece* board, Info* info, Kings* kings, Move move)
 	unsigned short passantFile = (startFile + 1);
 
 	Info infoPassant = PASSANT_INFO_MACRO(passantFile);
-
-	printf("Allocating %d to passant\n", passantFile);
 
 	*info = ALLOC_INFO_PASSANT(*info, infoPassant);
 

@@ -152,10 +152,13 @@ bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Sc
 		}
 	}
 
-	if(!move_chess_piece(board, info, kings, moves, move))
+	if(!move_chess_piece(board, info, kings, move))
 	{
 		return screen_user_handler(board, info, kings, moves, screen);
 	}
+
+	unsigned short movesAmount = moves_array_amount(moves);
+	moves[movesAmount] = move;
 
 	return true;
 }

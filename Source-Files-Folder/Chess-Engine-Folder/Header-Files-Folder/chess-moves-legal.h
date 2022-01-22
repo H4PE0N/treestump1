@@ -28,6 +28,4 @@ bool castle_pattern_fits(const Piece[], Move);
 
 bool pawn_pattern_fits(const Piece[], Move);
 
-bool passant_pseudo_legal(const Piece[], Info, Move);
-
 #endif

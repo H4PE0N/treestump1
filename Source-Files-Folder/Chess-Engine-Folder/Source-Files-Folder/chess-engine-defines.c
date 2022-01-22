@@ -1,6 +1,10 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
+const unsigned short TEAM_NONE  = 0b00;
+const unsigned short TEAM_WHITE = 0b01;
+const unsigned short TEAM_BLACK = 0b10;
+
 // ==========================================
 
 const Piece PIECE_TYPE_NONE 	= 0b00000;
@@ -105,6 +109,9 @@ const Piece PIECE_BLANK       = 0b00000;
 const Move MOVE_BLANK         = 0b000000000000000;
 const Info INFO_BLANK         = 0b00000000000000000000000;
 const Kings KINGS_BLANK         = 0b000000000000000;
+
+const signed short MIN_BOARD_VALUE = -10000;
+const signed short MAX_BOARD_VALUE = +10000;
 
 // ==========================================
 

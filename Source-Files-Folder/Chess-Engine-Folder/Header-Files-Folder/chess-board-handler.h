@@ -28,4 +28,12 @@ bool piece_type_exists(Piece);
 
 unsigned short move_array_amount(const Move[]);
 
+bool info_team_exists(Info);
+
+Info info_team_enemy(Info);
+
+unsigned short normal_team_enemy(unsigned short);
+
+bool normal_team_exists(unsigned short);
+
 #endif

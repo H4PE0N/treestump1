@@ -37,7 +37,37 @@ bool piece_team_exists(Piece pieceTeam)
 {
 	unsigned short team = PIECE_TEAM_MACRO(pieceTeam);
 
-	return NUMBER_IN_BOUNDS(team, 1, 2);
+	return (team == TEAM_WHITE || team == TEAM_BLACK);
+}
+
+bool normal_team_exists(unsigned short team)
+{
+	return (team == TEAM_WHITE || team == TEAM_BLACK);
+}
+
+unsigned short normal_team_enemy(unsigned short team)
+{
+	if(team == TEAM_WHITE) return TEAM_BLACK;
+
+	else if(team == TEAM_BLACK) return TEAM_WHITE;
+
+	return TEAM_NONE;
+}
+
+Info info_team_enemy(Info infoTeam)
+{
+	if(infoTeam == INFO_TEAM_WHITE) return INFO_TEAM_BLACK;
+
+	else if(infoTeam == INFO_TEAM_BLACK) return INFO_TEAM_WHITE;
+
+	return INFO_TEAM_NONE;
+}
+
+bool info_team_exists(Info infoTeam)
+{
+	unsigned short team = INFO_TEAM_MACRO(infoTeam);
+
+	return (team == TEAM_WHITE || team == TEAM_BLACK);
 }
 
 bool piece_type_exists(Piece pieceType)

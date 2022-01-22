@@ -53,31 +53,6 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 	return true;
 }
 
-bool passant_pseudo_legal(const Piece board[], Info info, Move passantMove)
-{
-	if(!move_inside_board(passantMove)) return false;
-
-	Piece startPiece = board[MOVE_START_MACRO(passantMove)];
-
-	// This function checks:
-	// - if the moving pattern and flag matches the piece
-	if(!passant_pattern_valid(passantMove, startPiece)) return false;
-
-	// This function checks:
-	// - if the move can be done, if it has the ability (castling)
-	if(!passant_ability_valid(passantMove, info)) return false;
-
-	// This function checks:
-	// - if the move pattern fits on the board and iteracts with the pieces that it needs
-	if(!passant_pattern_fits(board, passantMove)) return false;
-
-	// This function checks:
-	// - if the path between the start point and the stop point is clear
-	if(!clear_moving_path(board, passantMove, startPiece)) return false;
-
-	return true;
-}
-
 // This function should check if the inputted move prevents check.
 // It can do that by executing the move, and see if the king is in check
 bool move_prevent_check(const Piece board[], Info info, Kings kings, Move move)
