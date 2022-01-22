@@ -39,9 +39,22 @@ int main(int argAmount, char* arguments[])
 		moves[index] = MOVE_NONE;
 	}
 
-	if(!screen_single_game(board, &info, &kings, moves, screen))
+	if(screen_single_game(board, &info, &kings, moves, screen))
 	{
-		printf("if(!screen_single_game(board, &info, screen))\n");
+		if(!render_chess_board(screen, board, info, kings, moves, -1))
+		{
+			printf("if(!render_chess_board(screen, board, *info, -1))\n");
+
+			return false;
+		}
+
+		SDL_UpdateWindowSurface(screen.window);
+
+		unsigned short winnerTeam = normal_team_enemy(INFO_TEAM_MACRO(info));
+
+		printf("Winner is: [%d]\n", winnerTeam);
+
+		SDL_Delay(20000);
 	}
 
 	printf("free(board);\nfree(moves);\nfree_display_screen(screen);\n");
@@ -60,6 +73,15 @@ bool screen_single_game(Piece* board, Info* info, Kings* kings, Move* moves, Scr
 
 		Info infoTeam = (*info & INFO_TEAM_MASK);
 
+		if(!render_chess_board(screen, board, *info, *kings, moves, -1))
+		{
+			printf("if(!render_chess_board(screen, board, *info, -1))\n");
+
+			return false;
+		}
+
+		SDL_UpdateWindowSurface(screen.window);
+
 
 		printf("[%d] is moving!\n", (unsigned short) infoTeam);
 
@@ -75,11 +97,23 @@ bool screen_single_game(Piece* board, Info* info, Kings* kings, Move* moves, Scr
 
 		printf("\n");
 
-		if(!screen_user_handler(board, info, kings, moves, screen))
+		if(infoTeam == INFO_TEAM_WHITE)
 		{
-			printf("Abort! Screen!\n");
-			break;
+			if(!screen_user_handler(board, info, kings, moves, screen))
+			{
+				printf("Abort! Screen!\n");
+				return false;
+			}
 		}
+		else if(infoTeam == INFO_TEAM_BLACK)
+		{
+			if(!screen_computer_handler(board, info, kings, moves, screen))
+			{
+				printf("Abort! Screen!\n");
+				return false;
+			}
+		}
+		else return false;
 
 
 		if(infoTeam == INFO_TEAM_WHITE) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_BLACK);
@@ -88,6 +122,30 @@ bool screen_single_game(Piece* board, Info* info, Kings* kings, Move* moves, Scr
 
 
 	}
+
+	return true;
+}
+
+bool screen_computer_handler(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen)
+{
+	Move computerMove;
+
+	unsigned short team = INFO_TEAM_MACRO(*info);
+
+	if(!best_computer_move(&computerMove, board, *info, *kings, team, 2))
+	{
+		printf("bot could not find move!\n");
+		return false;
+	}
+
+	if(!move_chess_piece(board, info, kings, computerMove))
+	{
+		return screen_computer_handler(board, info, kings, moves, screen);
+	}
+
+	unsigned short movesAmount = move_array_amount(moves);
+
+	moves[movesAmount] = computerMove;
 
 	return true;
 }
@@ -157,7 +215,7 @@ bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Sc
 		return screen_user_handler(board, info, kings, moves, screen);
 	}
 
-	unsigned short movesAmount = moves_array_amount(moves);
+	unsigned short movesAmount = move_array_amount(moves);
 	moves[movesAmount] = move;
 
 	return true;

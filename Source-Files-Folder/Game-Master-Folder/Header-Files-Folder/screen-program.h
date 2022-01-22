@@ -7,6 +7,8 @@
 
 bool screen_user_handler(Piece*, Info*, Kings*, Move*, Screen);
 
+bool screen_computer_handler(Piece*, Info*, Kings*, Move*, Screen);
+
 bool input_screen_move(Move*, Screen, const Piece[], Info, Kings, const Move[]);
 
 bool screen_move_parser(Move*, Screen, const Piece[], Info, Kings, const Move[], Event);

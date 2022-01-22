@@ -37,14 +37,11 @@ bool piece_does_check(const Piece board[], Info info, Point kingPoint, Point sta
 
 bool game_still_running(const Piece board[], Info info, Kings kings)
 {
-	if(check_mate_ending(board, info, kings, PIECE_TEAM_WHITE)) return false;
+	unsigned short currentTeam = INFO_TEAM_MACRO(info);
 
-	if(check_draw_ending(board, info, kings, PIECE_TEAM_WHITE)) return false;
+	if(check_mate_ending(board, info, kings, TEAM_PIECE_MACRO(currentTeam) )) return false;
 
-
-	if(check_mate_ending(board, info, kings, PIECE_TEAM_BLACK)) return false;
-
-	if(check_draw_ending(board, info, kings, PIECE_TEAM_BLACK)) return false;
+	if(check_draw_ending(board, info, kings, TEAM_PIECE_MACRO(currentTeam))) return false;
 
 	return true;
 }
