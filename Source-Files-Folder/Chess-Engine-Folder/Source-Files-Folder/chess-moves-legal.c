@@ -20,8 +20,6 @@ bool move_fully_legal(const Piece board[], Info info, Kings kings, Move move)
 		return false;
 	}
 
-
-
 	return true;
 }
 
@@ -49,6 +47,91 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 	// This function checks:
 	// - if the path between the start point and the stop point is clear
 	if(!clear_moving_path(board, move, startPiece)) return false;
+
+	return true;
+}
+
+// This function creates memory for an array of legal moves
+// The memory has to be freed after use!! OBS!
+// This function is trash, make it more specific for the pieces:
+bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Kings kings, Point startPoint)
+{
+	if(!point_inside_board(startPoint)) return false;
+
+
+	*moveArray = malloc(sizeof(Move) * 64);
+	for(unsigned short index = 0; index < 64; index += 1)
+	{
+		(*moveArray)[index] = MOVE_NONE;
+	}
+
+
+	Piece startPiece = board[startPoint];
+
+
+	unsigned short moveAmount = 0;
+
+
+	for(unsigned short stopPoint = 0; stopPoint < BOARD_LENGTH; stopPoint += 1)
+	{
+		Move currentMove = START_MOVE_MACRO(startPoint) | STOP_MOVE_MACRO(stopPoint);
+
+		if(!correct_move_flag(&currentMove, startPiece, info)) continue;
+
+		if(move_fully_legal(board, info, kings, currentMove))
+		{
+			(*moveArray)[moveAmount] = currentMove;
+
+			moveAmount += 1;
+		}
+	}
+
+	return true;
+}
+
+bool team_legal_moves(Move** moveArray, const Piece board[], Info info, Kings kings, Piece pieceTeam)
+{
+	*moveArray = malloc(sizeof(Move) * 1024);
+
+	for(unsigned short index = 0; index < 1024; index += 1)
+	{
+		(*moveArray)[index] = MOVE_NONE;
+	}
+
+
+
+	// if(!piece_team_exists(team)) return false;
+
+	unsigned short movesAmount = 0;
+
+
+	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	{
+		Piece currentTeam = (board[point] & PIECE_TEAM_MASK);
+
+		if(currentTeam != pieceTeam) continue;
+
+
+		Move* addingMoves;
+
+		if(!piece_legal_moves(&addingMoves, board, info, kings, point)) continue;
+
+		unsigned short addingAmount = 0;
+
+		while(addingMoves[addingAmount] != MOVE_NONE && addingMoves[addingAmount] >= 0)
+		{
+			addingAmount += 1;
+		}
+
+		for(unsigned short index = 0; index < addingAmount; index += 1)
+		{
+			(*moveArray)[movesAmount] = addingMoves[index];
+
+			movesAmount += 1;
+		}
+
+		free(addingMoves);
+	}
 
 	return true;
 }

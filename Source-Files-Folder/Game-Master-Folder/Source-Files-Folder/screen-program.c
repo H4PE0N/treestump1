@@ -132,7 +132,7 @@ bool screen_computer_handler(Piece* board, Info* info, Kings* kings, Move* moves
 
 	unsigned short team = INFO_TEAM_MACRO(*info);
 
-	if(!best_computer_move(&computerMove, board, *info, *kings, team, 2))
+	if(!best_computer_move(&computerMove, board, *info, *kings, team, 3))
 	{
 		printf("bot could not find move!\n");
 		return false;

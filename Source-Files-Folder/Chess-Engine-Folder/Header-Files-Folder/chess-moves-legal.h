@@ -28,4 +28,8 @@ bool castle_pattern_fits(const Piece[], Move);
 
 bool pawn_pattern_fits(const Piece[], Move);
 
+bool piece_legal_moves(Move**, const Piece[], Info, Kings, Point);
+
+bool team_legal_moves(Move**, const Piece[], Info, Kings, Piece);
+
 #endif

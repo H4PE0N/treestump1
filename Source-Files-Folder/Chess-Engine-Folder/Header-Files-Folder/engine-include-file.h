@@ -15,6 +15,7 @@
 #include "move-patterns-valid.h"
 #include "chess-moves-legal.h"
 #include "execute-chess-moves.h"
+#include "ident-board-moves.h"
 #include "chess-game-actions.h"
 #include "string-modify-help.h"
 #include "string-board-parser.h"
