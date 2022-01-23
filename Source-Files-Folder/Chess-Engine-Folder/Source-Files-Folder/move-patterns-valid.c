@@ -199,10 +199,8 @@ bool king_pattern_valid(Move move, unsigned short team)
 
 bool castle_pattern_valid(Move move, unsigned short team)
 {
-	Point startPoint = MOVE_START_MACRO(move);
-
-	unsigned short startFile = POINT_FILE_MACRO(startPoint);
-	unsigned short startRank = POINT_RANK_MACRO(startPoint);
+	unsigned short startFile = POINT_FILE_MACRO(MOVE_START_MACRO(move));
+	unsigned short startRank = POINT_RANK_MACRO(MOVE_START_MACRO(move));
 
 	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, team));
 	unsigned short rankOffset = ABS_SHORT_NUMBER(move_rank_offset(move, team));
@@ -225,9 +223,7 @@ bool castle_pattern_valid(Move move, unsigned short team)
 
 	// and that it moves only sideways 2 steps
 
-	if(rankOffset != 0) return false;
-
-	if(fileOffset != KING_CASTLE_PAT && fileOffset != QUEEN_CASTLE_PAT) return false;
+	if(rankOffset != 0 || (fileOffset != KING_CASTLE_PAT && fileOffset != QUEEN_CASTLE_PAT)) return false;
 
 	return true;
 }

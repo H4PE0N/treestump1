@@ -6,9 +6,11 @@ Point bishopPoint = 21;
 Point rookPoint = 42;
 Point queenPoint = 45;
 
-bool input_promote_move(Move* promoMove, Screen screen, Piece pieceTeam)
+bool input_promote_move(Move* promoMove, Screen screen, unsigned short team)
 {
 	*promoMove = MOVE_BLANK;
+
+	Piece pieceTeam = TEAM_PIECE_MACRO(team);
 
 	if(!render_board_squares(screen))
 	{

@@ -20,7 +20,7 @@ bool render_board_pieces(Screen screen, const Piece board[])
 {
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
-		if(!board_piece_exists(board[point])) continue;
+		if(!chess_piece_exists(board[point])) continue;
 
 		if(!render_board_piece(screen, board[point], point)) return false;
 	}
@@ -29,7 +29,7 @@ bool render_board_pieces(Screen screen, const Piece board[])
 
 bool render_board_piece(Screen screen, Piece piece, Point point)
 {
-	if(!board_piece_exists(piece)) return false;
+	if(!chess_piece_exists(piece)) return false;
 
 	Surface* pieceImage;
 
@@ -71,9 +71,9 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Kings ki
 {
 	if(!point_inside_board(point)) return true;
 
-	Piece pieceTeam = (board[point] & PIECE_TEAM_MASK);
+	unsigned short team = PIECE_TEAM_MACRO(board[point]);
 
-	if(!current_team_move(info, pieceTeam)) return false;
+	if(!current_team_move(info, team)) return false;
 
 
 	Move* moveArray;
@@ -82,6 +82,13 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Kings ki
 
   unsigned short moveAmount = move_array_amount(moveArray);
 
+
+	if(moveAmount <= 0)
+	{
+		free(moveArray);
+
+		return false;
+	}
 
 
   Surface* moveSquare;

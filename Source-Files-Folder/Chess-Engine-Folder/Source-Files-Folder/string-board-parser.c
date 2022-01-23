@@ -29,9 +29,9 @@ bool parse_game_string(Piece** board, Info* info, Kings* kings, char gameString[
 		return false;
 	}
 
-	Info currentTeam = INFO_BLANK;
+	Info infoCurrentTeam = INFO_BLANK;
 
-	if(!parse_string_current(&currentTeam, stringArray[1]))
+	if(!parse_string_current(&infoCurrentTeam, stringArray[1]))
 	{
 		printf("parse_string_current\n");
 
@@ -43,7 +43,7 @@ bool parse_game_string(Piece** board, Info* info, Kings* kings, char gameString[
 	}
 
 
-	*info = ALLOC_INFO_TEAM(*info, currentTeam);
+	*info = ALLOC_INFO_TEAM(*info, infoCurrentTeam);
 
 
 	Info castles = INFO_BLANK;
@@ -143,7 +143,7 @@ bool parse_king_points(Kings* kings, const Piece board[])
 	return true;
 }
 
-bool parse_string_current(Info* currentTeam, char stringToken[])
+bool parse_string_current(Info* infoCurrentTeam, char stringToken[])
 {
 	unsigned short stringLength = strlen(stringToken);
 
@@ -155,11 +155,11 @@ bool parse_string_current(Info* currentTeam, char stringToken[])
 
 	if(stringCopy[0] == WHITE_SYMBOL)
 	{
-		*currentTeam = INFO_TEAM_WHITE;
+		*infoCurrentTeam = INFO_TEAM_WHITE;
 	}
 	else if(stringCopy[0] == BLACK_SYMBOL)
 	{
-		*currentTeam = INFO_TEAM_BLACK;
+		*infoCurrentTeam = INFO_TEAM_BLACK;
 	}
 	else
 	{

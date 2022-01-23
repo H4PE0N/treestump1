@@ -158,8 +158,6 @@ bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Sc
 	{
 		if(!render_chess_board(screen, board, *info, *kings, moves, -1))
 		{
-			printf("if(!render_chess_board(screen, board, *info, -1))\n");
-
 			return false;
 		}
 
@@ -174,8 +172,8 @@ bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Sc
 
 	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
 
-	Piece startTeam = (board[startPoint] & PIECE_TEAM_MASK);
-	Piece startType = (board[startPoint] & PIECE_TYPE_MASK);
+	unsigned short startTeam = PIECE_TEAM_MACRO(board[startPoint]);
+	Piece startPieceType = (board[startPoint] & PIECE_TYPE_MASK);
 
 
 	if(!current_team_move(*info, startTeam))
@@ -184,18 +182,15 @@ bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Sc
 	}
 
 
-	if(startType == PIECE_TYPE_PAWN) // This can be a promote move
+	if(startPieceType == PIECE_TYPE_PAWN) // This can be a promote move
 	{
 		if(
-			(startTeam == PIECE_TEAM_WHITE && stopRank == BLACK_START_RANK) ||
-			(startTeam == PIECE_TEAM_BLACK && stopRank == WHITE_START_RANK)
+			(startTeam == TEAM_WHITE && stopRank == BLACK_START_RANK) ||
+			(startTeam == TEAM_BLACK && stopRank == WHITE_START_RANK)
 		)
 		{
 			if(move_fully_legal(board, *info, *kings, move))
 			{
-
-				printf("INputting promote move!\n");
-
 				Move promoteMove = MOVE_NONE;
 				if(!input_promote_move(&promoteMove, screen, startTeam))
 				{
@@ -203,7 +198,6 @@ bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Sc
 				}
 				else if(promoteMove != MOVE_NONE)
 				{
-					printf("move = ALLOC_MOVE_FLAG(move, promoteMove);\n");
 					move = ALLOC_MOVE_FLAG(move, promoteMove);
 				}
 			}
@@ -245,11 +239,9 @@ bool input_screen_move(Move* move, Screen screen, const Piece board[], Info info
 
 bool screen_move_parser(Move* move, Screen screen, const Piece board[], Info info, Kings kings, const Move moves[], Event event)
 {
-
 	if(event.type == SDL_MOUSEBUTTONDOWN)
 	{
 		Point startPoint = parse_mouse_point(event, screen);
-
 
 		if(!render_chess_board(screen, board, info, kings, moves, startPoint)) return false;
 
@@ -266,7 +258,7 @@ bool screen_move_parser(Move* move, Screen screen, const Piece board[], Info inf
 		Point stopPoint = parse_mouse_point(upEvent, screen);
 
 
-		*move = START_MOVE_MACRO(startPoint) | STOP_MOVE_MACRO(stopPoint);
+		*move = (START_MOVE_MACRO(startPoint) | STOP_MOVE_MACRO(stopPoint));
 
 		return true;
 	}

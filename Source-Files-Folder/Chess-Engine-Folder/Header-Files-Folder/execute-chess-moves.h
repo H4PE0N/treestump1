@@ -14,6 +14,6 @@ bool execute_promote_move(Piece*, Info*, Kings*, Move);
 
 bool execute_normal_move(Piece*, Info*, Kings*, Move);
 
-bool update_king_point(Kings*, Piece, Point);
+bool update_king_point(Kings*, unsigned short, Point);
 
 #endif

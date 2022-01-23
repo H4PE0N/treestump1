@@ -5,7 +5,7 @@ bool move_chess_piece(Piece* board, Info* info, Kings* kings, Move move)
 {
 	Piece startPiece = board[MOVE_START_MACRO(move)];
 
-	Piece startTeam = (startPiece & PIECE_TEAM_MASK);
+	unsigned short startTeam = PIECE_TEAM_MACRO(startPiece);
 
 	if(!current_team_move(*info, startTeam)) return false;
 

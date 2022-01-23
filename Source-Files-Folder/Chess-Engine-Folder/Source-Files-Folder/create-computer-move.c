@@ -8,10 +8,8 @@ bool best_computer_move(Move* move, const Piece board[], Info info, Kings kings,
 	// if(!piece_team_exists(pieceTeam)) return false;
 
 	Move* moveArray;
-	if(!team_legal_moves(&moveArray, board, info, kings, TEAM_PIECE_MACRO(team)))
+	if(!team_legal_moves(&moveArray, board, info, kings, team))
 	{
-		printf("if(!team_legal_moves(&moves, board, info, kings, pieceTeam))\n");
-
 		return false;
 	}
 
@@ -88,10 +86,8 @@ unsigned short board_depth_value(const Piece board[], Info info, Kings kings, si
 
 	Move* moveArray;
 
-	if(!team_legal_moves(&moveArray, board, infoCopy, kings, TEAM_PIECE_MACRO(currentTeam)))
+	if(!team_legal_moves(&moveArray, board, infoCopy, kings, currentTeam))
 	{
-		printf("if(!team_legal_moves(&moves, board, info, kings, pieceTeam))\n");
-
 		return false;
 	}
 

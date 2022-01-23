@@ -30,13 +30,13 @@ bool execute_chess_move(Piece* board, Info* info, Kings* kings, Move move)
 	}
 }
 
-bool update_king_point(Kings* kings, Piece pieceTeam, Point point)
+bool update_king_point(Kings* kings, unsigned short team, Point point)
 {
-	if(pieceTeam == PIECE_TEAM_WHITE)
+	if(team == TEAM_WHITE)
 	{
 		*kings = ALLOC_KINGS_WHITE(*kings, WHITE_KINGS_MACRO(point));
 	}
-	else if(pieceTeam == PIECE_TEAM_BLACK)
+	else if(team == TEAM_BLACK)
 	{
 		*kings = ALLOC_KINGS_BLACK(*kings, BLACK_KINGS_MACRO(point));
 	}
@@ -62,29 +62,29 @@ bool execute_normal_move(Piece* board, Info* info, Kings* kings, Move move)
 	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
 
 
-	Piece startType = (board[startPoint] & PIECE_TYPE_MASK);
-	Piece stopType = (board[stopPoint] & PIECE_TYPE_MASK);
+	Piece startPieceType = (board[startPoint] & PIECE_TYPE_MASK);
+	Piece stopPieceType = (board[stopPoint] & PIECE_TYPE_MASK);
 
 	Piece startPiece = board[startPoint];
 
-	Piece startTeam = (startPiece & PIECE_TEAM_MASK);
+	unsigned short startTeam = PIECE_TEAM_MACRO(startPiece);
 
 	board[stopPoint] = startPiece;
 	board[startPoint] = PIECE_NONE;
 
-	if(startType == PIECE_TYPE_KING)
+	if(startPieceType == PIECE_TYPE_KING)
 	{
-		if(!update_king_point(kings, (startPiece & PIECE_TEAM_MASK), stopPoint))
+		if(!update_king_point(kings, startTeam, stopPoint))
 		{
 			return false;
 		}
 
-		if(startTeam == PIECE_TEAM_WHITE)
+		if(startTeam == TEAM_WHITE)
 		{
 			// Resets the bits of white king and queen
 			*info = (*info & ~INFO_WHITE_KING & ~INFO_WHITE_QUEEN);
 		}
-		else if(startTeam == PIECE_TEAM_BLACK)
+		else if(startTeam == TEAM_BLACK)
 		{
 			// Resets the bits of black king and queen
 			*info = (*info & ~INFO_BLACK_KING & ~INFO_BLACK_QUEEN);
@@ -92,10 +92,10 @@ bool execute_normal_move(Piece* board, Info* info, Kings* kings, Move move)
 	}
 
 	// If a rook is moving, or a rook is taken: The castle ability must be set to false
-	if(startType == PIECE_TYPE_ROOK || stopType == PIECE_TYPE_ROOK)
+	if(startPieceType == PIECE_TYPE_ROOK || stopPieceType == PIECE_TYPE_ROOK)
 	{
-		unsigned short rookRank = (startType == PIECE_TYPE_ROOK) ? startRank : stopRank;
-		unsigned short rookFile = (startType == PIECE_TYPE_ROOK) ? startFile : stopFile;
+		unsigned short rookRank = (startPieceType == PIECE_TYPE_ROOK) ? startRank : stopRank;
+		unsigned short rookFile = (startPieceType == PIECE_TYPE_ROOK) ? startFile : stopFile;
 
 		if(rookRank == WHITE_START_RANK && rookFile == 0)
 		{
@@ -130,7 +130,7 @@ bool execute_castle_move(Piece* board, Info* info, Kings* kings, Move move)
 
 	unsigned short kingTeam = PIECE_TEAM_MACRO(kingPiece);
 
-	Point rookPoint = castle_rook_point(move, TEAM_PIECE_MACRO(kingTeam));
+	Point rookPoint = castle_rook_point(move, kingTeam);
 
 	if(rookPoint == POINT_NONE) return false;
 
@@ -150,7 +150,7 @@ bool execute_castle_move(Piece* board, Info* info, Kings* kings, Move move)
 	board[rookPoint] = PIECE_NONE;
 
 
-	if(!update_king_point(kings, TEAM_PIECE_MACRO(kingTeam), newKingPoint))
+	if(!update_king_point(kings, kingTeam, newKingPoint))
 	{
 		return false;
 	}
@@ -222,16 +222,16 @@ bool execute_passant_move(Piece* board, Info* info, Kings* kings, Move move)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	Piece startTeam = (board[startPoint] & PIECE_TEAM_MASK);
+	Piece startPieceTeam = (board[startPoint] & PIECE_TEAM_MASK);
 
 	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
 
 
 	unsigned short pawnRank = 0;
 
-	if(startTeam == PIECE_TEAM_WHITE) pawnRank = (stopRank + BLACK_MOVE_VALUE);
+	if(startPieceTeam == PIECE_TEAM_WHITE) pawnRank = (stopRank + BLACK_MOVE_VALUE);
 
-	else if(startTeam == PIECE_TEAM_BLACK) pawnRank = (stopRank + WHITE_MOVE_VALUE);
+	else if(startPieceTeam == PIECE_TEAM_BLACK) pawnRank = (stopRank + WHITE_MOVE_VALUE);
 
 	else return false;
 

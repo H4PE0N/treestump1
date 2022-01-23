@@ -8,17 +8,9 @@ bool move_fully_legal(const Piece board[], Info info, Kings kings, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	// This function should check:
-	// - the piece is allowed to move that way
-	// - the move path is clear (except for the knight)
 	if(!move_pseudo_legal(board, info, move)) return false;
 
-	// This function should check if the inputted move prevents check.
-	// It can do that by executing the move, and see if the king is in check
-	if(!move_prevent_check(board, info, kings, move))
-	{
-		return false;
-	}
+	if(!move_prevent_check(board, info, kings, move)) return false;
 
 	return true;
 }
@@ -32,21 +24,13 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 
 	Piece startPiece = board[MOVE_START_MACRO(move)];
 
-	// This function checks:
-	// - if the moving pattern and flag matches the piece
 	if(!move_pattern_valid(move, startPiece)) return false;
 
-	// This function checks:
-	// - if the move can be done, if it has the ability (castling)
 	if(!move_ability_valid(move, startPiece, info)) return false;
 
-	// This function checks:
-	// - if the move pattern fits on the board and iteracts with the pieces that it needs
 	if(!move_pattern_fits(board, move)) return false;
 
-	// This function checks:
-	// - if the path between the start point and the stop point is clear
-	if(!clear_moving_path(board, move, startPiece)) return false;
+	if(!clear_moving_path(board, move)) return false;
 
 	return true;
 }
@@ -54,80 +38,64 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 // This function creates memory for an array of legal moves
 // The memory has to be freed after use!! OBS!
 // This function is trash, make it more specific for the pieces:
-bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Kings kings, Point startPoint)
+bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Kings kings, Point piecePoint)
 {
-	if(!point_inside_board(startPoint)) return false;
+	if(!point_inside_board(piecePoint)) return false;
 
 
-	*moveArray = malloc(sizeof(Move) * 64);
-	for(unsigned short index = 0; index < 64; index += 1)
-	{
-		(*moveArray)[index] = MOVE_NONE;
-	}
+	*moveArray = create_move_array(32);
+	// 32: Because the QUEEN is the one that can move the most,
+	// and she can move to 28 squares (7 horizontal, 7 vertical, 7 right diagonal, 7 left diagonal)
 
-
-	Piece startPiece = board[startPoint];
-
+	Piece startPiece = board[piecePoint];
 
 	unsigned short moveAmount = 0;
 
 
-	for(unsigned short stopPoint = 0; stopPoint < BOARD_LENGTH; stopPoint += 1)
+	for(Point stopPoint = 0; stopPoint < BOARD_LENGTH; stopPoint += 1)
 	{
-		Move currentMove = START_MOVE_MACRO(startPoint) | STOP_MOVE_MACRO(stopPoint);
+		Move currentMove = (START_MOVE_MACRO(piecePoint) | STOP_MOVE_MACRO(stopPoint));
 
 		if(!correct_move_flag(&currentMove, startPiece, info)) continue;
 
-		if(move_fully_legal(board, info, kings, currentMove))
-		{
-			(*moveArray)[moveAmount] = currentMove;
+		if(!move_fully_legal(board, info, kings, currentMove)) continue;
 
-			moveAmount += 1;
-		}
+		(*moveArray)[moveAmount++] = currentMove;
 	}
 
 	return true;
 }
 
-bool team_legal_moves(Move** moveArray, const Piece board[], Info info, Kings kings, Piece pieceTeam)
+bool team_legal_moves(Move** moveArray, const Piece board[], Info info, Kings kings, unsigned short team)
 {
-	*moveArray = malloc(sizeof(Move) * 1024);
-
-	for(unsigned short index = 0; index < 1024; index += 1)
-	{
-		(*moveArray)[index] = MOVE_NONE;
-	}
+	if(!normal_team_exists(team)) return false;
 
 
+	*moveArray = create_move_array(376);
+	// If all pawns has been promoted to queens (+8 QUEENS), and every other piece remains.
+	// The total amount of moves possible for all pieces combined, will add up to 376 with a large margin.
 
-	// if(!piece_team_exists(team)) return false;
-
-	unsigned short movesAmount = 0;
+	unsigned short moveAmount = 0;
 
 
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
-		Piece currentTeam = (board[point] & PIECE_TEAM_MASK);
+		unsigned short currentTeam = PIECE_TEAM_MACRO(board[point]);
 
-		if(currentTeam != pieceTeam) continue;
+		if(currentTeam != team) continue;
 
 
 		Move* addingMoves;
 
 		if(!piece_legal_moves(&addingMoves, board, info, kings, point)) continue;
 
-		unsigned short addingAmount = 0;
 
-		while(addingMoves[addingAmount] != MOVE_NONE && addingMoves[addingAmount] >= 0)
-		{
-			addingAmount += 1;
-		}
+		unsigned short addingAmount = move_array_amount(addingMoves);
+
 
 		for(unsigned short index = 0; index < addingAmount; index += 1)
 		{
-			(*moveArray)[movesAmount] = addingMoves[index];
-
-			movesAmount += 1;
+			(*moveArray)[moveAmount++] = addingMoves[index];
 		}
 
 		free(addingMoves);
@@ -144,7 +112,7 @@ bool move_prevent_check(const Piece board[], Info info, Kings kings, Move move)
 
 
 	Point startPoint = MOVE_START_MACRO(move);
-	Piece pieceTeam = (board[startPoint] & PIECE_TEAM_MASK);
+	unsigned short startTeam = PIECE_TEAM_MACRO(board[startPoint]);
 
 
 	Piece* boardCopy = malloc(sizeof(Piece) * BOARD_LENGTH);
@@ -163,9 +131,9 @@ bool move_prevent_check(const Piece board[], Info info, Kings kings, Move move)
 
 	Point kingPoint = POINT_NONE;
 
-	if(pieceTeam == PIECE_TEAM_WHITE) kingPoint = KINGS_WHITE_MACRO(kingsCopy);
+	if(startTeam == TEAM_WHITE) kingPoint = KINGS_WHITE_MACRO(kingsCopy);
 
-	else if(pieceTeam == PIECE_TEAM_BLACK) kingPoint = KINGS_BLACK_MACRO(kingsCopy);
+	else if(startTeam == TEAM_BLACK) kingPoint = KINGS_BLACK_MACRO(kingsCopy);
 
 
 	if(king_inside_check(boardCopy, infoCopy, kingPoint))
@@ -184,18 +152,18 @@ bool move_prevent_check(const Piece board[], Info info, Kings kings, Move move)
 	return true;
 }
 
-bool clear_moving_path(const Piece board[], Move move, Piece piece)
+bool clear_moving_path(const Piece board[], Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	//Piece pieceTeam = PIECE_TEAM_MACRO(piece);
+	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
+
+	Piece piece = board[startPoint];
 	Piece pieceType = PIECE_TYPE_MACRO(piece);
 
 	if(pieceType == PIECE_TYPE_KNIGHT) return true;
 
-
-	Point startPoint = MOVE_START_MACRO(move);
-	Point stopPoint = MOVE_STOP_MACRO(move);
 
 	unsigned short startRank = POINT_RANK_MACRO(startPoint);
 	unsigned short startFile = POINT_FILE_MACRO(startPoint);
@@ -230,10 +198,10 @@ bool clear_moving_path(const Piece board[], Move move, Piece piece)
 
 		Point point = (currentFile << POINT_FILE_SHIFT) | (currentRank << POINT_RANK_SHIFT);
 
-		Piece currentTeam = (board[point] & PIECE_TEAM_MASK);
-		Piece currentType = (board[point] & PIECE_TYPE_MASK);
+		Piece currentPieceTeam = (board[point] & PIECE_TEAM_MASK);
+		Piece currentPieceType = (board[point] & PIECE_TYPE_MASK);
 
-		if(currentType != PIECE_TYPE_NONE || currentTeam != PIECE_TEAM_NONE) return false;
+		if(currentPieceType != PIECE_TYPE_NONE || currentPieceTeam != PIECE_TEAM_NONE) return false;
 	}
 
 	return true;
@@ -243,14 +211,14 @@ bool move_ability_valid(Move move, Piece piece, Info info)
 {
 	if(!move_inside_board(move)) return false;
 
-	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
+	unsigned short team = PIECE_TEAM_MACRO(piece);
 
 	Move moveFlag = move & MOVE_FLAG_MASK;
 
 
 	if(moveFlag == MOVE_FLAG_CASTLE)
 	{
-		return castle_ability_valid(move, info, pieceTeam);
+		return castle_ability_valid(move, info, team);
 	}
 
 	else if(moveFlag == MOVE_FLAG_PASSANT)
@@ -261,31 +229,28 @@ bool move_ability_valid(Move move, Piece piece, Info info)
 	return true;
 }
 
-bool castle_ability_valid(Move move, Info info, Piece pieceTeam)
+bool castle_ability_valid(Move move, Info info, unsigned short team)
 {
-	Point startPoint = MOVE_START_MACRO(move);
-	Point stopPoint = MOVE_STOP_MACRO(move);
+	signed short movePattern = board_move_pattern(move);
 
-	signed short movePattern = (stopPoint - startPoint);
-
-	Info castles = (info & INFO_CASTLES_MASK);
+	Info infoCastles = (info & INFO_CASTLES_MASK);
 
 
-	if(pieceTeam == PIECE_TEAM_WHITE && movePattern == KING_CASTLE_PAT)
+	if(team == TEAM_WHITE && movePattern == KING_CASTLE_PAT)
 	{
-		if(!(castles & INFO_WHITE_KING)) return false;
+		if(!(infoCastles & INFO_WHITE_KING)) return false;
 	}
-	else if(pieceTeam == PIECE_TEAM_WHITE && movePattern == QUEEN_CASTLE_PAT)
+	else if(team == TEAM_WHITE && movePattern == QUEEN_CASTLE_PAT)
 	{
-		if(!(castles & INFO_WHITE_QUEEN)) return false;
+		if(!(infoCastles & INFO_WHITE_QUEEN)) return false;
 	}
-	else if(pieceTeam == PIECE_TEAM_BLACK && movePattern == KING_CASTLE_PAT)
+	else if(team == TEAM_BLACK && movePattern == KING_CASTLE_PAT)
 	{
-		if(!(castles & INFO_BLACK_KING)) return false;
+		if(!(infoCastles & INFO_BLACK_KING)) return false;
 	}
-	else if(pieceTeam == PIECE_TEAM_BLACK && movePattern == QUEEN_CASTLE_PAT)
+	else if(team == TEAM_BLACK && movePattern == QUEEN_CASTLE_PAT)
 	{
-		if(!(castles & INFO_BLACK_QUEEN)) return false;
+		if(!(infoCastles & INFO_BLACK_QUEEN)) return false;
 	}
 	else return false;
 
@@ -298,19 +263,14 @@ bool passant_ability_valid(Move move, Info info)
 
 	unsigned short passantFile = INFO_PASSANT_MACRO(info);
 
-	if( (stopFile + 1) == passantFile) return true;
-
-	else return false;
+	return ( (stopFile + 1) == passantFile);
 }
 
-bool current_team_move(Info info, Piece pieceTeam)
+bool current_team_move(Info info, unsigned short team)
 {
 	unsigned short infoTeamValue = INFO_TEAM_MACRO(info);
-	unsigned short pieceTeamValue = PIECE_TEAM_MACRO(pieceTeam);
 
-	if(infoTeamValue == pieceTeamValue && pieceTeamValue != 0) return true;
-
-	return false;
+	return normal_teams_team(infoTeamValue, team);
 }
 
 // This function is going to check if the move-pattern
@@ -349,10 +309,6 @@ bool move_pattern_fits(const Piece board[], Move move)
 	return true;
 }
 
-
-
-
-
 bool passant_pattern_fits(const Piece board[], Move move)
 {
 	Point startPoint = MOVE_START_MACRO(move);
@@ -363,7 +319,7 @@ bool passant_pattern_fits(const Piece board[], Move move)
 
 	if(startType != PIECE_TYPE_PAWN) return false;
 
-	if(!chess_piece_empty(board[stopPoint])) return false;
+	if(chess_piece_exists(board[stopPoint])) return false;
 
 	// ememy pawn must be at its place
 
@@ -374,11 +330,13 @@ bool castle_pattern_fits(const Piece board[], Move move)
 {
 	Point startPoint = MOVE_START_MACRO(move);
 
-	Piece startType = (board[startPoint] & PIECE_TYPE_MASK);
-	Piece startTeam = (board[startPoint] & PIECE_TEAM_MASK);
+	Piece startPieceType = (board[startPoint] & PIECE_TYPE_MASK);
+	Piece startPieceTeam = (board[startPoint] & PIECE_TEAM_MASK);
+
+	unsigned short startTeam = PIECE_TEAM_MACRO(board[startPoint]);
 
 
-	if(startType != PIECE_TYPE_KING) return false;
+	if(startPieceType != PIECE_TYPE_KING) return false;
 
 
 	Point rookPoint = castle_rook_point(move, startTeam);
@@ -386,10 +344,10 @@ bool castle_pattern_fits(const Piece board[], Move move)
 	if(rookPoint == POINT_NONE) return false;
 
 
-	Piece rookType = (board[rookPoint] & PIECE_TYPE_MASK);
-	Piece rookTeam = (board[rookPoint] & PIECE_TEAM_MASK);
+	Piece rookPieceType = (board[rookPoint] & PIECE_TYPE_MASK);
+	Piece rookPieceTeam = (board[rookPoint] & PIECE_TEAM_MASK);
 
-	if(rookType != PIECE_TYPE_ROOK || rookTeam != startTeam) return false;
+	if(rookPieceType != PIECE_TYPE_ROOK || rookPieceTeam != startPieceTeam) return false;
 
 	return true;
 }
@@ -413,23 +371,23 @@ bool pawn_pattern_fits(const Piece board[], Move move)
 
 	if(fileOffset == 0 && (rankOffset == 1 || rankOffset == 2))
 	{
-		if(!chess_piece_empty(board[stopPoint])) return false;
+		if(chess_piece_exists(board[stopPoint])) return false;
 	}
 
 	else if(fileOffset == 1 && rankOffset == 1)
 	{
-		if(!board_teams_enemy(TEAM_PIECE_MACRO(startTeam), TEAM_PIECE_MACRO(stopTeam))) return false;
+		if(!normal_teams_enemy(startTeam, stopTeam)) return false;
 	}
 
 	return true;
 }
 
-Point castle_rook_point(Move move, Piece pieceTeam)
+Point castle_rook_point(Move move, unsigned short team)
 {
 	Point kingPoint = MOVE_START_MACRO(move);
 	unsigned short kingRank = POINT_RANK_MACRO(kingPoint);
 
-	signed short fileOffset = move_file_offset(move, PIECE_TEAM_MACRO(pieceTeam));
+	signed short fileOffset = move_file_offset(move, team);
 
 	Point rookPoint = POINT_NONE;
 
