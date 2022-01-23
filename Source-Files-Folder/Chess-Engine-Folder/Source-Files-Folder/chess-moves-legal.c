@@ -355,9 +355,6 @@ bool move_pattern_fits(const Piece board[], Move move)
 
 bool passant_pattern_fits(const Piece board[], Move move)
 {
-	// unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, startTeam));
-	// signed short rankOffset = move_rank_offset(move, startTeam);
-
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
@@ -402,16 +399,16 @@ bool pawn_pattern_fits(const Piece board[], Move move)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	Piece startTeam = (board[startPoint] & PIECE_TEAM_MASK);
-	Piece startType = (board[startPoint] & PIECE_TYPE_MASK);
+	Piece startPieceType = (board[startPoint] & PIECE_TYPE_MASK);
 
-	Piece stopTeam = (board[stopPoint] & PIECE_TEAM_MASK);
+	unsigned short startTeam = PIECE_TEAM_MACRO(board[startPoint]);
+	unsigned short stopTeam = PIECE_TEAM_MACRO(board[stopPoint]);
 
 	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, startTeam));
 	signed short rankOffset = move_rank_offset(move, startTeam);
 
 
-	if(startType != PIECE_TYPE_PAWN) return false;
+	if(startPieceType != PIECE_TYPE_PAWN) return false;
 
 
 	if(fileOffset == 0 && (rankOffset == 1 || rankOffset == 2))
@@ -421,7 +418,7 @@ bool pawn_pattern_fits(const Piece board[], Move move)
 
 	else if(fileOffset == 1 && rankOffset == 1)
 	{
-		if(!board_teams_enemy(startTeam, stopTeam)) return false;
+		if(!board_teams_enemy(TEAM_PIECE_MACRO(startTeam), TEAM_PIECE_MACRO(stopTeam))) return false;
 	}
 
 	return true;
@@ -432,7 +429,7 @@ Point castle_rook_point(Move move, Piece pieceTeam)
 	Point kingPoint = MOVE_START_MACRO(move);
 	unsigned short kingRank = POINT_RANK_MACRO(kingPoint);
 
-	signed short fileOffset = move_file_offset(move, pieceTeam);
+	signed short fileOffset = move_file_offset(move, PIECE_TEAM_MACRO(pieceTeam));
 
 	Point rookPoint = POINT_NONE;
 

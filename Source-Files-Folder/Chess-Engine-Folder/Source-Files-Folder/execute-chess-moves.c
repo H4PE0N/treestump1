@@ -128,9 +128,9 @@ bool execute_castle_move(Piece* board, Info* info, Kings* kings, Move move)
 
 	Piece kingPiece = board[kingPoint];
 
-	Piece kingTeam = (kingPiece & PIECE_TEAM_MASK);
+	unsigned short kingTeam = PIECE_TEAM_MACRO(kingPiece);
 
-	Point rookPoint = castle_rook_point(move, kingTeam);
+	Point rookPoint = castle_rook_point(move, TEAM_PIECE_MACRO(kingTeam));
 
 	if(rookPoint == POINT_NONE) return false;
 
@@ -150,7 +150,7 @@ bool execute_castle_move(Piece* board, Info* info, Kings* kings, Move move)
 	board[rookPoint] = PIECE_NONE;
 
 
-	if(!update_king_point(kings, kingTeam, newKingPoint))
+	if(!update_king_point(kings, TEAM_PIECE_MACRO(kingTeam), newKingPoint))
 	{
 		return false;
 	}
@@ -158,12 +158,12 @@ bool execute_castle_move(Piece* board, Info* info, Kings* kings, Move move)
 	*info = ALLOC_INFO_PASSANT(*info, 0);
 
 
-	if(kingTeam == PIECE_TEAM_WHITE)
+	if(kingTeam == TEAM_WHITE)
 	{
 		// Resets the bits of white king and queen
 		*info = (*info & ~INFO_WHITE_KING & ~INFO_WHITE_QUEEN);
 	}
-	else if(kingTeam == PIECE_TEAM_BLACK)
+	else if(kingTeam == TEAM_BLACK)
 	{
 		// Resets the bits of black king and queen
 		*info = (*info & ~INFO_BLACK_KING & ~INFO_BLACK_QUEEN);

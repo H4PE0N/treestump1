@@ -4,9 +4,9 @@
 bool castle_move_ident(Info info, Move move, Piece piece)
 {
 	Piece pieceType = (piece & PIECE_TYPE_MASK);
-	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
+	unsigned short team = PIECE_TEAM_MACRO(piece);
 
-	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, pieceTeam));
+	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, team));
 
 	if(pieceType != PIECE_TYPE_KING) return false;
 
@@ -60,10 +60,10 @@ bool promote_move_ident(Info info, Move move, Piece piece)
 
 bool double_move_ident(Info info, Move move, Piece piece)
 {
-	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
+	unsigned short team = PIECE_TEAM_MACRO(piece);
 	Piece pieceType = (piece & PIECE_TYPE_MASK);
 
-	unsigned short rankOffset = move_rank_offset(move, pieceTeam);
+	unsigned short rankOffset = move_rank_offset(move, team);
 
 	if(pieceType == PIECE_TYPE_PAWN && rankOffset == 2) return true;
 
