@@ -3,8 +3,18 @@
 
 bool king_inside_check(const Piece board[], Info info, Point kingPoint)
 {
+	if(!point_inside_board(kingPoint)) return false;
+
+	unsigned short kingTeam = PIECE_TEAM_MACRO(board[kingPoint]);
+
+
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
+		unsigned short currentTeam = PIECE_TEAM_MACRO(board[point]);
+
+		// If the two pieces are not enemies, they cant make check on each other.
+		if(!normal_teams_enemy(currentTeam, kingTeam)) continue;
+
 		if(piece_does_check(board, info, kingPoint, point)) return true;
 	}
 	return false;
@@ -12,12 +22,18 @@ bool king_inside_check(const Piece board[], Info info, Point kingPoint)
 
 bool piece_does_check(const Piece board[], Info info, Point kingPoint, Point point)
 {
+	if(!point_inside_board(point)) return false;
+
+	if(!point_inside_board(kingPoint)) return false;
+
+	// If the two pieces are not enemies, they cant make check on each other.
+	if(!board_points_enemy(board, kingPoint, point)) return false;
+
+
 	Move move = (START_MOVE_MACRO(point) | STOP_MOVE_MACRO(kingPoint));
 
-	Piece piece = board[point];
 
-
-	if(!correct_move_flag(&move, piece, info)) return false;
+	if(!correct_move_flag(&move, board[point], info)) return false;
 
 	if(!move_pseudo_legal(board, info, move)) return false;
 
@@ -37,55 +53,60 @@ bool game_still_running(const Piece board[], Info info, Kings kings)
 
 bool check_mate_ending(const Piece board[], Info info, Kings kings, unsigned short team)
 {
-	Point kingPoint = POINT_NONE;
+	if(!normal_team_exists(team)) return false;
 
-	if(team == TEAM_WHITE) kingPoint = KINGS_WHITE_MACRO(kings);
+	Point kingPoint = team_king_point(kings, team);
 
-	else if(team == TEAM_BLACK) kingPoint = KINGS_BLACK_MACRO(kings);
-
-	else return false;
+	if(kingPoint == POINT_NONE) return false;
 
 
 	if(!king_inside_check(board, info, kingPoint)) return false;
 
 	if(team_pieces_movable(board, info, kings, team)) return false;
 
+	printf("MATE [%d]\n", team);
+
 	return true;
 }
 
 bool check_draw_ending(const Piece board[], Info info, Kings kings, unsigned short team)
 {
-	Point kingPoint = POINT_NONE;
+	if(!normal_team_exists(team)) return false;
 
-	if(team == TEAM_WHITE) kingPoint = KINGS_WHITE_MACRO(kings);
+	Point kingPoint = team_king_point(kings, team);
 
-	else if(team == TEAM_BLACK) kingPoint = KINGS_BLACK_MACRO(kings);
-
-	else return false;
+	if(kingPoint == POINT_NONE) return false;
 
 
 	if(king_inside_check(board, info, kingPoint)) return false;
 
 	if(team_pieces_movable(board, info, kings, team)) return false;
 
+	printf("DRAW [%d]\n", team);
+
 	return true;
 }
 
 bool team_pieces_movable(const Piece board[], Info info, Kings kings, unsigned short team)
 {
+	if(!normal_team_exists(team)) return false;
+
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
 		unsigned short currentTeam = PIECE_TEAM_MACRO(board[point]);
 
-		if(currentTeam != team) continue;
+		if(!normal_teams_team(currentTeam, team)) continue;
 
 		if(chess_piece_movable(board, info, kings, point)) return true;
 	}
 	return false;
 }
 
+// This function can be optimized
 bool chess_piece_movable(const Piece board[], Info info, Kings kings, Point piecePoint)
 {
+	if(!point_inside_board(piecePoint)) return false;
+
 	Piece piece = board[piecePoint];
 
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)

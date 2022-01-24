@@ -32,12 +32,7 @@ int main(int argAmount, char* arguments[])
 		return false;
 	}
 
-	Move* moves = malloc(sizeof(Move) * 128);
-
-	for(unsigned short index = 0; index < 128; index += 1)
-	{
-		moves[index] = MOVE_NONE;
-	}
+	Move* moves = create_move_array(256);
 
 	if(screen_single_game(board, &info, &kings, moves, screen))
 	{
@@ -132,7 +127,7 @@ bool screen_computer_handler(Piece* board, Info* info, Kings* kings, Move* moves
 
 	unsigned short team = INFO_TEAM_MACRO(*info);
 
-	if(!best_computer_move(&computerMove, board, *info, *kings, team, 3))
+	if(!best_computer_move(&computerMove, board, *info, *kings, team, 2))
 	{
 		printf("bot could not find move!\n");
 		return false;
@@ -144,7 +139,6 @@ bool screen_computer_handler(Piece* board, Info* info, Kings* kings, Move* moves
 	}
 
 	unsigned short movesAmount = move_array_amount(moves);
-
 	moves[movesAmount] = computerMove;
 
 	return true;

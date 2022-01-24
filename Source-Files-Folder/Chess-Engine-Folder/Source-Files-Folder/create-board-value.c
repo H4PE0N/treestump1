@@ -3,11 +3,9 @@
 
 signed short team_state_value(const Piece board[], Info info, Kings kings, unsigned short team)
 {
-	// This gets the enemy. If the team is NONE, the enemy is NONE
-	// And if the enemy is none. The return value should be nutural.
-	unsigned short enemy = normal_team_enemy(team);
+	if(!normal_team_exists(team)) return 0;
 
-	if(!normal_team_exists(team) || !normal_team_exists(enemy)) return 0;
+	unsigned short enemy = normal_team_enemy(team);
 
 	signed short enemyValue = board_state_value(board, info, kings, enemy);
 	signed short teamValue = board_state_value(board, info, kings, team);
@@ -32,7 +30,7 @@ signed short team_pieces_value(const Piece board[], unsigned short team)
     unsigned short currentTeam = PIECE_TEAM_MACRO(piece);
     unsigned short currentType = PIECE_TYPE_MACRO(piece);
 
-		if(currentTeam != team) continue;
+		if(!normal_teams_team(team, currentTeam)) continue;
 
 		// Adding the value of the piece
 		piecesValue += PIECE_VALUES[currentType];
@@ -40,7 +38,7 @@ signed short team_pieces_value(const Piece board[], unsigned short team)
 		// Adding extra value for the piece location
 		signed short matrixValue = piece_matrix_value(piece, point);
 
-		piecesValue += (signed short) ( (float) matrixValue / 10.0);
+		piecesValue += matrixValue;
 	}
 
 	return piecesValue;
@@ -57,49 +55,45 @@ signed short piece_matrix_value(Piece piece, Point point)
   unsigned short rank = POINT_RANK_MACRO(point);
   unsigned short file = POINT_FILE_MACRO(point);
 
-	if(team == TEAM_WHITE)
-  {
-    return PIECE_MATRIX[type][rank][file];
-  }
+	signed short rawMatrixValue = 0;
 
-	else if(team == TEAM_BLACK)
-  {
-    return PIECE_MATRIX[type][BOARD_RANKS - rank - 1][file];
-  }
+	if(team == TEAM_WHITE) rawMatrixValue = PIECE_MATRIX[type][rank][file];
 
-	else return 0;
+	else if(team == TEAM_BLACK) rawMatrixValue = PIECE_MATRIX[type][BOARD_RANKS - rank - 1][file];
+
+	return (signed short) ( (float) rawMatrixValue / (float) MATRIX_FACTOR);
 }
 
 signed short check_mate_value(const Piece board[], Info info, Kings kings, unsigned short team)
 {
-	unsigned short enemy = normal_team_enemy(team);
+	if(!normal_team_exists(team)) return 0;
 
-	if(!normal_team_exists(team) || !normal_team_exists(enemy)) return 0;
+	unsigned short enemy = normal_team_enemy(team);
 
 	signed short mateValue = 0;
 
 	// If the teamKing (own king) is in check mate
-	if(check_mate_ending(board, info, kings, team)) mateValue += MIN_BOARD_VALUE;
+	if(check_mate_ending(board, info, kings, team)) mateValue = MIN_BOARD_VALUE;
 
 	// If the enemyKing (opponent) is in check mate
-	else if(check_mate_ending(board, info, kings, enemy)) mateValue += MAX_BOARD_VALUE;
+	else if(check_mate_ending(board, info, kings, enemy)) mateValue = MAX_BOARD_VALUE;
 
 	return mateValue;
 }
 
 signed short check_draw_value(const Piece board[], Info info, Kings kings, unsigned short team)
 {
-	unsigned short enemy = normal_team_enemy(team);
+	if(!normal_team_exists(team)) return 0;
 
-	if(!normal_team_exists(team) || !normal_team_exists(enemy)) return 0;
+	unsigned short enemy = normal_team_enemy(team);
 
 	signed short drawValue = 0;
 
 	// If the own king cant move (oppenent did draw)
-	if(check_draw_ending(board, info, kings, team)) drawValue += MAX_BOARD_VALUE;
+	if(check_draw_ending(board, info, kings, team)) drawValue = MAX_BOARD_VALUE;
 
 	// If the opponent cant move (you did draw)
-	else if(check_draw_ending(board, info, kings, enemy)) drawValue += MIN_BOARD_VALUE;
+	else if(check_draw_ending(board, info, kings, enemy)) drawValue = MIN_BOARD_VALUE;
 
 	return drawValue;
 }

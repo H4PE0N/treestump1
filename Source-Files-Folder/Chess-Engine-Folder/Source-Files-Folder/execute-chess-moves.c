@@ -6,6 +6,8 @@
 // This function is not going to check any validation
 bool execute_chess_move(Piece* board, Info* info, Kings* kings, Move move)
 {
+	if(!move_inside_board(move)) return false;
+
 	Move moveFlag = (move & MOVE_FLAG_MASK);
 
 	if(moveFlag == MOVE_FLAG_KNIGHT || moveFlag == MOVE_FLAG_BISHOP || moveFlag == MOVE_FLAG_ROOK || moveFlag == MOVE_FLAG_QUEEN)
@@ -24,22 +26,15 @@ bool execute_chess_move(Piece* board, Info* info, Kings* kings, Move move)
 	{
 		return execute_double_move(board, info, kings, move);
 	}
-	else
-	{
-		return execute_normal_move(board, info, kings, move);
-	}
+	else return execute_normal_move(board, info, kings, move);
 }
 
 bool update_king_point(Kings* kings, unsigned short team, Point point)
 {
-	if(team == TEAM_WHITE)
-	{
-		*kings = ALLOC_KINGS_WHITE(*kings, WHITE_KINGS_MACRO(point));
-	}
-	else if(team == TEAM_BLACK)
-	{
-		*kings = ALLOC_KINGS_BLACK(*kings, BLACK_KINGS_MACRO(point));
-	}
+	if(team == TEAM_WHITE) *kings = ALLOC_KINGS_WHITE(*kings, WHITE_KINGS_MACRO(point));
+
+	else if(team == TEAM_BLACK) *kings = ALLOC_KINGS_BLACK(*kings, BLACK_KINGS_MACRO(point));
+
 	else return false;
 
 	return true;

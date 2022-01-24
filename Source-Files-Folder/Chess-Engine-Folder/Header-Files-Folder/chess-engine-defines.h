@@ -218,12 +218,12 @@ extern const unsigned short KING_START_FILE;
 extern const signed short KING_CASTLE_PAT;
 extern const signed short QUEEN_CASTLE_PAT;
 
-extern const unsigned short SHORT_ABS;
-
 // ==========================================
 
 #define NUMBER_IN_BOUNDS(NUMBER, MINIMUM, MAXIMUM) (NUMBER >= MINIMUM && NUMBER <= MAXIMUM)
 
-#define ABS_SHORT_NUMBER(NUMBER) (((NUMBER) >> SHORT_ABS) ^ (NUMBER)) - ((NUMBER) >> SHORT_ABS)
+#define ABS_SHORT_NUMBER(NUMBER) (((NUMBER) >> 15) ^ (NUMBER)) - ((NUMBER) >> 15)
+
+// ==========================================
 
 #endif

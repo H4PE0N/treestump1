@@ -3,6 +3,8 @@
 
 bool move_chess_piece(Piece* board, Info* info, Kings* kings, Move move)
 {
+	if(!move_inside_board(move)) return false;
+
 	Piece startPiece = board[MOVE_START_MACRO(move)];
 
 	unsigned short startTeam = PIECE_TEAM_MACRO(startPiece);
@@ -27,7 +29,7 @@ bool correct_move_flag(Move* move, Piece piece, Info info)
 
 	Move moveFlag = (*move & MOVE_FLAG_MASK);
 
-	bool flagIsPassant = (moveFlag == MOVE_FLAG_KNIGHT || moveFlag == MOVE_FLAG_BISHOP || moveFlag == MOVE_FLAG_ROOK || moveFlag == MOVE_FLAG_QUEEN);
+	bool flagIsPromote = (moveFlag == MOVE_FLAG_KNIGHT || moveFlag == MOVE_FLAG_BISHOP || moveFlag == MOVE_FLAG_ROOK || moveFlag == MOVE_FLAG_QUEEN);
 
 	if(double_move_ident(info, *move, piece)) moveFlag = MOVE_FLAG_DOUBLE;
 
@@ -37,7 +39,7 @@ bool correct_move_flag(Move* move, Piece piece, Info info)
 
 	else if(promote_move_ident(info, *move, piece))
 	{
-		if(!flagIsPassant) moveFlag = MOVE_FLAG_QUEEN;
+		if(!flagIsPromote) moveFlag = MOVE_FLAG_QUEEN;
 	}
 
 	else moveFlag = MOVE_FLAG_NONE;

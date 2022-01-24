@@ -153,5 +153,3 @@ const signed short KING_CASTLE_PAT	= +2;
 const signed short QUEEN_CASTLE_PAT	= -2;
 
 // ==========================================
-
-const unsigned short SHORT_ABS = 15;

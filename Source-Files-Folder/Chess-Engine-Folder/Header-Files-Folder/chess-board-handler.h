@@ -35,6 +35,8 @@ bool board_points_team(const Piece[], Point, Point);
 
 bool board_points_enemy(const Piece[], Point, Point);
 
+bool board_point_exists(const Piece[], Point);
+
 // ##############################################################################
 
 bool info_team_exists(Info);
@@ -52,6 +54,10 @@ bool move_points_enemy(const Piece[], Move);
 short move_rank_offset(Move, unsigned short);
 
 short move_file_offset(Move, unsigned short);
+
+short normal_rank_offset(Move);
+
+short normal_file_offset(Move);
 
 unsigned short move_array_amount(const Move[]);
 

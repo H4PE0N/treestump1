@@ -94,6 +94,13 @@ bool board_points_enemy(const Piece board[], Point firstPoint, Point secondPoint
 	return chess_pieces_enemy(firstPiece, secondPiece);
 }
 
+bool board_point_exists(const Piece board[], Point point)
+{
+	Piece piece = board[point];
+
+	return chess_piece_exists(piece);
+}
+
 // ##############################################################################
 
 Info info_team_enemy(Info infoTeam)
@@ -199,6 +206,22 @@ short move_rank_offset(Move move, unsigned short team)
 	if(team == TEAM_BLACK) return rankOffset * BLACK_MOVE_VALUE;
 
 	return SHORT_NONE;
+}
+
+short normal_rank_offset(Move move)
+{
+	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
+
+	return (POINT_RANK_MACRO(stopPoint) - POINT_RANK_MACRO(startPoint));
+}
+
+short normal_file_offset(Move move)
+{
+		Point startPoint = MOVE_START_MACRO(move);
+		Point stopPoint = MOVE_STOP_MACRO(move);
+
+		return (POINT_FILE_MACRO(stopPoint) - POINT_FILE_MACRO(startPoint));
 }
 
 signed short board_move_pattern(Move move)
