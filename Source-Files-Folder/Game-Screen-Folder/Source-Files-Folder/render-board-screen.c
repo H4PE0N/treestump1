@@ -16,6 +16,52 @@ bool render_chess_board(Screen screen, const Piece board[], Info info, Kings kin
 	return true;
 }
 
+bool render_result_board(Screen screen, const Piece board[], Info info, Kings kings, unsigned short winningTeam)
+{
+	if(normal_team_exists(winningTeam))
+	{
+		if(!render_team_squares(screen, winningTeam)) return false;
+	}
+	else if(!render_board_squares(screen)) return false;
+
+	if(!render_check_squares(screen, board, info, kings)) return false;
+
+	if(!render_board_pieces(screen, board)) return false;
+
+	return true;
+}
+
+bool extract_team_square(Surface** squareImage, unsigned short team)
+{
+	if(team == TEAM_WHITE)
+	{
+		if(!load_filename_image(squareImage, "../Source-Files-Folder/Game-Screen-Folder/Screen-Images-Folder/white-square.png")) return false;
+	}
+	else if(team == TEAM_BLACK)
+	{
+		if(!load_filename_image(squareImage, "../Source-Files-Folder/Game-Screen-Folder/Screen-Images-Folder/black-square.png")) return false;
+	}
+	else return false;
+
+	return true;
+}
+
+bool render_team_squares(Screen screen, unsigned short team)
+{
+	Surface* squareImage;
+
+	if(!extract_team_square(&squareImage, team)) return false;
+
+	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	{
+		if(!render_point_image(screen, squareImage, point, 255)) return false;
+	}
+
+	SDL_RenderPresent(screen.renderer);
+
+  return true;
+}
+
 bool render_board_pieces(Screen screen, const Piece board[])
 {
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)

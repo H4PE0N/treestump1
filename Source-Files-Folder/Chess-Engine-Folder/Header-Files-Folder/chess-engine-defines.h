@@ -198,6 +198,8 @@ extern const char RANK_DELIM[];
 extern const char PASSANT_NONE[];
 extern const char CASTLES_NONE[];
 
+extern const char DEFAULT_STRING[];
+
 // ==========================================
 
 extern const signed short BLACK_MOVE_VALUE;

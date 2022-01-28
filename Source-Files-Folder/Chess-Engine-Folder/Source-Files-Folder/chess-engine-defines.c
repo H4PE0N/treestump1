@@ -132,6 +132,8 @@ const char RANK_DELIM[] = "/";
 const char PASSANT_NONE[] = "-";
 const char CASTLES_NONE[] = "-";
 
+const char DEFAULT_STRING[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 1 0";
+
 // ==========================================
 
 const signed short BLACK_MOVE_VALUE 	= +1;
