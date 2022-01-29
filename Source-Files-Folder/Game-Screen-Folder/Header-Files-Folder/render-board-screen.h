@@ -22,6 +22,6 @@ bool render_team_squares(Screen, unsigned short);
 
 bool extract_team_square(Surface**, unsigned short);
 
-bool render_result_board(Screen, const Piece[], Info, Kings, unsigned short);
+bool render_result_board(Screen, const Piece[], Info, Kings);
 
 #endif

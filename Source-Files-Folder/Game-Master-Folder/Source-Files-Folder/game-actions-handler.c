@@ -196,9 +196,7 @@ bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Sc
 
 bool game_result_handler(Screen screen, const Piece board[], Info info, Kings kings)
 {
-	unsigned short winnerTeam = normal_team_enemy(INFO_TEAM_MACRO(info));
-
-	if(render_result_board(screen, board, info, kings, winnerTeam))
+	if(render_result_board(screen, board, info, kings))
 	{
 		SDL_UpdateWindowSurface(screen.window);
 	}

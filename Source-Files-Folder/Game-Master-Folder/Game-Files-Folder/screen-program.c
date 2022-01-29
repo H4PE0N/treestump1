@@ -8,7 +8,7 @@ int main(int argAmount, char* arguments[])
 {
 	if(argAmount < 2) return false;
 
-	if(strcmp(arguments[1], MULTI_KEYWORD) == 0 && strcmp(arguments[1], SINGLE_KEYWORD) == 0) return false;
+	if(strcmp(arguments[1], MULTI_KEYWORD) != 0 && strcmp(arguments[1], SINGLE_KEYWORD) != 0) return false;
 
 
 	Screen screen;

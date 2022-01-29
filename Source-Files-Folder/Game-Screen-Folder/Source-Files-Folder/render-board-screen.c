@@ -16,13 +16,25 @@ bool render_chess_board(Screen screen, const Piece board[], Info info, Kings kin
 	return true;
 }
 
-bool render_result_board(Screen screen, const Piece board[], Info info, Kings kings, unsigned short winningTeam)
+bool render_result_board(Screen screen, const Piece board[], Info info, Kings kings)
 {
-	if(normal_team_exists(winningTeam))
+	unsigned short team = INFO_TEAM_MACRO(info);
+
+	unsigned short winningTeam = normal_team_enemy(team);
+
+	if(check_mate_ending(board, info, kings, team))
 	{
 		if(!render_team_squares(screen, winningTeam)) return false;
 	}
-	else if(!render_board_squares(screen)) return false;
+	else if(check_draw_ending(board, info, kings, team))
+	{
+		if(!render_board_squares(screen)) return false;
+	}
+	else
+	{
+		// This is if there is no check mate or draw (game not ended)
+	}
+
 
 	if(!render_check_squares(screen, board, info, kings)) return false;
 
