@@ -232,6 +232,79 @@ signed short board_move_pattern(Move move)
 	return (stopPoint - startPoint);
 }
 
+bool create_move_string(char* moveString, const Piece board[], Info info, Kings kings, Move move)
+{
+	if(move == MOVE_NONE || move < 0)
+	{
+		*moveString = '\0';
+
+		return true;
+	}
+
+	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
+
+	unsigned short type = PIECE_TYPE_MACRO(board[startPoint]);
+
+	Piece pieceTeam = (board[startPoint] & PIECE_TEAM_MASK);
+
+	unsigned short stopFile = POINT_FILE_MACRO(stopPoint);
+
+
+	char pieceSymbol = '\0';
+	char stopPointString[10];
+	char checkSymbol = '\0';
+	char mateSymbol = '\0';
+	char captureSymbol = '\0';
+
+
+	if(pieceTeam == PIECE_TEAM_WHITE) pieceSymbol = WHITE_MOVE_SYMBOLS[type];
+	else if(pieceTeam == PIECE_TEAM_BLACK) pieceSymbol = BLACK_MOVE_SYMBOLS[type];
+
+	if(!create_point_string(stopPointString, stopPoint))
+	{
+		printf("if(!create_point_string(stopPointString, stopPoint))\n");
+	}
+
+	if(move_deliver_mate(board, info, kings, move))
+	{
+		mateSymbol = '#';
+	}
+	else if(move_deliver_check(board, info, kings, move))
+	{
+		checkSymbol = '+';
+	}
+
+	if(board_points_enemy(board, startPoint, stopPoint) || (INFO_PASSANT_MACRO(info) == (stopFile + 1) ))
+	{
+		captureSymbol = 'x';
+	}
+
+
+
+	sprintf(moveString, "%s%s%s%s%s",
+		(char[]) {pieceSymbol, '\0'},
+		(char[]) {captureSymbol, '\0'},
+		stopPointString,
+		(char[]) {checkSymbol, '\0'},
+		(char[]) {mateSymbol, '\0'}
+	);
+
+	//sprintf(moveString, "%c%c%s%c", pieceSymbol, speciallChar1, stopPointString, speciallChar2);
+
+	return true;
+}
+
+bool create_point_string(char* pointString, Point point)
+{
+	unsigned short file = POINT_FILE_MACRO(point);
+	unsigned short rank = POINT_RANK_MACRO(point);
+
+	sprintf(pointString, "%c%c", FILE_SYMBOLS[file], RANK_SYMBOLS[rank]);
+
+	return true;
+}
+
 // ##############################################################################
 
 Point team_king_point(Kings kings, unsigned short team)

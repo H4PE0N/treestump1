@@ -112,6 +112,16 @@ bool execute_normal_move(Piece* board, Info* info, Kings* kings, Move move)
 
 	*info = ALLOC_INFO_PASSANT(*info, 0);
 
+
+	unsigned short turns = INFO_TURNS_MACRO(*info);
+	unsigned short team = INFO_TEAM_MACRO(*info);
+
+	if(team == TEAM_BLACK) *info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO((turns + 1)) );
+
+
+	if(team == TEAM_WHITE) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_BLACK);
+	if(team == TEAM_BLACK) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_WHITE);
+
 	return true;
 }
 
@@ -164,6 +174,14 @@ bool execute_castle_move(Piece* board, Info* info, Kings* kings, Move move)
 		*info = (*info & ~INFO_BLACK_KING & ~INFO_BLACK_QUEEN);
 	}
 
+	unsigned short turns = INFO_TURNS_MACRO(*info);
+	unsigned short team = INFO_TEAM_MACRO(*info);
+
+	if(team == TEAM_BLACK) *info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO((turns + 1)) );
+
+
+	if(team == TEAM_WHITE) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_BLACK);
+	if(team == TEAM_BLACK) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_WHITE);
 
 	return true;
 }
@@ -203,6 +221,15 @@ bool execute_promote_move(Piece* board, Info* info, Kings* kings, Move move)
 
 
 	*info = ALLOC_INFO_PASSANT(*info, 0);
+
+	unsigned short turns = INFO_TURNS_MACRO(*info);
+	unsigned short team = INFO_TEAM_MACRO(*info);
+
+	if(team == TEAM_BLACK) *info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO((turns + 1)) );
+
+
+	if(team == TEAM_WHITE) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_BLACK);
+	if(team == TEAM_BLACK) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_WHITE);
 
 	return true;
 }
@@ -244,6 +271,15 @@ bool execute_passant_move(Piece* board, Info* info, Kings* kings, Move move)
 
 	*info = ALLOC_INFO_PASSANT(*info, 0);
 
+	unsigned short turns = INFO_TURNS_MACRO(*info);
+	unsigned short team = INFO_TEAM_MACRO(*info);
+
+	if(team == TEAM_BLACK) *info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO((turns + 1)) );
+
+
+	if(team == TEAM_WHITE) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_BLACK);
+	if(team == TEAM_BLACK) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_WHITE);
+
 	return true;
 }
 
@@ -270,6 +306,15 @@ bool execute_double_move(Piece* board, Info* info, Kings* kings, Move move)
 	Info infoPassant = PASSANT_INFO_MACRO(passantFile);
 
 	*info = ALLOC_INFO_PASSANT(*info, infoPassant);
+
+	unsigned short turns = INFO_TURNS_MACRO(*info);
+	unsigned short team = INFO_TEAM_MACRO(*info);
+
+	if(team == TEAM_BLACK) *info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO((turns + 1)) );
+
+
+	if(team == TEAM_WHITE) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_BLACK);
+	if(team == TEAM_BLACK) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_WHITE);
 
 	return true;
 }

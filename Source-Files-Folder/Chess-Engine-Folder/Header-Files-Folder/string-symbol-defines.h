@@ -5,6 +5,9 @@
 extern const char WHITE_SYMBOLS[];
 extern const char BLACK_SYMBOLS[];
 
+extern const char WHITE_MOVE_SYMBOLS[];
+extern const char BLACK_MOVE_SYMBOLS[];
+
 extern const unsigned short SYMBOL_AMOUNT;
 
 extern const char RANK_SYMBOLS[];

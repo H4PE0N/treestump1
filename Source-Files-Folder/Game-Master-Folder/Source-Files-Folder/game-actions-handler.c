@@ -37,13 +37,6 @@ bool screen_single_game(Piece* board, Info* info, Kings* kings, Move* moves, Scr
 			}
 		}
 		else return false;
-
-
-		if(infoTeam == INFO_TEAM_WHITE) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_BLACK);
-
-		if(infoTeam == INFO_TEAM_BLACK)  *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_WHITE);
-
-
 	}
 
 	return true;
@@ -51,14 +44,33 @@ bool screen_single_game(Piece* board, Info* info, Kings* kings, Move* moves, Scr
 
 bool screen_multi_game(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen)
 {
+	char whiteMoveString[10];
+	char blackMoveString[10];
+
 	while(game_still_running(board, *info, *kings))
 	{
+		Info infoCopy = *info;
+		Kings kingsCopy = *kings;
+
+		Piece* boardCopy = malloc(sizeof(Piece) * BOARD_LENGTH);
+		memcpy(boardCopy, board, sizeof(Piece) * BOARD_LENGTH);
+
+
 
 		Info infoTeam = (*info & INFO_TEAM_MASK);
+
+		if(infoTeam == INFO_TEAM_WHITE)
+		{
+			strcpy(whiteMoveString, "");
+			strcpy(blackMoveString, "");
+		}
+
 
 		if(!render_chess_board(screen, board, *info, *kings, moves, -1))
 		{
 			printf("if(!render_chess_board(screen, board, *info, -1))\n");
+
+			free(boardCopy);
 
 			return false;
 		}
@@ -66,18 +78,41 @@ bool screen_multi_game(Piece* board, Info* info, Kings* kings, Move* moves, Scre
 		SDL_UpdateWindowSurface(screen.window);
 
 
-		printf("[%d] is moving!\n", (unsigned short) infoTeam);
-
-		printf("\n");
-
 		if(!screen_user_handler(board, info, kings, moves, screen))
 		{
+			printf("if(!screen_user_handler(board, info, kings, moves, screen))\n");
+
+			free(boardCopy);
+
 			return false;
 		}
 
-		if(infoTeam == INFO_TEAM_WHITE) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_BLACK);
 
-		if(infoTeam == INFO_TEAM_BLACK)  *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_WHITE);
+		unsigned short moveAmount = move_array_amount(moves);
+
+		unsigned short teamCopy = INFO_TEAM_MACRO(infoCopy);
+		unsigned short turnsCopy = INFO_TURNS_MACRO(infoCopy);
+
+		if(teamCopy == TEAM_WHITE)
+		{
+			if(!create_move_string(whiteMoveString, boardCopy, infoCopy, kingsCopy, moves[moveAmount - 1]))
+			{
+				printf("if(!create_move_string(whiteMoveString, boardCopy, infoCopy, kingsCopy, moves[moveAmount - 1]))\n");
+			}
+		}
+		else if(teamCopy == TEAM_BLACK)
+		{
+			if(!create_move_string(blackMoveString, boardCopy, infoCopy, kingsCopy, moves[moveAmount - 1]))
+			{
+				printf("if(!create_move_string(blackMoveString, boardCopy, infoCopy, kingsCopy, moves[moveAmount - 1]))\n");
+			}
+		}
+
+		free(boardCopy);
+
+
+
+		printf("%d. %s %s\n", turnsCopy, whiteMoveString, blackMoveString);
 	}
 
 	return true;

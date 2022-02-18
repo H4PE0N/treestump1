@@ -16,4 +16,8 @@ bool check_mate_ending(const Piece[], Info, Kings, unsigned short);
 
 bool game_still_running(const Piece[], Info, Kings);
 
+bool move_deliver_mate(const Piece[], Info, Kings, Move);
+
+bool move_deliver_check(const Piece[], Info, Kings, Move);
+
 #endif

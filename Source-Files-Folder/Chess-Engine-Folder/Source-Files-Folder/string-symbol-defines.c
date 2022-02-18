@@ -4,6 +4,9 @@
 const char WHITE_SYMBOLS[] = {'X', 'P', 'N', 'B', 'R', 'Q', 'K'};
 const char BLACK_SYMBOLS[] = {'x', 'p', 'n', 'b', 'r', 'q', 'k'};
 
+const char WHITE_MOVE_SYMBOLS[] = {'\0', '\0', 'N', 'B', 'R', 'Q', 'K'};
+const char BLACK_MOVE_SYMBOLS[] = {'\0', '\0', 'n', 'b', 'r', 'q', 'k'};
+
 const unsigned short SYMBOL_AMOUNT = 7;
 
 const char RANK_SYMBOLS[] = {'8', '7', '6', '5', '4', '3', '2', '1'};

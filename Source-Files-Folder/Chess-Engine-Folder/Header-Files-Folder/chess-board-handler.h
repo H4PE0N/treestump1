@@ -65,6 +65,10 @@ Move* create_move_array(unsigned short);
 
 signed short board_move_pattern(Move);
 
+bool create_move_string(char*, const Piece[], Info, Kings, Move);
+
+bool create_point_string(char*, Point);
+
 // ##############################################################################
 
 Point team_king_point(Kings, unsigned short);

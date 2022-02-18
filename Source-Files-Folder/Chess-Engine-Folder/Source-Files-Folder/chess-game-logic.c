@@ -64,8 +64,6 @@ bool check_mate_ending(const Piece board[], Info info, Kings kings, unsigned sho
 
 	if(team_pieces_movable(board, info, kings, team)) return false;
 
-	printf("MATE [%d]\n", team);
-
 	return true;
 }
 
@@ -81,8 +79,6 @@ bool check_draw_ending(const Piece board[], Info info, Kings kings, unsigned sho
 	if(king_inside_check(board, info, kingPoint)) return false;
 
 	if(team_pieces_movable(board, info, kings, team)) return false;
-
-	printf("DRAW [%d]\n", team);
 
 	return true;
 }
@@ -117,5 +113,95 @@ bool chess_piece_movable(const Piece board[], Info info, Kings kings, Point piec
 
 		if(move_fully_legal(board, info, kings, move)) return true;
 	}
+	return false;
+}
+
+bool move_deliver_check(const Piece board[], Info info, Kings kings, Move move)
+{
+	if(!move_inside_board(move)) return false;
+
+
+	Point startPoint = MOVE_START_MACRO(move);
+	unsigned short startTeam = PIECE_TEAM_MACRO(board[startPoint]);
+	unsigned short enemyTeam = normal_team_enemy(startTeam);
+
+
+	Piece* boardCopy = malloc(sizeof(Piece) * BOARD_LENGTH);
+	memcpy(boardCopy, board, sizeof(Piece) * BOARD_LENGTH);
+
+	Info infoCopy = info;
+	Kings kingsCopy = kings;
+
+	if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move))
+	{
+		free(boardCopy);
+
+		return false;
+	}
+
+
+	Point kingPoint = team_king_point(kingsCopy, enemyTeam);
+
+	if(kingPoint == POINT_NONE)
+	{
+		free(boardCopy);
+
+		return false;
+	}
+
+	if(king_inside_check(boardCopy, infoCopy, kingPoint))
+	{
+		free(boardCopy);
+
+		return true;
+	}
+
+	free(boardCopy);
+
+	return false;
+}
+
+bool move_deliver_mate(const Piece board[], Info info, Kings kings, Move move)
+{
+	if(!move_inside_board(move)) return false;
+
+
+	Point startPoint = MOVE_START_MACRO(move);
+	unsigned short startTeam = PIECE_TEAM_MACRO(board[startPoint]);
+	unsigned short enemyTeam = normal_team_enemy(startTeam);
+
+
+	Piece* boardCopy = malloc(sizeof(Piece) * BOARD_LENGTH);
+	memcpy(boardCopy, board, sizeof(Piece) * BOARD_LENGTH);
+
+	Info infoCopy = info;
+	Kings kingsCopy = kings;
+
+	if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move))
+	{
+		free(boardCopy);
+
+		return false;
+	}
+
+
+	Point kingPoint = team_king_point(kingsCopy, enemyTeam);
+
+	if(kingPoint == POINT_NONE)
+	{
+		free(boardCopy);
+
+		return false;
+	}
+
+	if(check_mate_ending(boardCopy, infoCopy, kings, enemyTeam))
+	{
+		free(boardCopy);
+
+		return true;
+	}
+
+	free(boardCopy);
+
 	return false;
 }
