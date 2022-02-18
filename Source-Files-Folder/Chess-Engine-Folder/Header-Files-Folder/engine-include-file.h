@@ -9,7 +9,10 @@
 #include <math.h>
 
 #include "chess-engine-structs.h"
+#include "engine-struct-macros.h"
 #include "chess-engine-defines.h"
+#include "chess-engine-macros.h"
+#include "string-symbol-defines.h"
 #include "chess-board-handler.h"
 #include "chess-game-logic.h"
 #include "move-patterns-valid.h"
