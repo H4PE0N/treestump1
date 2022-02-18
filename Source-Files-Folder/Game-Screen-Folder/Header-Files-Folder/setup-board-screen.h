@@ -10,7 +10,7 @@ bool create_surface_renderer(Renderer**, Surface*);
 
 bool create_surface_texture(Texture**, Renderer*, Surface*);
 
-bool setup_display_screen(Screen*, char[]);
+bool setup_display_screen(Screen*, unsigned short, unsigned short, char[]);
 
 void free_display_screen(Screen);
 

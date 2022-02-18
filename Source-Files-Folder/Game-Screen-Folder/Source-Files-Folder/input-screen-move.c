@@ -8,11 +8,10 @@ bool input_screen_move(Move* move, Screen screen, const Piece board[], Info info
 
 	while(!move_inside_board(inputMove))
 	{
-		if(!SDL_PollEvent(&event)) continue;
+		if(!SDL_WaitEvent(&event)) continue;
 
 		if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_q))
 		{
-			printf("Quitting inpu!\n");
 		  return false;
 		}
 		else if(!screen_move_parser(&inputMove, screen, board, info, kings, moves, event)) continue;
@@ -38,7 +37,7 @@ bool screen_move_parser(Move* move, Screen screen, const Piece board[], Info inf
 
 		while(upEvent.type != SDL_MOUSEBUTTONUP)
 		{
-			SDL_PollEvent(&upEvent);
+			SDL_WaitEvent(&upEvent);
 		}
 
 		Point stopPoint = parse_mouse_point(upEvent, screen);

@@ -1,7 +1,7 @@
 
 #include "../Header-Files-Folder/game-screen-includer.h"
 
-bool setup_display_screen(Screen* screen, char title[])
+bool setup_display_screen(Screen* screen, unsigned short width, unsigned short height, char title[])
 {
 	if(SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
@@ -14,6 +14,9 @@ bool setup_display_screen(Screen* screen, char title[])
 
 		return false;
 	}
+
+	screen->width = width;
+	screen->height = height;
 
 	if(!create_screen_window(&screen->window, screen->height, screen->width, title))
 	{

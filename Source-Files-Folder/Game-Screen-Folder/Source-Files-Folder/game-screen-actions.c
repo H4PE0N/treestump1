@@ -45,7 +45,7 @@ bool input_promote_move(Move* promoMove, Screen screen, unsigned short team)
 
 	while(event.type != SDL_MOUSEBUTTONDOWN)
 	{
-		SDL_PollEvent(&event);
+		SDL_WaitEvent(&event);
 	}
 
 	Point piecePoint = parse_mouse_point(event, screen);
