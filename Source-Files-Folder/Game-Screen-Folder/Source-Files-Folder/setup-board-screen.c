@@ -1,7 +1,7 @@
 
 #include "../Header-Files-Folder/game-screen-includer.h"
 
-bool setup_display_screen(Screen* screen, unsigned short width, unsigned short height, char title[])
+bool setup_screen_struct(Screen* screen, const char title[], unsigned short width, unsigned short height)
 {
 	if(SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
@@ -18,26 +18,15 @@ bool setup_display_screen(Screen* screen, unsigned short width, unsigned short h
 	screen->width = width;
 	screen->height = height;
 
-	if(!create_screen_window(&screen->window, screen->height, screen->width, title))
+	if(!create_screen_window(&screen->window, title, screen->height, screen->width))
 	{
 		SDL_Quit();
 
 		return false;
 	}
 
-	if(!create_window_surface(&screen->surface, screen->window))
+	if(!create_window_render(&screen->render, screen->window))
 	{
-		SDL_DestroyWindow(screen->window);
-
-		SDL_Quit();
-
-		return false;
-	}
-
-	if(!create_surface_renderer(&screen->renderer, screen->surface))
-	{
-		SDL_FreeSurface(screen->surface);
-
 		SDL_DestroyWindow(screen->window);
 
 		SDL_Quit();
@@ -48,39 +37,25 @@ bool setup_display_screen(Screen* screen, unsigned short width, unsigned short h
 	return true;
 }
 
-bool create_surface_texture(Texture** texture, Renderer* renderer, Surface* surface)
+bool create_screen_window(Window** window, const char title[], unsigned short height, unsigned short width)
 {
-  *texture = SDL_CreateTextureFromSurface(renderer, surface);
+	*window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 
-	return (texture != NULL);
-}
-
-bool create_surface_renderer(Renderer** renderer, Surface* surface)
-{
-  *renderer = SDL_CreateSoftwareRenderer(surface);
-
-	return (*renderer != NULL);
-}
-
-bool create_window_surface(Surface** surface, Window* window)
-{
-  *surface = SDL_GetWindowSurface(window);
-
-	return (*surface != NULL);
-}
-
-bool create_screen_window(Window** window, unsigned short height, unsigned short width, char title[])
-{
-  *window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, 0);
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 
 	return (*window != NULL);
 }
 
-void free_display_screen(Screen screen)
+bool create_window_render(Render** render, Window* window)
 {
-	SDL_DestroyRenderer(screen.renderer);
+	*render = SDL_CreateRenderer(window, -1, 0);
 
-	SDL_FreeSurface(screen.surface);
+	return (*render != NULL);
+}
+
+void free_screen_struct(Screen screen)
+{
+	SDL_DestroyRenderer(screen.render);
 
 	SDL_DestroyWindow(screen.window);
 

@@ -1,6 +1,28 @@
 
 #include "../Header-Files-Folder/game-screen-includer.h"
 
+bool display_chess_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], Point point)
+{
+	SDL_RenderClear(screen.render);
+
+	if(!render_chess_board(screen, board, info, kings, moveArray, point)) return false;
+
+	SDL_RenderPresent(screen.render);
+
+	return true;
+}
+
+bool display_result_board(Screen screen, const Piece board[], Info info, Kings kings)
+{
+	SDL_RenderClear(screen.render);
+
+	if(!render_result_board(screen, board, info, kings)) return false;
+
+	SDL_RenderPresent(screen.render);
+
+	return true;
+}
+
 bool render_chess_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], Point point)
 {
 	if(!render_board_squares(screen)) return false;
@@ -69,8 +91,6 @@ bool render_team_squares(Screen screen, unsigned short team)
 		if(!render_point_image(screen, squareImage, point, 255)) return false;
 	}
 
-	SDL_RenderPresent(screen.renderer);
-
   return true;
 }
 
@@ -94,8 +114,6 @@ bool render_board_piece(Screen screen, Piece piece, Point point)
 	if(!extract_piece_image(&pieceImage, piece)) return false;
 
 	if(!render_point_image(screen, pieceImage, point, 255)) return false;
-
-	SDL_RenderPresent(screen.renderer);
 
 	return true;
 }
@@ -211,8 +229,6 @@ bool render_board_squares(Screen screen)
 
 		if(!render_point_image(screen, image, point, 255)) return false;
 	}
-
-	SDL_RenderPresent(screen.renderer);
 
   return true;
 }

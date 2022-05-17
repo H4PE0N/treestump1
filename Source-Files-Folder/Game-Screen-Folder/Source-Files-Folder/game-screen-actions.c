@@ -6,39 +6,44 @@ Point bishopPoint = 21;
 Point rookPoint = 42;
 Point queenPoint = 45;
 
-bool input_promote_move(Move* promoMove, Screen screen, unsigned short team)
+bool render_promote_board(Screen screen, unsigned short team)
 {
-	*promoMove = MOVE_BLANK;
-
 	Piece pieceTeam = TEAM_PIECE_MACRO(team);
 
-	if(!render_board_squares(screen))
+	if(!render_board_squares(screen)) return false;
+
+	if(!render_board_piece(screen, (PIECE_TYPE_KNIGHT | pieceTeam), knightPoint)) return false;
+
+	if(!render_board_piece(screen, (PIECE_TYPE_BISHOP | pieceTeam), bishopPoint)) return false;
+
+	if(!render_board_piece(screen, (PIECE_TYPE_ROOK | pieceTeam), rookPoint)) return false;
+
+	if(!render_board_piece(screen, (PIECE_TYPE_QUEEN | pieceTeam), queenPoint)) return false;
+
+	return true;
+}
+
+bool display_promote_board(Screen screen, unsigned short team)
+{
+	SDL_RenderClear(screen.render);
+
+	if(!render_promote_board(screen, team)) return false;
+
+	SDL_RenderPresent(screen.render);
+
+	return true;
+}
+
+bool input_promote_move(Move* promoMove, Screen screen, unsigned short team)
+{
+	if(!display_promote_board(screen, team))
 	{
-		printf("if(!render_board_squares(screen))\n");
+		printf("Could not display_promote_board\n");
+
 		return false;
 	}
 
-	if(!render_board_piece(screen, (PIECE_TYPE_KNIGHT | pieceTeam), knightPoint))
-	{
-		return false;
-	}
-
-	if(!render_board_piece(screen, (PIECE_TYPE_BISHOP | pieceTeam), bishopPoint))
-	{
-		return false;
-	}
-
-	if(!render_board_piece(screen, (PIECE_TYPE_ROOK | pieceTeam), rookPoint))
-	{
-		return false;
-	}
-
-	if(!render_board_piece(screen, (PIECE_TYPE_QUEEN | pieceTeam), queenPoint))
-	{
-		return false;
-	}
-
-	SDL_UpdateWindowSurface(screen.window);
+	*promoMove = MOVE_BLANK;
 
 
 	Event event;

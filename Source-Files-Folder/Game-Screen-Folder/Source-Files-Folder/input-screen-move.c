@@ -8,13 +8,16 @@ bool input_screen_move(Move* move, Screen screen, const Piece board[], Info info
 
 	while(!move_inside_board(inputMove))
 	{
+		if(!display_chess_board(screen, board, info, kings, moves, -1)) return false;
+
 		if(!SDL_WaitEvent(&event)) continue;
 
 		if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_q))
 		{
 		  return false;
 		}
-		else if(!screen_move_parser(&inputMove, screen, board, info, kings, moves, event)) continue;
+
+		screen_move_parser(&inputMove, screen, board, info, kings, moves, event);
 	}
 
 	*move = inputMove;
@@ -28,9 +31,7 @@ bool screen_move_parser(Move* move, Screen screen, const Piece board[], Info inf
 	{
 		Point startPoint = parse_mouse_point(event, screen);
 
-		if(!render_chess_board(screen, board, info, kings, moves, startPoint)) return false;
-
-		SDL_UpdateWindowSurface(screen.window);
+		if(!display_chess_board(screen, board, info, kings, moves, startPoint)) return false;
 
 
 		Event upEvent;

@@ -24,4 +24,9 @@ bool extract_team_square(Surface**, unsigned short);
 
 bool render_result_board(Screen, const Piece[], Info, Kings);
 
+
+bool display_chess_board(Screen, const Piece[], Info, Kings, const Move[], Point);
+
+bool display_result_board(Screen, const Piece[], Info, Kings);
+
 #endif

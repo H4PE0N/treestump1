@@ -8,15 +8,12 @@ bool screen_single_game(Piece* board, Info* info, Kings* kings, Move* moves, Scr
 
 		Info infoTeam = (*info & INFO_TEAM_MASK);
 
-		if(!render_chess_board(screen, board, *info, *kings, moves, -1))
+		if(!display_chess_board(screen, board, *info, *kings, moves, -1))
 		{
-			printf("if(!render_chess_board(screen, board, *info, -1))\n");
+			printf("if(!display_chess_board(screen, board, *info, -1))\n");
 
 			return false;
 		}
-
-		SDL_UpdateWindowSurface(screen.window);
-
 
 		printf("[%d] is moving!\n", (unsigned short) infoTeam);
 
@@ -66,17 +63,14 @@ bool screen_multi_game(Piece* board, Info* info, Kings* kings, Move* moves, Scre
 		}
 
 
-		if(!render_chess_board(screen, board, *info, *kings, moves, -1))
+		if(!display_chess_board(screen, board, *info, *kings, moves, -1))
 		{
-			printf("if(!render_chess_board(screen, board, *info, -1))\n");
+			printf("if(!display_chess_board(screen, board, *info, -1))\n");
 
 			free(boardCopy);
 
 			return false;
 		}
-
-		SDL_UpdateWindowSurface(screen.window);
-
 
 		if(!screen_user_handler(board, info, kings, moves, screen))
 		{
@@ -147,12 +141,10 @@ bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Sc
 
 	while(!move_inside_board(move))
 	{
-		if(!render_chess_board(screen, board, *info, *kings, moves, -1))
+		if(!display_chess_board(screen, board, *info, *kings, moves, -1))
 		{
 			return false;
 		}
-
-		SDL_UpdateWindowSurface(screen.window);
 
 		if(!input_screen_move(&move, screen, board, *info, *kings, moves)) return false;
 	}
@@ -208,13 +200,10 @@ bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Sc
 
 bool game_result_handler(Screen screen, const Piece board[], Info info, Kings kings)
 {
-	if(render_result_board(screen, board, info, kings))
+	if(!display_result_board(screen, board, info, kings))
 	{
-		SDL_UpdateWindowSurface(screen.window);
+		printf("Could not display result board!\n");
 	}
-	else printf("Could not render board!\n");
-
-
 
 	Event event;
 

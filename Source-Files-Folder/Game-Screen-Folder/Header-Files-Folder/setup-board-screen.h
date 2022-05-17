@@ -2,16 +2,12 @@
 #ifndef SETUP_BOARD_SCREEN_H
 #define SETUP_BOARD_SCREEN_H
 
-bool create_screen_window(Window**, unsigned short, unsigned short, char[]);
+bool create_screen_window(Window**, const char[], unsigned short, unsigned short);
 
-bool create_window_surface(Surface**, Window*);
+bool create_window_render(Render**, Window*);
 
-bool create_surface_renderer(Renderer**, Surface*);
+bool setup_screen_struct(Screen*, const char[], unsigned short, unsigned short);
 
-bool create_surface_texture(Texture**, Renderer*, Surface*);
-
-bool setup_display_screen(Screen*, unsigned short, unsigned short, char[]);
-
-void free_display_screen(Screen);
+void free_screen_struct(Screen);
 
 #endif

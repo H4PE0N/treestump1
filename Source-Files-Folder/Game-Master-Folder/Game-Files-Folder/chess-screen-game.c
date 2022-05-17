@@ -13,7 +13,7 @@ int main(int argAmount, char* arguments[])
 
 	Screen screen;
 
-	if(!setup_display_screen(&screen, 800, 800, "treestump\0"))
+	if(!setup_screen_struct(&screen, "treestump", 800, 800))
 	{
 		printf("Could not setup screen!\n");
 
@@ -60,7 +60,7 @@ int main(int argAmount, char* arguments[])
 
 	free(board);
 	free(moves);
-	free_display_screen(screen);
+	free_screen_struct(screen);
 
 	return 0;
 }

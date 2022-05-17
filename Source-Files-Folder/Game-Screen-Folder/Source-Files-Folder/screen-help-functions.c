@@ -1,11 +1,11 @@
 
 #include "../Header-Files-Folder/game-screen-includer.h"
 
-bool render_board_image(Renderer* renderer, Surface* surface, Rect position, Uint8 opacity)
+bool render_board_image(Render* render, Surface* surface, Rect position, Uint8 opacity)
 {
 	Texture* texture = NULL;
 
-	if(!create_surface_texture(&texture, renderer, surface))
+	if(!create_surface_texture(&texture, render, surface))
 	{
 		return false;
 	}
@@ -13,12 +13,19 @@ bool render_board_image(Renderer* renderer, Surface* surface, Rect position, Uin
 	SDL_SetTextureAlphaMod(texture, opacity);
 
 
-	SDL_RenderCopy(renderer, texture, NULL, &position);
+	SDL_RenderCopy(render, texture, NULL, &position);
 
 
 	SDL_DestroyTexture(texture);
 
 	return true;
+}
+
+bool create_surface_texture(Texture** texture, Render* render, Surface* surface)
+{
+  *texture = SDL_CreateTextureFromSurface(render, surface);
+
+	return (texture != NULL);
 }
 
 bool load_filename_image(Surface** image, char filename[])
@@ -94,7 +101,7 @@ bool render_point_image(Screen screen, Surface* image, Point point, Uint8 opacit
 		return false;
 	}
 
-	if(!render_board_image(screen.renderer, image, position, opacity))
+	if(!render_board_image(screen.render, image, position, opacity))
 	{
 		return false;
 	}
