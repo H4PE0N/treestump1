@@ -16,6 +16,6 @@
 #include "setup-board-screen.h"
 #include "render-board-screen.h"
 #include "game-screen-actions.h"
-#include "input-screen-move.h"
+#include "display-screen-board.h"
 
 #endif

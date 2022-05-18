@@ -1,26 +1,6 @@
 
 #include "../Header-Files-Folder/game-screen-includer.h"
 
-bool render_board_image(Render* render, Surface* surface, Rect position, Uint8 opacity)
-{
-	Texture* texture = NULL;
-
-	if(!create_surface_texture(&texture, render, surface))
-	{
-		return false;
-	}
-
-	SDL_SetTextureAlphaMod(texture, opacity);
-
-
-	SDL_RenderCopy(render, texture, NULL, &position);
-
-
-	SDL_DestroyTexture(texture);
-
-	return true;
-}
-
 bool create_surface_texture(Texture** texture, Render* render, Surface* surface)
 {
   *texture = SDL_CreateTextureFromSurface(render, surface);
@@ -28,11 +8,20 @@ bool create_surface_texture(Texture** texture, Render* render, Surface* surface)
 	return (texture != NULL);
 }
 
-bool load_filename_image(Surface** image, char filename[])
+bool extract_path_image(Surface** image, const char filePath[])
 {
-	*image = IMG_Load(filename);
+	*image = IMG_Load(filePath);
 
 	return (*image != NULL);
+}
+
+bool extract_file_image(Image** image, const char filename[])
+{
+	char filePath[256];
+
+	sprintf(filePath, "%s/%s", PIECE_FOLDER, filename);
+
+	return extract_path_image(image, filePath);
 }
 
 const char* teamWords[] = {"none", "white", "black"};
@@ -42,12 +31,12 @@ bool extract_piece_image(Surface** image, Piece piece)
 {
 	char* filename;
 
-	if(!extract_piece_file(&filename, piece))
+	if(!extract_piece_path(&filename, piece))
 	{
 		return false;
 	}
 
-	if(!load_filename_image(image, filename))
+	if(!extract_path_image(image, filename))
 	{
 		free(filename);
 
@@ -59,9 +48,9 @@ bool extract_piece_image(Surface** image, Piece piece)
 	return true;
 }
 
-bool extract_piece_file(char** filename, Piece piece)
+bool extract_piece_path(char** filePath, Piece piece)
 {
-	*filename = malloc(sizeof(char) * 128);
+	*filePath = malloc(sizeof(char) * 256);
 
 	unsigned short team = PIECE_TEAM_MACRO(piece);
 	unsigned short type = PIECE_TYPE_MACRO(piece);
@@ -69,42 +58,22 @@ bool extract_piece_file(char** filename, Piece piece)
 	const char* teamWord = teamWords[team];
 	const char* typeWord = typeWords[type];
 
-	sprintf(*filename, "%s/%s-%s.png", PIECE_FOLDER, teamWord, typeWord);
+	sprintf(*filePath, "%s/%s-%s.png", PIECE_FOLDER, teamWord, typeWord);
 
 	return true;
 }
 
-bool render_board_move(Screen screen, Surface* moveImage, Move move, Uint8 opacity)
+bool extract_team_square(Surface** squareImage, unsigned short team)
 {
-	Point stopPoint = MOVE_STOP_MACRO(move);
-	Point startPoint = MOVE_START_MACRO(move);
-
-	if(!render_point_image(screen, moveImage, stopPoint, opacity))
+	if(team == TEAM_WHITE)
 	{
-		return false;
+		if(!extract_file_image(squareImage, WHITE_SQUARE)) return false;
 	}
-
-	if(!render_point_image(screen, moveImage, startPoint, opacity))
+	else if(team == TEAM_BLACK)
 	{
-		return false;
+		if(!extract_file_image(squareImage, BLACK_SQUARE)) return false;
 	}
-
-	return true;
-}
-
-bool render_point_image(Screen screen, Surface* image, Point point, Uint8 opacity)
-{
-	Rect position;
-
-	if(!board_point_position(&position, screen, point))
-	{
-		return false;
-	}
-
-	if(!render_board_image(screen.render, image, position, opacity))
-	{
-		return false;
-	}
+	else return false;
 
 	return true;
 }

@@ -1,39 +1,6 @@
 
 #include "../Header-Files-Folder/game-screen-includer.h"
 
-Point knightPoint = 18;
-Point bishopPoint = 21;
-Point rookPoint = 42;
-Point queenPoint = 45;
-
-bool render_promote_board(Screen screen, unsigned short team)
-{
-	Piece pieceTeam = TEAM_PIECE_MACRO(team);
-
-	if(!render_board_squares(screen)) return false;
-
-	if(!render_board_piece(screen, (PIECE_TYPE_KNIGHT | pieceTeam), knightPoint)) return false;
-
-	if(!render_board_piece(screen, (PIECE_TYPE_BISHOP | pieceTeam), bishopPoint)) return false;
-
-	if(!render_board_piece(screen, (PIECE_TYPE_ROOK | pieceTeam), rookPoint)) return false;
-
-	if(!render_board_piece(screen, (PIECE_TYPE_QUEEN | pieceTeam), queenPoint)) return false;
-
-	return true;
-}
-
-bool display_promote_board(Screen screen, unsigned short team)
-{
-	SDL_RenderClear(screen.render);
-
-	if(!render_promote_board(screen, team)) return false;
-
-	SDL_RenderPresent(screen.render);
-
-	return true;
-}
-
 bool input_promote_move(Move* promoMove, Screen screen, unsigned short team)
 {
 	if(!display_promote_board(screen, team))
@@ -56,19 +23,19 @@ bool input_promote_move(Move* promoMove, Screen screen, unsigned short team)
 	Point piecePoint = parse_mouse_point(event, screen);
 
 
-	if(piecePoint == knightPoint)
+	if(piecePoint == PROM_KNIGHT_POINT)
 	{
 		*promoMove = ALLOC_MOVE_FLAG(*promoMove, MOVE_FLAG_KNIGHT);
 	}
-	else if(piecePoint == bishopPoint)
+	else if(piecePoint == PROM_BISHOP_POINT)
 	{
 		*promoMove = ALLOC_MOVE_FLAG(*promoMove, MOVE_FLAG_BISHOP);
 	}
-	else if(piecePoint == rookPoint)
+	else if(piecePoint == PROM_BISHOP_POINT)
 	{
 		*promoMove = ALLOC_MOVE_FLAG(*promoMove, MOVE_FLAG_ROOK);
 	}
-	else if(piecePoint == queenPoint)
+	else if(piecePoint == PROM_QUEEN_POINT)
 	{
 		*promoMove = ALLOC_MOVE_FLAG(*promoMove, MOVE_FLAG_QUEEN);
 	}
@@ -76,4 +43,55 @@ bool input_promote_move(Move* promoMove, Screen screen, unsigned short team)
 
 
 	return true;
+}
+
+bool input_screen_move(Move* move, Screen screen, const Piece board[], Info info, Kings kings, const Move moves[])
+{
+	Move inputMove = MOVE_NONE;
+	Event event;
+
+	while(!move_inside_board(inputMove))
+	{
+		if(!display_chess_board(screen, board, info, kings, moves, -1)) return false;
+
+		if(!SDL_WaitEvent(&event)) continue;
+
+		if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_q))
+		{
+		  return false;
+		}
+
+		screen_move_parser(&inputMove, screen, board, info, kings, moves, event);
+	}
+
+	*move = inputMove;
+
+	return true;
+}
+
+bool screen_move_parser(Move* move, Screen screen, const Piece board[], Info info, Kings kings, const Move moves[], Event event)
+{
+	if(event.type == SDL_MOUSEBUTTONDOWN)
+	{
+		Point startPoint = parse_mouse_point(event, screen);
+
+		if(!display_chess_board(screen, board, info, kings, moves, startPoint)) return false;
+
+
+		Event upEvent;
+
+		while(upEvent.type != SDL_MOUSEBUTTONUP)
+		{
+			SDL_WaitEvent(&upEvent);
+		}
+
+		Point stopPoint = parse_mouse_point(upEvent, screen);
+
+
+		*move = (START_MOVE_MACRO(startPoint) | STOP_MOVE_MACRO(stopPoint));
+
+		return true;
+	}
+
+	return false;
 }

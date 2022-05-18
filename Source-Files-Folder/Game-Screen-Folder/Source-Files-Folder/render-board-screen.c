@@ -1,24 +1,19 @@
 
 #include "../Header-Files-Folder/game-screen-includer.h"
 
-bool display_chess_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], Point point)
+bool render_promote_board(Screen screen, unsigned short team)
 {
-	SDL_RenderClear(screen.render);
+	Piece pieceTeam = TEAM_PIECE_MACRO(team);
 
-	if(!render_chess_board(screen, board, info, kings, moveArray, point)) return false;
+	if(!render_board_squares(screen)) return false;
 
-	SDL_RenderPresent(screen.render);
+	if(!render_board_piece(screen, (PIECE_TYPE_KNIGHT | pieceTeam), PROM_KNIGHT_POINT)) return false;
 
-	return true;
-}
+	if(!render_board_piece(screen, (PIECE_TYPE_BISHOP | pieceTeam), PROM_BISHOP_POINT)) return false;
 
-bool display_result_board(Screen screen, const Piece board[], Info info, Kings kings)
-{
-	SDL_RenderClear(screen.render);
+	if(!render_board_piece(screen, (PIECE_TYPE_ROOK | pieceTeam), PROM_ROOK_POINT)) return false;
 
-	if(!render_result_board(screen, board, info, kings)) return false;
-
-	SDL_RenderPresent(screen.render);
+	if(!render_board_piece(screen, (PIECE_TYPE_QUEEN | pieceTeam), PROM_QUEEN_POINT)) return false;
 
 	return true;
 }
@@ -61,21 +56,6 @@ bool render_result_board(Screen screen, const Piece board[], Info info, Kings ki
 	if(!render_check_squares(screen, board, info, kings)) return false;
 
 	if(!render_board_pieces(screen, board)) return false;
-
-	return true;
-}
-
-bool extract_team_square(Surface** squareImage, unsigned short team)
-{
-	if(team == TEAM_WHITE)
-	{
-		if(!load_filename_image(squareImage, "../Source-Files-Folder/Game-Screen-Folder/Screen-Images-Folder/white-square.png")) return false;
-	}
-	else if(team == TEAM_BLACK)
-	{
-		if(!load_filename_image(squareImage, "../Source-Files-Folder/Game-Screen-Folder/Screen-Images-Folder/black-square.png")) return false;
-	}
-	else return false;
 
 	return true;
 }
@@ -124,7 +104,7 @@ bool render_check_square(Screen screen, const Piece board[], Info info, Point ki
 
 	Surface* checkSquare;
 
-	if(!load_filename_image(&checkSquare, "../Source-Files-Folder/Game-Screen-Folder/Screen-Images-Folder/check-square.png")) return false;
+	if(!extract_file_image(&checkSquare, CHECK_SQUARE)) return false;
 
 	if(!render_point_image(screen, checkSquare, kingPoint, 255)) return false;
 
@@ -169,7 +149,7 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Kings ki
 
   Surface* moveSquare;
 
-	if(!load_filename_image(&moveSquare, "../Source-Files-Folder/Game-Screen-Folder/Screen-Images-Folder/move-square.png"))
+	if(!extract_file_image(&moveSquare, MOVE_SQUARE))
 	{
 		free(moveArray);
 
@@ -204,7 +184,7 @@ bool render_latest_move(Screen screen, const Move moveArray[])
 
 	Surface* movedSquare;
 
-	if(!load_filename_image(&movedSquare, "../Source-Files-Folder/Game-Screen-Folder/Screen-Images-Folder/moved-square.png")) return false;
+	if(!extract_file_image(&movedSquare, MOVED_SQUARE)) return false;
 
 
   if(!render_board_move(screen, movedSquare, moveArray[moveAmount - 1], 255)) return false;
@@ -216,9 +196,9 @@ bool render_board_squares(Screen screen)
 {
 	Surface* whiteSquare, *blackSquare;
 
-	if(!load_filename_image(&whiteSquare, "../Source-Files-Folder/Game-Screen-Folder/Screen-Images-Folder/white-square.png")) return false;
+	if(!extract_file_image(&whiteSquare, WHITE_SQUARE)) return false;
 
-  if(!load_filename_image(&blackSquare, "../Source-Files-Folder/Game-Screen-Folder/Screen-Images-Folder/black-square.png")) return false;
+  if(!extract_file_image(&blackSquare, BLACK_SQUARE)) return false;
 
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
@@ -231,4 +211,59 @@ bool render_board_squares(Screen screen)
 	}
 
   return true;
+}
+
+bool render_board_move(Screen screen, Surface* moveImage, Move move, Uint8 opacity)
+{
+	Point stopPoint = MOVE_STOP_MACRO(move);
+	Point startPoint = MOVE_START_MACRO(move);
+
+	if(!render_point_image(screen, moveImage, stopPoint, opacity))
+	{
+		return false;
+	}
+
+	if(!render_point_image(screen, moveImage, startPoint, opacity))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool render_point_image(Screen screen, Surface* image, Point point, Uint8 opacity)
+{
+	Rect position;
+
+	if(!board_point_position(&position, screen, point))
+	{
+		return false;
+	}
+
+	if(!render_board_image(screen.render, image, position, opacity))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool render_board_image(Render* render, Surface* surface, Rect position, Uint8 opacity)
+{
+	Texture* texture = NULL;
+
+	if(!create_surface_texture(&texture, render, surface))
+	{
+		return false;
+	}
+
+	SDL_SetTextureAlphaMod(texture, opacity);
+
+
+	SDL_RenderCopy(render, texture, NULL, &position);
+
+
+	SDL_DestroyTexture(texture);
+
+	return true;
 }

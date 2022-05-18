@@ -1,6 +1,11 @@
 
 #include "../Header-Files-Folder/game-screen-includer.h"
 
+const Point PROM_KNIGHT_POINT = 18;
+const Point PROM_BISHOP_POINT = 21;
+const Point PROM_ROOK_POINT = 42;
+const Point PROM_QUEEN_POINT = 45;
+
 const char PIECE_FOLDER[] = "../Source-Files-Folder/Game-Screen-Folder/Screen-Images-Folder";
 
 const char WHITE_SQUARE[] = "white-square.png";
