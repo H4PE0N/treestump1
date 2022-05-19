@@ -30,4 +30,6 @@ bool render_board_move(Screen, Surface*, Move, Uint8);
 
 bool render_board_image(Render*, Surface*, Rect, Uint8);
 
+bool render_input_marks(Screen, const Point[]);
+
 #endif

@@ -48,6 +48,14 @@ bool extract_piece_image(Surface** image, Piece piece)
 	return true;
 }
 
+bool parse_quit_input(Event event)
+{
+  bool keypress = (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_q);
+  bool quitIcon = (event.type == SDL_QUIT);
+
+  return keypress || quitIcon;
+}
+
 bool extract_piece_path(char** filePath, Piece piece)
 {
 	*filePath = malloc(sizeof(char) * 256);
@@ -76,6 +84,15 @@ bool extract_team_square(Surface** squareImage, unsigned short team)
 	else return false;
 
 	return true;
+}
+
+unsigned short point_array_amount(const Point pointArray[])
+{
+	unsigned short amount = 0;
+
+	while(pointArray[amount] != POINT_NONE) amount += 1;
+
+	return amount;
 }
 
 bool board_point_position(Rect* position, Screen screen, Point point)
@@ -111,4 +128,32 @@ Point parse_mouse_point(Event event, Screen screen)
 	Point point = FILE_POINT_MACRO(file) | RANK_POINT_MACRO(rank);
 
 	return point;
+}
+
+signed short array_point_index(const Point pointArray[], unsigned short amount, Point point)
+{
+	signed short pointIndex = -1;
+
+	for(unsigned short index = 0; index < amount; index += 1)
+	{
+		if(pointArray[index] == point)
+		{
+			pointIndex = index; break;
+		}
+	}
+	return pointIndex;
+}
+
+bool delete_array_point(Point* pointArray, unsigned short amount, short delIndex)
+{
+	if(!(delIndex >= 0 && delIndex < amount)) return false;
+
+	for(int index = delIndex; index < (amount - 1); index += 1)
+	{
+		pointArray[index] = pointArray[index + 1];
+	}
+
+	pointArray[amount - 1] = POINT_NONE;
+
+	return true;
 }

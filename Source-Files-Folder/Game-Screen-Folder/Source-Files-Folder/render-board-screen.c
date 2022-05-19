@@ -60,6 +60,23 @@ bool render_result_board(Screen screen, const Piece board[], Info info, Kings ki
 	return true;
 }
 
+bool render_input_marks(Screen screen, const Point markPoints[])
+{
+	Surface* image;
+
+	if(!extract_file_image(&image, CHECK_SQUARE)) return false;
+
+	unsigned short amount = point_array_amount(markPoints);
+
+	for(int index = 0; index < amount; index += 1)
+	{
+		Point point = markPoints[index];
+
+		if(!render_point_image(screen, image, point, 255)) return false;
+	}
+	return true;
+}
+
 bool render_team_squares(Screen screen, unsigned short team)
 {
 	Surface* squareImage;

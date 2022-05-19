@@ -33,3 +33,16 @@ bool display_promote_board(Screen screen, unsigned short team)
 
 	return true;
 }
+
+bool display_input_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], const Point markPoints[], Point point)
+{
+	SDL_RenderClear(screen.render);
+
+	if(!render_chess_board(screen, board, info, kings, moveArray, point)) return false;
+
+	if(!render_input_marks(screen, markPoints)) return false;
+
+	SDL_RenderPresent(screen.render);
+
+	return true;
+}

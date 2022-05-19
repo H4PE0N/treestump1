@@ -174,14 +174,15 @@ bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Sc
 		{
 			if(move_fully_legal(board, *info, *kings, move))
 			{
-				Move promoteMove = MOVE_NONE;
-				if(!input_promote_move(&promoteMove, screen, startTeam))
+				Move promoteFlag = MOVE_FLAG_NONE;
+
+				if(!input_promote_flag(&promoteFlag, screen, startTeam))
 				{
 					return screen_user_handler(board, info, kings, moves, screen);
 				}
-				else if(promoteMove != MOVE_NONE)
+				else if(promoteFlag != MOVE_FLAG_NONE)
 				{
-					move = ALLOC_MOVE_FLAG(move, promoteMove);
+					move = ALLOC_MOVE_FLAG(move, promoteFlag);
 				}
 			}
 		}
