@@ -26,4 +26,6 @@ bool delete_array_point(Point*, unsigned short, short);
 
 unsigned short point_array_amount(const Point[]);
 
+Point* create_point_array(unsigned short);
+
 #endif

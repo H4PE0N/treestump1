@@ -157,3 +157,14 @@ bool delete_array_point(Point* pointArray, unsigned short amount, short delIndex
 
 	return true;
 }
+
+Point* create_point_array(unsigned short amount)
+{
+	Point* pointArray = malloc(sizeof(Point) * (amount + 1));
+
+	for(short index = 0; index < (amount + 1); index += 1)
+	{
+		pointArray[index] = POINT_NONE;
+	}
+	return pointArray;
+}

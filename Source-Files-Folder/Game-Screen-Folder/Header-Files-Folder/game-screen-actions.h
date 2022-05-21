@@ -6,12 +6,14 @@ bool input_promote_flag(Move*, Screen, unsigned short);
 
 bool parse_promote_point(Move*, Point);
 
-bool input_mark_parser(Point*, Screen, Event);
+bool input_mark_parser(Point*, Screen, const Piece[], Info, Kings, const Move[], Event);
 
 bool input_screen_move(Move*, Screen, const Piece[], Info, Kings, const Move[]);
 
-bool screen_input_parser(Move*, Point*, Screen, const Piece[], Info, Kings, const Move[], Event);
-
 bool input_move_parser(Move*, Screen, const Piece[], Info, Kings, const Move[], Event);
+
+bool input_single_move(Move*, Screen, const Piece[], Info, Kings, const Move[]);
+
+bool input_legal_move(Move*, Screen, const Piece[], Info, Kings, const Move[]);
 
 #endif

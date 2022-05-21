@@ -139,54 +139,8 @@ bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Sc
 {
 	Move move = MOVE_NONE;
 
-	while(!move_inside_board(move))
-	{
-		if(!display_chess_board(screen, board, *info, *kings, moves, -1))
-		{
-			return false;
-		}
+	if(!input_screen_move(&move, screen, board, *info, *kings, moves)) return false;
 
-		if(!input_screen_move(&move, screen, board, *info, *kings, moves)) return false;
-	}
-
-	// Now a move on the board has been inputted
-	Point startPoint = MOVE_START_MACRO(move);
-	Point stopPoint = MOVE_STOP_MACRO(move);
-
-	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
-
-	unsigned short startTeam = PIECE_TEAM_MACRO(board[startPoint]);
-	Piece startPieceType = (board[startPoint] & PIECE_TYPE_MASK);
-
-
-	if(!current_team_move(*info, startTeam))
-	{
-		return screen_user_handler(board, info, kings, moves, screen);
-	}
-
-
-	if(startPieceType == PIECE_TYPE_PAWN) // This can be a promote move
-	{
-		if(
-			(startTeam == TEAM_WHITE && stopRank == BLACK_START_RANK) ||
-			(startTeam == TEAM_BLACK && stopRank == WHITE_START_RANK)
-		)
-		{
-			if(move_fully_legal(board, *info, *kings, move))
-			{
-				Move promoteFlag = MOVE_FLAG_NONE;
-
-				if(!input_promote_flag(&promoteFlag, screen, startTeam))
-				{
-					return screen_user_handler(board, info, kings, moves, screen);
-				}
-				else if(promoteFlag != MOVE_FLAG_NONE)
-				{
-					move = ALLOC_MOVE_FLAG(move, promoteFlag);
-				}
-			}
-		}
-	}
 
 	if(!move_chess_piece(board, info, kings, move))
 	{
