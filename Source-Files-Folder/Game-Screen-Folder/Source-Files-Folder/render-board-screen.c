@@ -1,6 +1,53 @@
 
 #include "../Header-Files-Folder/game-screen-includer.h"
 
+bool render_chess_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[])
+{
+	if(!render_board_squares(screen)) return false;
+
+	if(!render_latest_move(screen, moveArray)) return false;
+
+	if(!render_check_squares(screen, board, info, kings)) return false;
+
+	if(!render_board_pieces(screen, board)) return false;
+
+	return true;
+}
+
+bool render_move_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], Point point)
+{
+	if(!render_board_squares(screen)) return false;
+
+	if(!render_latest_move(screen, moveArray)) return false;
+
+	if(!render_check_squares(screen, board, info, kings)) return false;
+
+
+	if(!render_move_squares(screen, board, info, kings, point)) return false;
+
+
+	if(!render_board_pieces(screen, board)) return false;
+
+	return true;
+}
+
+bool render_mark_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], const Point markPoints[])
+{
+	if(!render_board_squares(screen)) return false;
+
+	if(!render_latest_move(screen, moveArray)) return false;
+
+	if(!render_check_squares(screen, board, info, kings)) return false;
+
+
+	if(!render_board_pieces(screen, board)) return false;
+
+
+	if(!render_input_marks(screen, markPoints)) return false;
+
+	return true;
+}
+
 bool render_promote_board(Screen screen, unsigned short team)
 {
 	Piece pieceTeam = TEAM_PIECE_MACRO(team);
@@ -14,21 +61,6 @@ bool render_promote_board(Screen screen, unsigned short team)
 	if(!render_board_piece(screen, (PIECE_TYPE_ROOK | pieceTeam), PROM_ROOK_POINT)) return false;
 
 	if(!render_board_piece(screen, (PIECE_TYPE_QUEEN | pieceTeam), PROM_QUEEN_POINT)) return false;
-
-	return true;
-}
-
-bool render_chess_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], Point point)
-{
-	if(!render_board_squares(screen)) return false;
-
-  if(!render_latest_move(screen, moveArray)) return false;
-
-  if(!render_check_squares(screen, board, info, kings)) return false;
-
-	if(!render_move_squares(screen, board, info, kings, point)) return false;
-
-	if(!render_board_pieces(screen, board)) return false;
 
 	return true;
 }
@@ -60,11 +92,13 @@ bool render_result_board(Screen screen, const Piece board[], Info info, Kings ki
 	return true;
 }
 
+// ############################################################################################
+
 bool render_input_marks(Screen screen, const Point markPoints[])
 {
 	Surface* image;
 
-	if(!extract_file_image(&image, CHECK_SQUARE)) return false;
+	if(!extract_file_image(&image, MARK_SQUARE)) return false;
 
 	unsigned short amount = point_array_amount(markPoints);
 

@@ -14,3 +14,4 @@ const char BLACK_SQUARE[] = "black-square.png";
 const char MOVE_SQUARE[] = "move-square.png";
 const char MOVED_SQUARE[] = "moved-square.png";
 const char CHECK_SQUARE[] = "check-square.png";
+const char MARK_SQUARE[] = "mark-square.png";

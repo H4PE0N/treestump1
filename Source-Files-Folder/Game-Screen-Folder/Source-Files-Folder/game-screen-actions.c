@@ -62,7 +62,7 @@ bool input_promote_flag(Move* promoteFlag, Screen screen, unsigned short team)
 
 	Event event;
 
-	while(event.type != SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+	while(!(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT))
 	{
 		SDL_WaitEvent(&event);
 
@@ -71,7 +71,9 @@ bool input_promote_flag(Move* promoteFlag, Screen screen, unsigned short team)
 
 	Point piecePoint = parse_mouse_point(event, screen);
 
-	return parse_promote_point(promoteFlag, piecePoint);
+	parse_promote_point(promoteFlag, piecePoint);
+
+	return true;
 }
 
 bool input_single_move(Move* move, Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[])
@@ -86,7 +88,7 @@ bool input_single_move(Move* move, Screen screen, const Piece board[], Info info
 		if(!SDL_WaitEvent(&event)) continue;
 
 
-		if(!display_input_board(screen, board, info, kings, moveArray, markPoints, -1)) return false;
+		if(!display_mark_board(screen, board, info, kings, moveArray, markPoints)) return false;
 
 
 		if(parse_quit_input(event))
@@ -133,12 +135,12 @@ bool input_mark_parser(Point* markPoints, Screen screen, const Piece board[], In
 	Point startPoint = parse_mouse_point(event, screen);
 
 
-	if(!display_input_board(screen, board, info, kings, moveArray, markPoints, -1)) return false;
+	if(!display_mark_board(screen, board, info, kings, moveArray, markPoints)) return false;
 
 
 	Event upEvent;
 
-	while(!(upEvent.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_RIGHT))
+	while(!(upEvent.type == SDL_MOUSEBUTTONUP && upEvent.button.button == SDL_BUTTON_RIGHT))
 	{
 		SDL_WaitEvent(&upEvent);
 	}
@@ -161,7 +163,7 @@ bool input_mark_parser(Point* markPoints, Screen screen, const Piece board[], In
 	else delete_array_point(markPoints, amount, pointIndex);
 
 
-	if(!display_input_board(screen, board, info, kings, moveArray, markPoints, -1)) return false;
+	if(!display_mark_board(screen, board, info, kings, moveArray, markPoints)) return false;
 
 	return true;
 }
@@ -173,12 +175,12 @@ bool input_move_parser(Move* move, Screen screen, const Piece board[], Info info
 	Point startPoint = parse_mouse_point(event, screen);
 
 
-	if(!display_chess_board(screen, board, info, kings, moveArray, startPoint)) return false;
+	if(!display_move_board(screen, board, info, kings, moveArray, startPoint)) return false;
 
 
 	Event upEvent;
 
-	while(!(upEvent.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT))
+	while(!(upEvent.type == SDL_MOUSEBUTTONUP && upEvent.button.button == SDL_BUTTON_LEFT))
 	{
 		SDL_WaitEvent(&upEvent);
 	}
@@ -188,7 +190,7 @@ bool input_move_parser(Move* move, Screen screen, const Piece board[], Info info
 
 	*move = (START_MOVE_MACRO(startPoint) | STOP_MOVE_MACRO(stopPoint));
 
-	if(!display_chess_board(screen, board, info, kings, moveArray, -1)) return false;
+	if(!display_chess_board(screen, board, info, kings, moveArray)) return false;
 
 	return true;
 }

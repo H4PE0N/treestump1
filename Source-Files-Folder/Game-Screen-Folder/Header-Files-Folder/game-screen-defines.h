@@ -15,5 +15,6 @@ extern const char BLACK_SQUARE[];
 extern const char MOVE_SQUARE[];
 extern const char MOVED_SQUARE[];
 extern const char CHECK_SQUARE[];
+extern const char MARK_SQUARE[];
 
 #endif

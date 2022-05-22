@@ -5,37 +5,22 @@ bool screen_single_game(Piece* board, Info* info, Kings* kings, Move* moves, Scr
 {
 	while(game_still_running(board, *info, *kings))
 	{
-
 		Info infoTeam = (*info & INFO_TEAM_MASK);
 
-		if(!display_chess_board(screen, board, *info, *kings, moves, -1))
-		{
-			printf("if(!display_chess_board(screen, board, *info, -1))\n");
+		if(!display_chess_board(screen, board, *info, *kings, moves)) return false;
 
-			return false;
-		}
-
-		printf("[%d] is moving!\n", (unsigned short) infoTeam);
-
-		printf("\n");
+		printf("[%d] is moving!\n\n", (unsigned short) infoTeam);
 
 		if(infoTeam == INFO_TEAM_WHITE)
 		{
-			if(!screen_user_handler(board, info, kings, moves, screen))
-			{
-				return false;
-			}
+			if(!screen_user_handler(board, info, kings, moves, screen)) return false;
 		}
 		else if(infoTeam == INFO_TEAM_BLACK)
 		{
-			if(!screen_computer_handler(board, info, kings, moves, screen))
-			{
-				return false;
-			}
+			if(!screen_computer_handler(board, info, kings, moves, screen)) return false;
 		}
 		else return false;
 	}
-
 	return true;
 }
 
@@ -63,10 +48,8 @@ bool screen_multi_game(Piece* board, Info* info, Kings* kings, Move* moves, Scre
 		}
 
 
-		if(!display_chess_board(screen, board, *info, *kings, moves, -1))
+		if(!display_chess_board(screen, board, *info, *kings, moves))
 		{
-			printf("if(!display_chess_board(screen, board, *info, -1))\n");
-
 			free(boardCopy);
 
 			return false;
