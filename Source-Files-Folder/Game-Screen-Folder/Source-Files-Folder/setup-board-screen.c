@@ -3,36 +3,30 @@
 
 bool setup_screen_struct(Screen* screen, const char title[], unsigned short width, unsigned short height)
 {
-	if(SDL_Init(SDL_INIT_VIDEO) != 0)
-	{
-		return false;
-	}
+	if(!init_screen_drivers(SDL_INIT_VIDEO, IMG_INIT_PNG)) return false;
 
-	if(IMG_Init(IMG_INIT_PNG) == 0)
-	{
-		SDL_Quit();
-
-		return false;
-	}
-
-	screen->width = width;
-	screen->height = height;
+	screen->width = width; screen->height = height;
 
 	if(!create_screen_window(&screen->window, title, screen->height, screen->width))
 	{
-		SDL_Quit();
-
-		return false;
+		SDL_Quit(); IMG_Quit(); return false;
 	}
 
 	if(!create_window_render(&screen->render, screen->window))
 	{
 		SDL_DestroyWindow(screen->window);
 
-		SDL_Quit();
-
-		return false;
+		SDL_Quit(); IMG_Quit(); return false;
 	}
+
+	return true;
+}
+
+bool init_screen_drivers(Uint32 sdlFlags, Uint32 imgFlags)
+{
+	if(SDL_Init(sdlFlags) != 0) return false;
+
+	if(IMG_Init(imgFlags) == 0) { SDL_Quit(); return false; }
 
 	return true;
 }
@@ -59,5 +53,5 @@ void free_screen_struct(Screen screen)
 
 	SDL_DestroyWindow(screen.window);
 
-	SDL_Quit();
+	SDL_Quit(); IMG_Quit();
 }

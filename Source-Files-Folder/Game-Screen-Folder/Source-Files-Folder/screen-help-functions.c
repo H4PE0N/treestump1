@@ -10,9 +10,7 @@ bool create_surface_texture(Texture** texture, Render* render, Surface* surface)
 
 bool extract_path_image(Surface** image, const char filePath[])
 {
-	*image = IMG_Load(filePath);
-
-	return (*image != NULL);
+	*image = IMG_Load(filePath); return (*image != NULL);
 }
 
 bool extract_file_image(Image** image, const char filename[])
@@ -23,9 +21,6 @@ bool extract_file_image(Image** image, const char filename[])
 
 	return extract_path_image(image, filePath);
 }
-
-const char* teamWords[] = {"none", "white", "black"};
-const char* typeWords[] = {"none", "pawn", "knight", "bishop", "rook", "queen", "king"};
 
 bool extract_piece_image(Surface** image, Piece piece)
 {
@@ -38,14 +33,9 @@ bool extract_piece_image(Surface** image, Piece piece)
 
 	if(!extract_path_image(image, filename))
 	{
-		free(filename);
-
-		return false;
+		free(filename); return false;
 	}
-
-	free(filename);
-
-	return true;
+	free(filename); return true;
 }
 
 bool parse_quit_input(Event event)
@@ -63,10 +53,7 @@ bool extract_piece_path(char** filePath, Piece piece)
 	unsigned short team = PIECE_TEAM_MACRO(piece);
 	unsigned short type = PIECE_TYPE_MACRO(piece);
 
-	const char* teamWord = teamWords[team];
-	const char* typeWord = typeWords[type];
-
-	sprintf(*filePath, "%s/%s-%s.png", PIECE_FOLDER, teamWord, typeWord);
+	sprintf(*filePath, "%s/%s-%s.png", PIECE_FOLDER, TEAM_WORDS[team], TYPE_WORDS[type]);
 
 	return true;
 }
@@ -136,10 +123,7 @@ signed short array_point_index(const Point pointArray[], unsigned short amount, 
 
 	for(unsigned short index = 0; index < amount; index += 1)
 	{
-		if(pointArray[index] == point)
-		{
-			pointIndex = index; break;
-		}
+		if(pointArray[index] == point) { pointIndex = index; break; }
 	}
 	return pointIndex;
 }
@@ -152,10 +136,7 @@ bool delete_array_point(Point* pointArray, unsigned short amount, short delIndex
 	{
 		pointArray[index] = pointArray[index + 1];
 	}
-
-	pointArray[amount - 1] = POINT_NONE;
-
-	return true;
+	pointArray[amount - 1] = POINT_NONE; return true;
 }
 
 Point* create_point_array(unsigned short amount)

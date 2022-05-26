@@ -79,11 +79,7 @@ bool render_result_board(Screen screen, const Piece board[], Info info, Kings ki
 	{
 		if(!render_board_squares(screen)) return false;
 	}
-	else
-	{
-		// This is if there is no check mate or draw (game not ended)
-	}
-
+	// else: The game has not ended
 
 	if(!render_check_squares(screen, board, info, kings)) return false;
 
@@ -121,7 +117,6 @@ bool render_team_squares(Screen screen, unsigned short team)
 	{
 		if(!render_point_image(screen, squareImage, point, 255)) return false;
 	}
-
   return true;
 }
 
@@ -190,21 +185,14 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Kings ki
   unsigned short moveAmount = move_array_amount(moveArray);
 
 
-	if(moveAmount <= 0)
-	{
-		free(moveArray);
-
-		return false;
-	}
+	if(moveAmount <= 0) { free(moveArray); return false; }
 
 
   Surface* moveSquare;
 
 	if(!extract_file_image(&moveSquare, MOVE_SQUARE))
 	{
-		free(moveArray);
-
-		return false;
+		free(moveArray); return false;
 	}
 
 
@@ -212,18 +200,12 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Kings ki
 	{
 		Point stopPoint = MOVE_STOP_MACRO(moveArray[index]);
 
-
 		if(!render_point_image(screen, moveSquare, stopPoint, 255))
 		{
-      free(moveArray);
-
-			return false;
+      free(moveArray); return false;
 		}
 	}
-
-	free(moveArray);
-
-	return true;
+	free(moveArray); return true;
 }
 
 bool render_latest_move(Screen screen, const Move moveArray[])
@@ -269,15 +251,9 @@ bool render_board_move(Screen screen, Surface* moveImage, Move move, Uint8 opaci
 	Point stopPoint = MOVE_STOP_MACRO(move);
 	Point startPoint = MOVE_START_MACRO(move);
 
-	if(!render_point_image(screen, moveImage, stopPoint, opacity))
-	{
-		return false;
-	}
+	if(!render_point_image(screen, moveImage, stopPoint, opacity)) return false;
 
-	if(!render_point_image(screen, moveImage, startPoint, opacity))
-	{
-		return false;
-	}
+	if(!render_point_image(screen, moveImage, startPoint, opacity)) return false;
 
 	return true;
 }
@@ -286,15 +262,9 @@ bool render_point_image(Screen screen, Surface* image, Point point, Uint8 opacit
 {
 	Rect position;
 
-	if(!board_point_position(&position, screen, point))
-	{
-		return false;
-	}
+	if(!board_point_position(&position, screen, point)) return false;
 
-	if(!render_board_image(screen.render, image, position, opacity))
-	{
-		return false;
-	}
+	if(!render_board_image(screen.render, image, position, opacity)) return false;
 
 	return true;
 }
@@ -303,10 +273,7 @@ bool render_board_image(Render* render, Surface* surface, Rect position, Uint8 o
 {
 	Texture* texture = NULL;
 
-	if(!create_surface_texture(&texture, render, surface))
-	{
-		return false;
-	}
+	if(!create_surface_texture(&texture, render, surface)) return false;
 
 	SDL_SetTextureAlphaMod(texture, opacity);
 

@@ -91,12 +91,7 @@ bool input_single_move(Move* move, Screen screen, const Piece board[], Info info
 		if(!display_mark_board(screen, board, info, kings, moveArray, markPoints)) return false;
 
 
-		if(parse_quit_input(event))
-		{
-			free(markPoints);
-
-			return false;
-		}
+		if(parse_quit_input(event)) { free(markPoints); return false; }
 
 
 		if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_RIGHT)

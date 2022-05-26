@@ -7,9 +7,7 @@ bool display_move_board(Screen screen, const Piece board[], Info info, Kings kin
 
 	if(!render_move_board(screen, board, info, kings, moveArray, point)) return false;
 
-	SDL_RenderPresent(screen.render);
-
-	return true;
+	SDL_RenderPresent(screen.render); return true;
 }
 
 bool display_result_board(Screen screen, const Piece board[], Info info, Kings kings)
@@ -18,9 +16,7 @@ bool display_result_board(Screen screen, const Piece board[], Info info, Kings k
 
 	if(!render_result_board(screen, board, info, kings)) return false;
 
-	SDL_RenderPresent(screen.render);
-
-	return true;
+	SDL_RenderPresent(screen.render); return true;
 }
 
 bool display_promote_board(Screen screen, unsigned short team)
@@ -29,9 +25,7 @@ bool display_promote_board(Screen screen, unsigned short team)
 
 	if(!render_promote_board(screen, team)) return false;
 
-	SDL_RenderPresent(screen.render);
-
-	return true;
+	SDL_RenderPresent(screen.render); return true;
 }
 
 bool display_mark_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], const Point markPoints[])
@@ -40,9 +34,7 @@ bool display_mark_board(Screen screen, const Piece board[], Info info, Kings kin
 
 	if(!render_mark_board(screen, board, info, kings, moveArray, markPoints)) return false;
 
-	SDL_RenderPresent(screen.render);
-
-	return true;
+	SDL_RenderPresent(screen.render); return true;
 }
 
 bool display_chess_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[])
@@ -51,7 +43,5 @@ bool display_chess_board(Screen screen, const Piece board[], Info info, Kings ki
 
 	if(!render_chess_board(screen, board, info, kings, moveArray)) return false;
 
-	SDL_RenderPresent(screen.render);
-
-	return true;
+	SDL_RenderPresent(screen.render); return true;
 }

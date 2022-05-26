@@ -10,4 +10,6 @@ bool setup_screen_struct(Screen*, const char[], unsigned short, unsigned short);
 
 void free_screen_struct(Screen);
 
+bool init_screen_drivers(Uint32, Uint32);
+
 #endif
