@@ -14,4 +14,8 @@ signed short check_draw_value(const Piece[], Info, Kings, unsigned short);
 
 signed short board_state_value(const Piece[], Info, Kings, unsigned short);
 
+signed short type_matrix_value(Piece, unsigned short, unsigned short);
+
+unsigned short team_matrix_rank(unsigned short, Piece);
+
 #endif

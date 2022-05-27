@@ -49,19 +49,39 @@ signed short piece_matrix_value(Piece piece, Point point)
 	// This is a error catcher. If the point insn't inside the board, segfault is going to happen next
 	if(!point_inside_board(point) || !chess_piece_exists(piece)) return 0;
 
-  unsigned short team = PIECE_TEAM_MACRO(piece);
-  unsigned short type = PIECE_TYPE_MACRO(piece);
+	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
+  Piece pieceType = (piece & PIECE_TYPE_MASK);
 
   unsigned short rank = POINT_RANK_MACRO(point);
-  unsigned short file = POINT_FILE_MACRO(point);
 
-	signed short rawMatrixValue = 0;
+	unsigned short teamRank = team_matrix_rank(rank, pieceTeam);
+	unsigned short teamFile = POINT_FILE_MACRO(point);
 
-	if(team == TEAM_WHITE) rawMatrixValue = PIECE_MATRIX[type][rank][file];
+	signed short value = type_matrix_value(pieceType, teamRank, teamFile);
 
-	else if(team == TEAM_BLACK) rawMatrixValue = PIECE_MATRIX[type][BOARD_RANKS - rank - 1][file];
+	return (signed short) ( (float) value * MATRIX_FACTOR);
+}
 
-	return (signed short) ( (float) rawMatrixValue / (float) MATRIX_FACTOR);
+unsigned short team_matrix_rank(unsigned short rank, Piece pieceTeam)
+{
+	return (pieceTeam == PIECE_TEAM_BLACK) ? (BOARD_RANKS-rank-1) : rank;
+}
+
+signed short type_matrix_value(Piece pieceType, unsigned short rank, unsigned short file)
+{
+	if(pieceType == PIECE_TYPE_PAWN) return PAWN_MATRIX[rank][file];
+
+	else if(pieceType == PIECE_TYPE_KNIGHT) return KNIGHT_MATRIX[rank][file];
+
+	else if(pieceType == PIECE_TYPE_BISHOP) return BISHOP_MATRIX[rank][file];
+
+	else if(pieceType == PIECE_TYPE_ROOK) return ROOK_MATRIX[rank][file];
+
+	else if(pieceType == PIECE_TYPE_QUEEN) return QUEEN_MATRIX[rank][file];
+
+	else if(pieceType == PIECE_TYPE_KING) return KING_MATRIX[rank][file];
+
+	return 0;
 }
 
 signed short check_mate_value(const Piece board[], Info info, Kings kings, unsigned short team)
