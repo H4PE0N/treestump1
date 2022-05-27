@@ -73,15 +73,6 @@ bool extract_team_square(Surface** squareImage, unsigned short team)
 	return true;
 }
 
-unsigned short point_array_amount(const Point pointArray[])
-{
-	unsigned short amount = 0;
-
-	while(pointArray[amount] != POINT_NONE) amount += 1;
-
-	return amount;
-}
-
 bool board_point_position(Rect* position, Screen screen, Point point)
 {
 	if(!point_inside_board(point)) return false;
@@ -115,37 +106,4 @@ Point parse_mouse_point(Event event, Screen screen)
 	Point point = FILE_POINT_MACRO(file) | RANK_POINT_MACRO(rank);
 
 	return point;
-}
-
-signed short array_point_index(const Point pointArray[], unsigned short amount, Point point)
-{
-	signed short pointIndex = -1;
-
-	for(unsigned short index = 0; index < amount; index += 1)
-	{
-		if(pointArray[index] == point) { pointIndex = index; break; }
-	}
-	return pointIndex;
-}
-
-bool delete_array_point(Point* pointArray, unsigned short amount, short delIndex)
-{
-	if(!(delIndex >= 0 && delIndex < amount)) return false;
-
-	for(int index = delIndex; index < (amount - 1); index += 1)
-	{
-		pointArray[index] = pointArray[index + 1];
-	}
-	pointArray[amount - 1] = POINT_NONE; return true;
-}
-
-Point* create_point_array(unsigned short amount)
-{
-	Point* pointArray = malloc(sizeof(Point) * (amount + 1));
-
-	for(short index = 0; index < (amount + 1); index += 1)
-	{
-		pointArray[index] = POINT_NONE;
-	}
-	return pointArray;
 }

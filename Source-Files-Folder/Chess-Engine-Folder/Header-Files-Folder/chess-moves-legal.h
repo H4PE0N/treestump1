@@ -10,9 +10,15 @@ bool move_pattern_fits(const Piece[], Move);
 
 bool clear_moving_path(const Piece[], Move);
 
+bool moving_path_points(Point*, const Piece[], Move);
+
 bool move_ability_valid(Move, Piece, Info);
 
 bool move_prevent_check(const Piece[], Info, Kings, Move);
+
+bool move_check_handler(const Piece[], Info, Kings, Move);
+
+bool castle_prevent_check(const Piece[], Info, Kings, Move);
 
 bool current_team_move(Info, Piece);
 
@@ -31,5 +37,7 @@ bool pawn_pattern_fits(const Piece[], Move);
 bool piece_legal_moves(Move**, const Piece[], Info, Kings, Point);
 
 bool team_legal_moves(Move**, const Piece[], Info, Kings, unsigned short);
+
+signed short move_offset_factor(signed short);
 
 #endif

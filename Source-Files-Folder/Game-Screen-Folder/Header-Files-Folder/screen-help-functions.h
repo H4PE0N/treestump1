@@ -20,12 +20,4 @@ bool extract_team_square(Surface**, unsigned short);
 
 bool parse_quit_input(Event);
 
-signed short array_point_index(const Point[], unsigned short, Point);
-
-bool delete_array_point(Point*, unsigned short, short);
-
-unsigned short point_array_amount(const Point[]);
-
-Point* create_point_array(unsigned short);
-
 #endif

@@ -37,6 +37,14 @@ bool board_points_enemy(const Piece[], Point, Point);
 
 bool board_point_exists(const Piece[], Point);
 
+signed short array_point_index(const Point[], unsigned short, Point);
+
+bool delete_array_point(Point*, unsigned short, short);
+
+unsigned short point_array_amount(const Point[]);
+
+Point* create_point_array(unsigned short);
+
 // ##############################################################################
 
 bool info_team_exists(Info);

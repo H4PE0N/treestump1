@@ -64,8 +64,8 @@ bool execute_normal_move(Piece* board, Info* info, Kings* kings, Move move)
 
 	unsigned short startTeam = PIECE_TEAM_MACRO(startPiece);
 
-	board[stopPoint] = startPiece;
 	board[startPoint] = PIECE_NONE;
+	board[stopPoint] = startPiece;
 
 	if(startPieceType == PIECE_TYPE_KING)
 	{

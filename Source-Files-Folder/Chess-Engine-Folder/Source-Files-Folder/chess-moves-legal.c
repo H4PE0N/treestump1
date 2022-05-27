@@ -10,7 +10,7 @@ bool move_fully_legal(const Piece board[], Info info, Kings kings, Move move)
 
 	if(!move_pseudo_legal(board, info, move)) return false;
 
-	if(!move_prevent_check(board, info, kings, move)) return false;
+	if(!move_check_handler(board, info, kings, move)) return false;
 
 	return true;
 }
@@ -108,52 +108,67 @@ bool team_legal_moves(Move** moveArray, const Piece board[], Info info, Kings ki
 
 // This function should check if the inputted move prevents check.
 // It can do that by executing the move, and see if the king is in check
+bool move_check_handler(const Piece board[], Info info, Kings kings, Move move)
+{
+	if(!move_inside_board(move)) return false;
+
+	if(castle_pattern_fits(board, move))
+	{
+		return castle_prevent_check(board, info, kings, move);
+	}
+	else return move_prevent_check(board, info, kings, move);
+}
+
+bool castle_prevent_check(const Piece board[], Info info, Kings kings, Move move)
+{
+	if(!move_inside_board(move)) return false;
+
+	Point startPoint = MOVE_START_MACRO(move);
+
+	unsigned short startFile = POINT_FILE_MACRO(startPoint);
+	unsigned short startRank = POINT_RANK_MACRO(startPoint);
+
+	signed short fileOffset = normal_file_offset(move);
+	unsigned short absFileOffset = ABS_SHORT_NUMBER(fileOffset);
+
+	signed short fileFactor = move_offset_factor(fileOffset);
+
+	for(unsigned short index = 0; index <= absFileOffset; index += 1)
+	{
+		unsigned short currentFile = startFile + (index * fileFactor);
+
+		Point currentPoint = FILE_POINT_MACRO(currentFile) | RANK_POINT_MACRO(startRank);
+		Move currentMove = START_MOVE_MACRO(startPoint) | STOP_MOVE_MACRO(currentPoint);
+
+		if(!move_prevent_check(board, info, kings, currentMove)) return false;
+	}
+	return true;
+}
+
 bool move_prevent_check(const Piece board[], Info info, Kings kings, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-
 	Point startPoint = MOVE_START_MACRO(move);
 	unsigned short startTeam = PIECE_TEAM_MACRO(board[startPoint]);
-
 
 	Piece* boardCopy = malloc(sizeof(Piece) * BOARD_LENGTH);
 	memcpy(boardCopy, board, sizeof(Piece) * BOARD_LENGTH);
 
-	Info infoCopy = info;
-	Kings kingsCopy = kings;
+	Info infoCopy = info; Kings kingsCopy = kings;
 
 	if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move))
 	{
-		free(boardCopy);
-
-		return false;
+		free(boardCopy); return false;
 	}
-
 
 	Point kingPoint = team_king_point(kingsCopy, startTeam);
 
-	if(kingPoint == POINT_NONE)
-	{
-		free(boardCopy);
+	if(kingPoint == POINT_NONE) { free(boardCopy); return false; }
 
-		return false;
-	}
+	bool inCheck = king_inside_check(boardCopy, infoCopy, kingPoint);
 
-	if(king_inside_check(boardCopy, infoCopy, kingPoint))
-	{
-		free(boardCopy);
-
-		return false;
-	}
-
-	free(boardCopy);
-
-	// If it is a king that is castling, you have to check
-	// that the king does not pass through check (the point
-	// where the rook later lands, should not be in check)
-
-	return true;
+	free(boardCopy); return !(inCheck);
 }
 
 bool clear_moving_path(const Piece board[], Move move)
@@ -161,7 +176,38 @@ bool clear_moving_path(const Piece board[], Move move)
 	if(!move_inside_board(move)) return false;
 
 	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
+
 	if((board[startPoint] & PIECE_TYPE_MASK) == PIECE_TYPE_KNIGHT) return true;
+
+	Point* movePoints = create_point_array(32);
+
+	if(!moving_path_points(movePoints, board, move))
+	{
+		free(movePoints); return false;
+	}
+
+	unsigned short amount = point_array_amount(movePoints);
+
+	for(short index = 0; index < amount; index += 1)
+	{
+		Point currentPoint = movePoints[index];
+
+		if(currentPoint == startPoint || currentPoint == stopPoint) continue;
+
+		if(board_point_exists(board, currentPoint))
+		{
+			free(movePoints); return false;
+		}
+	}
+	free(movePoints); return true;
+}
+
+bool moving_path_points(Point* movePoints, const Piece board[], Move move)
+{
+	if(!move_inside_board(move)) return false;
+
+	Point startPoint = MOVE_START_MACRO(move);
 
 	unsigned short startFile = POINT_FILE_MACRO(startPoint);
 	unsigned short startRank = POINT_RANK_MACRO(startPoint);
@@ -177,22 +223,26 @@ bool clear_moving_path(const Piece board[], Move move)
 
 	if(!moveStraight && !moveDiagonal) return false;
 
-	signed short fileFactor = (fileOffset == 0 ? 0 : (fileOffset > 0 ? 1 : -1) );
-	signed short rankFactor = (rankOffset == 0 ? 0 : (rankOffset > 0 ? 1 : -1) );
+	signed short fileFactor = move_offset_factor(fileOffset);
+	signed short rankFactor = move_offset_factor(rankOffset);
 
 	unsigned short moveSteps = (absRankOffset > absFileOffset) ? absRankOffset : absFileOffset;
 
-	for(unsigned short index = 1; index < moveSteps; index += 1)
+	for(unsigned short index = 0; index <= moveSteps; index += 1)
 	{
 		unsigned short currentFile = startFile + (index * fileFactor);
 		unsigned short currentRank = startRank + (index * rankFactor);
 
 		Point point = (FILE_POINT_MACRO(currentFile) | RANK_POINT_MACRO(currentRank));
 
-		if(board_point_exists(board, point)) return false;
+		movePoints[index] = point;
 	}
-
 	return true;
+}
+
+signed short move_offset_factor(signed short moveOffset)
+{
+	return (moveOffset == 0 ? 0 : (moveOffset > 0 ? 1 : -1) );
 }
 
 bool move_ability_valid(Move move, Piece piece, Info info)
