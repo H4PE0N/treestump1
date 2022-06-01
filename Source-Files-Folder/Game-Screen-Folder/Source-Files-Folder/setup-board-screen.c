@@ -33,7 +33,7 @@ bool init_screen_drivers(Uint32 sdlFlags, Uint32 imgFlags)
 
 bool create_screen_window(Window** window, const char title[], unsigned short height, unsigned short width)
 {
-	*window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+	*window = SDL_CreateWindow(title, WINDOW_CENTER, WINDOW_CENTER, width, height, WINDOW_SHOWN | WINDOW_RESIZE | WINDOW_OPENGL);
 
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 

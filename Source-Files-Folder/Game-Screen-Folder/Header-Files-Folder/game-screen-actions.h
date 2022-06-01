@@ -16,4 +16,6 @@ bool input_single_move(Move*, Screen, const Piece[], Info, Kings, const Move[]);
 
 bool input_legal_move(Move*, Screen, const Piece[], Info, Kings, const Move[]);
 
+bool mouse_event_check(Event, Uint8, Uint32);
+
 #endif
