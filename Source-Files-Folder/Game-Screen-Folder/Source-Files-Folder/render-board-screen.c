@@ -94,7 +94,7 @@ bool render_input_marks(Screen screen, const Point markPoints[])
 {
 	Surface* image;
 
-	if(!extract_file_image(&image, MARK_SQUARE)) return false;
+	if(!extract_file_image(&image, MARK_SQUARE_FILE)) return false;
 
 	unsigned short amount = point_array_amount(markPoints);
 
@@ -150,7 +150,7 @@ bool render_check_square(Screen screen, const Piece board[], Info info, Point ki
 
 	Surface* checkSquare;
 
-	if(!extract_file_image(&checkSquare, CHECK_SQUARE)) return false;
+	if(!extract_file_image(&checkSquare, CHECK_SQUARE_FILE)) return false;
 
 	if(!render_point_image(screen, checkSquare, kingPoint, 255)) return false;
 
@@ -190,7 +190,7 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Kings ki
 
   Surface* moveSquare;
 
-	if(!extract_file_image(&moveSquare, MOVE_SQUARE))
+	if(!extract_file_image(&moveSquare, MOVE_SQUARE_FILE))
 	{
 		free(moveArray); return false;
 	}
@@ -217,7 +217,7 @@ bool render_latest_move(Screen screen, const Move moveArray[])
 
 	Surface* movedSquare;
 
-	if(!extract_file_image(&movedSquare, MOVED_SQUARE)) return false;
+	if(!extract_file_image(&movedSquare, MOVED_SQUARE_FILE)) return false;
 
 
   if(!render_board_move(screen, movedSquare, moveArray[moveAmount - 1], 255)) return false;
@@ -229,9 +229,9 @@ bool render_board_squares(Screen screen)
 {
 	Surface* whiteSquare, *blackSquare;
 
-	if(!extract_file_image(&whiteSquare, WHITE_SQUARE)) return false;
+	if(!extract_file_image(&whiteSquare, WHITE_SQUARE_FILE)) return false;
 
-  if(!extract_file_image(&blackSquare, BLACK_SQUARE)) return false;
+  if(!extract_file_image(&blackSquare, BLACK_SQUARE_FILE)) return false;
 
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{

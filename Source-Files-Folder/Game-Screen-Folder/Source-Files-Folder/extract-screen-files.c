@@ -10,7 +10,7 @@ bool extract_file_image(Image** image, const char filename[])
 {
 	char filePath[256];
 
-	sprintf(filePath, "%s/%s", PIECE_FOLDER, filename);
+	sprintf(filePath, "%s/%s", IMAGES_FOLDER, filename);
 
 	return extract_path_image(image, filePath);
 }
@@ -38,7 +38,7 @@ bool extract_piece_path(char** filePath, Piece piece)
 	unsigned short team = PIECE_TEAM_MACRO(piece);
 	unsigned short type = PIECE_TYPE_MACRO(piece);
 
-	sprintf(*filePath, "%s/%s-%s.png", PIECE_FOLDER, TEAM_WORDS[team], TYPE_WORDS[type]);
+	sprintf(*filePath, "%s/%s-%s.png", IMAGES_FOLDER, TEAM_WORDS[team], TYPE_WORDS[type]);
 
 	return true;
 }
@@ -47,11 +47,11 @@ bool extract_team_square(Surface** squareImage, unsigned short team)
 {
 	if(team == TEAM_WHITE)
 	{
-		if(!extract_file_image(squareImage, WHITE_SQUARE)) return false;
+		if(!extract_file_image(squareImage, WHITE_SQUARE_FILE)) return false;
 	}
 	else if(team == TEAM_BLACK)
 	{
-		if(!extract_file_image(squareImage, BLACK_SQUARE)) return false;
+		if(!extract_file_image(squareImage, BLACK_SQUARE_FILE)) return false;
 	}
 	else return false;
 

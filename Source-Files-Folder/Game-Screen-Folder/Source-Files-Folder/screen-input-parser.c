@@ -6,7 +6,7 @@ bool parse_quit_input(Event event)
   bool keypress = (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_q);
   bool quitIcon = (event.type == SDL_QUIT);
 
-  return keypress || quitIcon;
+  return (keypress || quitIcon);
 }
 
 bool parse_promote_point(Move* promoteFlag, Point point)
@@ -39,8 +39,8 @@ bool board_point_position(Rect* position, Screen screen, Point point)
 	float squareWidth = (screen.width / BOARD_FILES);
 	float squareHeight = (screen.height / BOARD_RANKS);
 
-	float realHeight = squareHeight * rank;
-	float realWidth = squareWidth * file;
+	float realHeight = (squareHeight * rank);
+	float realWidth = (squareWidth * file);
 
 	*position = (Rect) {realWidth, realHeight, squareWidth, squareHeight};
 
@@ -59,7 +59,5 @@ Point parse_mouse_point(Event event, Screen screen)
 
 	if(!NUMBER_IN_BOUNDS(rank, 0, BOARD_RANKS)) return POINT_NONE;
 
-	Point point = FILE_POINT_MACRO(file) | RANK_POINT_MACRO(rank);
-
-	return point;
+  return (FILE_POINT_MACRO(file) | RANK_POINT_MACRO(rank));
 }

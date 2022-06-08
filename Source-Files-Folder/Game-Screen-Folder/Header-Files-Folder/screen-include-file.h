@@ -11,6 +11,7 @@
 
 #include "game-screen-structs.h"
 #include "game-screen-defines.h"
+#include "sdl-display-defines.h"
 #include "extract-screen-files.h"
 #include "game-screen-handler.h"
 #include "render-board-screen.h"
