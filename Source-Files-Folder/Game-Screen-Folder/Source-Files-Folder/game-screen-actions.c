@@ -1,5 +1,5 @@
 
-#include "../Header-Files-Folder/game-screen-includer.h"
+#include "../Header-Files-Folder/screen-include-file.h"
 
 bool input_screen_move(Move* move, Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[])
 {
@@ -87,21 +87,6 @@ bool input_single_move(Move* move, Screen screen, const Piece board[], Info info
 	return true;
 }
 
-bool parse_promote_point(Move* promoteFlag, Point point)
-{
-	if(point == PROM_KNIGHT_POINT) *promoteFlag = MOVE_FLAG_KNIGHT;
-
-	else if(point == PROM_BISHOP_POINT) *promoteFlag = MOVE_FLAG_BISHOP;
-
-	else if(point == PROM_ROOK_POINT) *promoteFlag = MOVE_FLAG_ROOK;
-
-	else if(point == PROM_QUEEN_POINT) *promoteFlag = MOVE_FLAG_QUEEN;
-
-	else return false;
-
-	return true;
-}
-
 bool input_mark_parser(Point* markPoints, Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], Event event)
 {
 	if(!mouse_event_check(event, RIGHT_BUTTON, BUTTON_DOWN)) return false;
@@ -159,9 +144,4 @@ bool input_move_parser(Move* move, Screen screen, const Piece board[], Info info
 	if(!display_chess_board(screen, board, info, kings, moveArray)) return false;
 
 	return true;
-}
-
-bool mouse_event_check(Event event, Uint8 buttonSide, Uint32 buttonMove)
-{
-	return (event.type == buttonMove && event.button.button == buttonSide);
 }

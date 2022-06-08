@@ -1,5 +1,5 @@
 
-#include "../Header-Files-Folder/game-screen-includer.h"
+#include "../Header-Files-Folder/screen-include-file.h"
 
 bool setup_screen_struct(Screen* screen, const char title[], unsigned short width, unsigned short height)
 {
@@ -45,6 +45,13 @@ bool create_window_render(Render** render, Window* window)
 	*render = SDL_CreateRenderer(window, -1, 0);
 
 	return (*render != NULL);
+}
+
+bool create_surface_texture(Texture** texture, Render* render, Surface* surface)
+{
+  *texture = SDL_CreateTextureFromSurface(render, surface);
+
+	return (texture != NULL);
 }
 
 void free_screen_struct(Screen screen)

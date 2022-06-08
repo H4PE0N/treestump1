@@ -1,6 +1,6 @@
 
-#ifndef SETUP_BOARD_SCREEN_H
-#define SETUP_BOARD_SCREEN_H
+#ifndef GAME_SCREEN_HANDLER_H
+#define GAME_SCREEN_HANDLER_H
 
 bool create_screen_window(Window**, const char[], unsigned short, unsigned short);
 
@@ -11,5 +11,7 @@ bool setup_screen_struct(Screen*, const char[], unsigned short, unsigned short);
 void free_screen_struct(Screen);
 
 bool init_screen_drivers(Uint32, Uint32);
+
+bool create_surface_texture(Texture**, Render*, Surface*);
 
 #endif
