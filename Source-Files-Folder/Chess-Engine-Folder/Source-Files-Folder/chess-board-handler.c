@@ -71,6 +71,20 @@ Piece piece_team_enemy(Piece pieceTeam)
 	return PIECE_TEAM_NONE;
 }
 
+Point board_piece_point(const Piece board[], Piece piece)
+{
+	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	{
+		if(board[point] == piece) return point;
+	}
+	return POINT_NONE;
+}
+
+Point rank_file_point(unsigned short rank, unsigned short file)
+{
+	return (RANK_POINT_MACRO(rank) | FILE_POINT_MACRO(file));
+}
+
 // ##############################################################################
 
 bool point_inside_board(Point point)

@@ -1,7 +1,7 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool split_string_delim(char* stringArray[], char string[], unsigned short length, char delim[], unsigned short amount)
+bool split_string_delim(char* stringArray[], const char string[], unsigned short length, const char delim[], unsigned short amount)
 {
 	// The amount must be more or equal to 1
 	if(amount < 1) return false;
@@ -64,12 +64,11 @@ void free_array_strings(char* stringArray[], unsigned short amount)
 	}
 }
 
-int string_symbol_index(char string[], unsigned short length, char symbol)
+signed short string_symbol_index(const char string[], unsigned short length, char symbol)
 {
 	for(unsigned short index = 0; index < length; index += 1)
 	{
 		if(symbol == string[index]) return index;
 	}
-
 	return INDEX_NONE;
 }

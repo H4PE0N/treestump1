@@ -27,6 +27,11 @@ bool chess_pieces_enemy(Piece, Piece);
 
 Piece piece_team_enemy(Piece);
 
+
+Point board_piece_point(const Piece[], Piece);
+
+Point rank_file_point(unsigned short, unsigned short);
+
 // ##############################################################################
 
 bool point_inside_board(Point);

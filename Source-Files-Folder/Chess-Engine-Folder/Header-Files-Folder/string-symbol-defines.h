@@ -14,8 +14,13 @@ extern const char FILE_SYMBOLS[];
 extern const char WHITE_SYMBOL;
 extern const char BLACK_SYMBOL;
 
+extern const char SYMBOL_NONE;
+
 extern const char FEN_STRING_DELIM[];
 extern const char FEN_RANK_DELIM[];
+
+extern const unsigned short FEN_STRING_PARTS;
+extern const unsigned short FEN_MAX_CASTLES;
 
 extern const char FEN_PASSANT_NONE[];
 extern const char FEN_CASTLES_NONE[];

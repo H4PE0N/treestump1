@@ -13,8 +13,13 @@ const char FILE_SYMBOLS[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
 const char WHITE_SYMBOL = 'w';
 const char BLACK_SYMBOL = 'b';
 
+const char SYMBOL_NONE = '\0';
+
 const char FEN_STRING_DELIM[] = " ";
 const char FEN_RANK_DELIM[] = "/";
+
+const unsigned short FEN_STRING_PARTS = 6;
+const unsigned short FEN_MAX_CASTLES = 4;
 
 const char FEN_PASSANT_NONE[] = "-";
 const char FEN_CASTLES_NONE[] = "-";
