@@ -11,7 +11,7 @@ bool parse_game_string(Piece** board, Info* info, Kings* kings, char gameString[
 
 	char* stringArray[amount];
 
-	if(!split_string_delim(stringArray, gameString, stringLength, (char*) STRING_DELIM, amount))
+	if(!split_string_delim(stringArray, gameString, stringLength, (char*) FEN_STRING_DELIM, amount))
 	{
 		printf("split_string_delim\n");
 
@@ -287,7 +287,7 @@ bool parse_string_castles(Info* castles, char stringToken[])
 	*castles = INFO_NONE; // Setting all castle abilities to false;
 
 
-	if(strcmp(stringCopy, CASTLES_NONE) == 0)
+	if(strcmp(stringCopy, FEN_CASTLES_NONE) == 0)
 	{
 		// This means that there is no castle ability
 		return true;
@@ -298,19 +298,19 @@ bool parse_string_castles(Info* castles, char stringToken[])
 		char symbol = stringCopy[index];
 
 
-		if(symbol == WHITE_SYMBOLS[(PIECE_TYPE_KING >> PIECE_TYPE_SHIFT)])
+		if(symbol == WHITE_TYPE_SYMBOLS[(PIECE_TYPE_KING >> PIECE_TYPE_SHIFT)])
 		{
 			*castles |= INFO_WHITE_KING;
 		}
-		else if(symbol == WHITE_SYMBOLS[(PIECE_TYPE_QUEEN >> PIECE_TYPE_SHIFT)])
+		else if(symbol == WHITE_TYPE_SYMBOLS[(PIECE_TYPE_QUEEN >> PIECE_TYPE_SHIFT)])
 		{
 			*castles |= INFO_WHITE_QUEEN;
 		}
-		else if(symbol == BLACK_SYMBOLS[(PIECE_TYPE_KING >> PIECE_TYPE_SHIFT)])
+		else if(symbol == BLACK_TYPE_SYMBOLS[(PIECE_TYPE_KING >> PIECE_TYPE_SHIFT)])
 		{
 			*castles |= INFO_BLACK_KING;
 		}
-		else if(symbol == BLACK_SYMBOLS[(PIECE_TYPE_QUEEN >> PIECE_TYPE_SHIFT)])
+		else if(symbol == BLACK_TYPE_SYMBOLS[(PIECE_TYPE_QUEEN >> PIECE_TYPE_SHIFT)])
 		{
 			*castles |= INFO_BLACK_QUEEN;
 		}
@@ -339,7 +339,7 @@ bool parse_string_board(Piece** board, char stringToken[])
 
 	char* stringArray[BOARD_RANKS];
 
-	if(!split_string_delim(stringArray, stringCopy, stringLength, (char*) RANK_DELIM, BOARD_RANKS))
+	if(!split_string_delim(stringArray, stringCopy, stringLength, (char*) FEN_RANK_DELIM, BOARD_RANKS))
 	{
 		printf("split_string_delim\n");
 
@@ -424,15 +424,15 @@ bool parse_board_piece(Piece* piece, char symbol)
 	// 65 - 90  uppercase = white
 	// 97 - 122	lowercase = black
 
-	for(unsigned short index = 0; index < SYMBOL_AMOUNT; index += 1)
+	for(unsigned short index = 0; index < PIECE_TYPE_SPAN; index += 1)
 	{
-		if(symbol == WHITE_SYMBOLS[index])
+		if(symbol == WHITE_TYPE_SYMBOLS[index])
 		{
 			*piece = PIECE_TEAM_WHITE | (index << PIECE_TYPE_SHIFT); // (index = type)
 
 			return true;
 		}
-		if(symbol == BLACK_SYMBOLS[index])
+		if(symbol == BLACK_TYPE_SYMBOLS[index])
 		{
 			*piece = PIECE_TEAM_BLACK | (index << PIECE_TYPE_SHIFT); // (index = type)
 

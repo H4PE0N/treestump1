@@ -24,7 +24,7 @@ int main(int argAmount, char* arguments[])
 	Info info;
 	Kings kings;
 
-	char* gameString = (argAmount >= 3) ? arguments[2] : (char*) DEFAULT_STRING;
+	char* gameString = (argAmount >= 3) ? arguments[2] : (char*) FEN_START_STRING;
 
 	if(!parse_game_string(&board, &info, &kings, gameString))
 	{

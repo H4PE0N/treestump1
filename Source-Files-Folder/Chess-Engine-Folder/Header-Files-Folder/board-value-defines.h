@@ -18,4 +18,7 @@ extern const signed short PIECE_VALUES[7];
 
 const float MATRIX_FACTOR;
 
+extern const signed short MIN_BOARD_VALUE;
+extern const signed short MAX_BOARD_VALUE;
+
 #endif

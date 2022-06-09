@@ -5,8 +5,8 @@ const unsigned short BOARD_RANKS = 8;
 const unsigned short BOARD_FILES = 8;
 const unsigned short BOARD_LENGTH = 64;
 
-const signed short MIN_BOARD_VALUE = -10000;
-const signed short MAX_BOARD_VALUE = +10000;
+const unsigned short PIECE_TYPE_SPAN = 7;
+const unsigned short PIECE_TEAM_SPAN = 3;
 
 const signed short BLACK_MOVE_VALUE = +1;
 const signed short WHITE_MOVE_VALUE = -1;

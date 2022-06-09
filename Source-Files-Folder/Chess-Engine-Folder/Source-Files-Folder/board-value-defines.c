@@ -76,3 +76,6 @@ const signed short KING_MATRIX[8][8] =
 const signed short PIECE_VALUES[] = {+0, +10, +30, +30, +50, +90, +900};
 
 const float MATRIX_FACTOR = 0.1;
+
+const signed short MIN_BOARD_VALUE = -10000;
+const signed short MAX_BOARD_VALUE = +10000;
