@@ -12,120 +12,41 @@ bool parse_game_string(Piece** board, Info* info, Kings* kings, const char fenSt
 
 	char* stringArray[FEN_STRING_PARTS];
 
-	if(!split_string_delim(stringArray, fenString, stringLength, FEN_STRING_DELIM, FEN_STRING_PARTS))
-	{
-		printf("split_string_delim\n");
+	if(!split_string_delim(stringArray, fenString, stringLength, FEN_STRING_DELIM, FEN_STRING_PARTS)) return false;
 
-		return false;
-	}
-
-	*info = INFO_BLANK;
-
-	if(!parse_string_board(board, stringArray[0]))
-	{
-		printf("parse_string_board\n");
-
-		free_array_strings(stringArray, FEN_STRING_PARTS);
-
-		return false;
-	}
-
-	Info infoCurrentTeam = INFO_BLANK;
-
-	if(!parse_string_current(&infoCurrentTeam, stringArray[1]))
-	{
-		printf("parse_string_current\n");
-
-		free_array_strings(stringArray, FEN_STRING_PARTS);
-
-		free(*board);
-
-		return false;
-	}
-
-
-	*info = ALLOC_INFO_TEAM(*info, infoCurrentTeam);
-
-
-	Info castles = INFO_BLANK;
-
-	if(!parse_string_castles(&castles, stringArray[2]))
-	{
-		printf("parse_string_castles\n");
-
-		free_array_strings(stringArray, FEN_STRING_PARTS);
-
-		free(*board);
-
-		return false;
-	}
-
-
-	*info = ALLOC_INFO_CASTLES(*info, castles);
-
-
-	unsigned short passant = 0;
-
-	if(!parse_string_passant(&passant, stringArray[3]))
-	{
-		printf("parse_string_passant\n");
-
-		free_array_strings(stringArray, FEN_STRING_PARTS);
-
-		free(*board);
-
-		return false;
-	}
-
-
-	*info = ALLOC_INFO_PASSANT(*info, PASSANT_INFO_MACRO(passant));
-
-
-	unsigned short turns = 0;
-
-	if(!parse_string_turns(&turns, stringArray[4]))
-	{
-		printf("parse_string_turns\n");
-
-		free_array_strings(stringArray, FEN_STRING_PARTS);
-
-		free(*board);
-
-		return false;
-	}
-
-
-	*info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO(turns));
-
-
-	unsigned short counter = 0;
-
-	if(!parse_string_counter(&counter, stringArray[5]))
-	{
-		printf("parse_string_counter\n");
-
-		free_array_strings(stringArray, FEN_STRING_PARTS);
-
-		free(*board);
-
-		return false;
-	}
-
-
-	*info = ALLOC_INFO_COUNTER(*info, COUNTER_INFO_MACRO(counter));
-
+	bool parseResult = parse_string_array(board, info, kings, stringArray);
 
 	free_array_strings(stringArray, FEN_STRING_PARTS);
 
+	return parseResult;
+}
+
+bool parse_string_array(Piece** board, Info* info, Kings* kings, char* stringArray[])
+{
+	*info = INFO_BLANK;
+
+	if(!parse_string_board(board, stringArray[0])) return false;
+
+	if(!parse_string_info(info, stringArray))
+	{ free(*board); return false; }
 
 	if(!parse_king_points(kings, *board))
-	{
-		printf("if(!parse_king_points(kings, board))\n");
+	{ free(*board); return false; }
 
-		free(*board);
+	return true;
+}
 
-		return false;
-	}
+bool parse_string_info(Info* info, char* stringArray[])
+{
+	if(!parse_string_current(info, stringArray[1])) return false;
+
+	if(!parse_string_castles(info, stringArray[2])) return false;
+
+	if(!parse_string_passant(info, stringArray[3])) return false;
+
+	if(!parse_string_turns(info, stringArray[4])) return false;
+
+	if(!parse_string_counter(info, stringArray[5])) return false;
 
 	return true;
 }
@@ -143,29 +64,46 @@ bool parse_king_points(Kings* kings, const Piece board[])
 	return true;
 }
 
-bool parse_string_current(Info* infoCurrentTeam, const char stringToken[])
+bool parse_string_current(Info* info, const char stringToken[])
 {
+	Info infoCurrentTeam = INFO_BLANK;
+
 	unsigned short stringLength = strlen(stringToken);
 
 	if(stringLength != 1) return false;
 
-	if(stringToken[0] == WHITE_SYMBOL) *infoCurrentTeam = INFO_TEAM_WHITE;
 
-	else if(stringToken[0] == BLACK_SYMBOL) *infoCurrentTeam = INFO_TEAM_BLACK;
+	if(stringToken[0] == WHITE_SYMBOL) infoCurrentTeam = INFO_TEAM_WHITE;
+
+	else if(stringToken[0] == BLACK_SYMBOL) infoCurrentTeam = INFO_TEAM_BLACK;
 
 	else return false;
+
+	*info = ALLOC_INFO_TEAM(*info, infoCurrentTeam);
 
 	return true;
 }
 
-bool parse_string_counter(unsigned short* counter, const char stringToken[])
+bool parse_string_counter(Info* info, const char stringToken[])
 {
-	return parse_string_short(counter, stringToken);
+	unsigned short counter = 0;
+
+	if(!parse_string_short(&counter, stringToken)) return false;
+
+	*info = ALLOC_INFO_COUNTER(*info, COUNTER_INFO_MACRO(counter));
+
+	return true;
 }
 
-bool parse_string_turns(unsigned short* turns, const char stringToken[])
+bool parse_string_turns(Info* info, const char stringToken[])
 {
-	return parse_string_short(turns, stringToken);
+	unsigned short turns = 0;
+
+	if(!parse_string_short(&turns, stringToken)) return false;
+
+	*info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO(turns));
+
+	return true;
 }
 
 bool parse_string_short(unsigned short* number, const char string[])
@@ -189,16 +127,16 @@ bool parse_string_short(unsigned short* number, const char string[])
 	*number = dummyNumber; return true;
 }
 
-bool parse_string_passant(unsigned short* passant, const char stringToken[])
+bool parse_string_passant(Info* info, const char stringToken[])
 {
-	*passant = INFO_NONE;
-
 	if(!strcmp(stringToken, FEN_PASSANT_NONE)) return true;
 
 	Point passantPoint = POINT_NONE;
 	if(!parse_string_point(&passantPoint, stringToken)) return false;
 
-	*passant = (POINT_FILE_MACRO(passantPoint) + 1);
+	unsigned short passant = (POINT_FILE_MACRO(passantPoint) + 1);
+
+	*info = ALLOC_INFO_PASSANT(*info, PASSANT_INFO_MACRO(passant));
 
 	return true;
 }
@@ -219,9 +157,9 @@ bool parse_string_point(Point* point, const char string[])
 	return true;
 }
 
-bool parse_string_castles(Info* castles, const char stringToken[])
+bool parse_string_castles(Info* info, const char stringToken[])
 {
-	*castles = INFO_NONE;
+	Info castles = INFO_NONE;
 
 	if(!strcmp(stringToken, FEN_CASTLES_NONE)) return true;
 
@@ -232,24 +170,38 @@ bool parse_string_castles(Info* castles, const char stringToken[])
 	{
 		char symbol = stringToken[index];
 
-		if(symbol == chess_piece_symbol(PIECE_TEAM_WHITE | PIECE_TYPE_KING))
-		{
-			*castles |= INFO_WHITE_KING;
-		}
-		else if(symbol == chess_piece_symbol(PIECE_TEAM_WHITE | PIECE_TYPE_QUEEN))
-		{
-			*castles |= INFO_WHITE_QUEEN;
-		}
-		else if(symbol == chess_piece_symbol(PIECE_TEAM_BLACK | PIECE_TYPE_KING))
-		{
-			*castles |= INFO_BLACK_KING;
-		}
-		else if(symbol == chess_piece_symbol(PIECE_TEAM_BLACK | PIECE_TYPE_QUEEN))
-		{
-			*castles |= INFO_BLACK_QUEEN;
-		}
-		else return false;
+		Info infoCastle = INFO_BLANK;
+
+		if(!parse_castle_symbol(&infoCastle, symbol)) return false;
+
+		castles |= infoCastle;
 	}
+
+	*info = ALLOC_INFO_CASTLES(*info, castles);
+
+	return true;
+}
+
+bool parse_castle_symbol(Info* infoCastle, char symbol)
+{
+	if(symbol == chess_piece_symbol(PIECE_TEAM_WHITE | PIECE_TYPE_KING))
+	{
+		*infoCastle = INFO_WHITE_KING;
+	}
+	else if(symbol == chess_piece_symbol(PIECE_TEAM_WHITE | PIECE_TYPE_QUEEN))
+	{
+		*infoCastle = INFO_WHITE_QUEEN;
+	}
+	else if(symbol == chess_piece_symbol(PIECE_TEAM_BLACK | PIECE_TYPE_KING))
+	{
+		*infoCastle = INFO_BLACK_KING;
+	}
+	else if(symbol == chess_piece_symbol(PIECE_TEAM_BLACK | PIECE_TYPE_QUEEN))
+	{
+		*infoCastle = INFO_BLACK_QUEEN;
+	}
+	else return false;
+
 	return true;
 }
 
@@ -271,12 +223,7 @@ bool parse_string_board(Piece** board, const char stringToken[])
 
 	char* stringArray[BOARD_RANKS];
 
-	if(!split_string_delim(stringArray, stringToken, stringLength, FEN_RANK_DELIM, BOARD_RANKS))
-	{
-		printf("split_string_delim\n");
-
-		return false;
-	}
+	if(!split_string_delim(stringArray, stringToken, stringLength, FEN_RANK_DELIM, BOARD_RANKS)) return false;
 
 	/*
 	Just now: split_string_delim can return an array with less than BOARD_RANKS (8) ranks of strings.
@@ -292,9 +239,9 @@ bool parse_string_board(Piece** board, const char stringToken[])
 
 		if(!parse_board_files(board, rank, stringArray[rank], rankLength))
 		{
-			free(*board); free_array_strings(stringArray, BOARD_RANKS);
+			free_array_strings(stringArray, BOARD_RANKS);
 
-			return false;
+			free(*board); return false;
 		}
 	}
 	free_array_strings(stringArray, BOARD_RANKS); return true;
@@ -332,9 +279,7 @@ bool parse_board_symbol(Piece** board, unsigned short rank, unsigned short* file
 
 	(*board)[point] = piece;
 
-	*file += 1;
-
-	return true;
+	*file += 1; return true;
 }
 
 bool parse_board_blanks(Piece** board, unsigned short rank, unsigned short* file, unsigned short blanks)
