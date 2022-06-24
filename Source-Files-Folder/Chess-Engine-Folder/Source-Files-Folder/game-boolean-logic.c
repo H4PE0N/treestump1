@@ -120,88 +120,58 @@ bool move_deliver_check(const Piece board[], Info info, Kings kings, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-
-	Point startPoint = MOVE_START_MACRO(move);
-	unsigned short startTeam = PIECE_TEAM_MACRO(board[startPoint]);
-	unsigned short enemyTeam = normal_team_enemy(startTeam);
-
-
 	Piece* boardCopy = malloc(sizeof(Piece) * BOARD_LENGTH);
 	memcpy(boardCopy, board, sizeof(Piece) * BOARD_LENGTH);
 
-	Info infoCopy = info;
-	Kings kingsCopy = kings;
+	Info infoCopy = info; Kings kingsCopy = kings;
 
-	if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move))
-	{
-		free(boardCopy);
+	bool result = deliver_check_test(boardCopy, infoCopy, kingsCopy, move);
 
-		return false;
-	}
+	free(boardCopy); return result;
+}
 
+bool deliver_check_test(Piece* boardCopy, Info infoCopy, Kings kingsCopy, Move move)
+{
+	Point startPoint = MOVE_START_MACRO(move);
+
+	unsigned short startTeam = PIECE_TEAM_MACRO(boardCopy[startPoint]);
+	unsigned short enemyTeam = normal_team_enemy(startTeam);
+
+	if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move)) return false;
 
 	Point kingPoint = team_king_point(kingsCopy, enemyTeam);
 
-	if(kingPoint == POINT_NONE)
-	{
-		free(boardCopy);
+	if(kingPoint == POINT_NONE) return false;
 
-		return false;
-	}
-
-	if(king_inside_check(boardCopy, infoCopy, kingPoint))
-	{
-		free(boardCopy);
-
-		return true;
-	}
-
-	free(boardCopy);
-
-	return false;
+	return king_inside_check(boardCopy, infoCopy, kingPoint);
 }
 
 bool move_deliver_mate(const Piece board[], Info info, Kings kings, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-
-	Point startPoint = MOVE_START_MACRO(move);
-	unsigned short startTeam = PIECE_TEAM_MACRO(board[startPoint]);
-	unsigned short enemyTeam = normal_team_enemy(startTeam);
-
-
 	Piece* boardCopy = malloc(sizeof(Piece) * BOARD_LENGTH);
 	memcpy(boardCopy, board, sizeof(Piece) * BOARD_LENGTH);
 
-	Info infoCopy = info;
-	Kings kingsCopy = kings;
+	Info infoCopy = info; Kings kingsCopy = kings;
 
-	if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move))
-	{
-		free(boardCopy);
+	bool result = deliver_mate_test(boardCopy, infoCopy, kingsCopy, move);
 
-		return false;
-	}
+	free(boardCopy); return result;
+}
 
+bool deliver_mate_test(Piece* boardCopy, Info infoCopy, Kings kingsCopy, Move move)
+{
+	Point startPoint = MOVE_START_MACRO(move);
+
+	unsigned short startTeam = PIECE_TEAM_MACRO(boardCopy[startPoint]);
+	unsigned short enemyTeam = normal_team_enemy(startTeam);
+
+	if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move)) return false;
 
 	Point kingPoint = team_king_point(kingsCopy, enemyTeam);
 
-	if(kingPoint == POINT_NONE)
-	{
-		free(boardCopy);
+	if(kingPoint == POINT_NONE) return false;
 
-		return false;
-	}
-
-	if(check_mate_ending(boardCopy, infoCopy, kings, enemyTeam))
-	{
-		free(boardCopy);
-
-		return true;
-	}
-
-	free(boardCopy);
-
-	return false;
+	return check_mate_ending(boardCopy, infoCopy, kingsCopy, enemyTeam);
 }

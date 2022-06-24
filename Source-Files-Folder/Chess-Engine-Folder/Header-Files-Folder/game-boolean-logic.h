@@ -20,4 +20,8 @@ bool move_deliver_mate(const Piece[], Info, Kings, Move);
 
 bool move_deliver_check(const Piece[], Info, Kings, Move);
 
+bool deliver_mate_test(Piece*, Info, Kings, Move);
+
+bool deliver_check_test(Piece*, Info, Kings, Move);
+
 #endif

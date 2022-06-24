@@ -1,0 +1,52 @@
+
+#include "../Header-Files-Folder/engine-include-file.h"
+
+bool split_string_delim(char* stringArray[], const char string[], unsigned short length, const char delim[], unsigned short amount)
+{
+	if(amount < 1) return false;
+
+	char stringCopy[length]; strcpy(stringCopy, string);
+
+	alloc_array_strings(stringArray, amount, length);
+
+	char* stringToken = NULL;
+
+	if((stringToken = strtok(stringCopy, delim)) == NULL)
+	{
+		free_array_strings(stringArray, amount); return false;
+	}
+
+	for(unsigned short index = 0; index < amount; index += 1)
+	{
+		strcpy(stringArray[index], stringToken);
+
+		if((stringToken = strtok(NULL, delim)) == NULL) break;
+	}
+	return true;
+}
+
+void alloc_array_strings(char* stringArray[], unsigned short amount, unsigned short length)
+{
+	for(unsigned short index = 0; index < amount; index += 1)
+	{
+		stringArray[index] = malloc(sizeof(char) * (length + 1));
+		memset(stringArray[index], '\0', (length + 1));
+	}
+}
+
+void free_array_strings(char* stringArray[], unsigned short amount)
+{
+	for(unsigned short index = 0; index < amount; index += 1)
+	{
+		free(stringArray[index]);
+	}
+}
+
+signed short string_symbol_index(const char string[], unsigned short length, char symbol)
+{
+	for(unsigned short index = 0; index < length; index += 1)
+	{
+		if(symbol == string[index]) return index;
+	}
+	return INDEX_NONE;
+}
