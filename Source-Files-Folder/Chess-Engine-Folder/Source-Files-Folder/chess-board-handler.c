@@ -191,9 +191,9 @@ unsigned short move_array_amount(const Move moveArray[])
 
 Move* create_move_array(unsigned short arrayLength)
 {
-	Move* moveArray = malloc(sizeof(Move) * arrayLength);
+	Move* moveArray = malloc(sizeof(Move) * (arrayLength + 1));
 
-	for(unsigned short index = 0; index < arrayLength; index += 1)
+	for(unsigned short index = 0; index < (arrayLength + 1); index += 1)
 	{
 		moveArray[index] = MOVE_NONE;
 	}

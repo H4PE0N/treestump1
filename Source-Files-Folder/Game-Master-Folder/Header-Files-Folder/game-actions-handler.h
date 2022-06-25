@@ -6,7 +6,11 @@ bool screen_user_handler(Piece*, Info*, Kings*, Move*, Screen, bool*);
 
 bool screen_computer_handler(Piece*, Info*, Kings*, Move*, Screen);
 
-bool screen_single_game(Piece*, Info*, Kings*, Move*, Screen, bool*);
+bool screen_single_game(Piece*, Info*, Kings*, Move*, Screen, bool*, bool);
+
+bool screen_cheat_handler(Piece*, Info*, Kings*, Move*, Screen, bool*);
+
+bool screen_cheat_game(Piece*, Info*, Kings*, Move*, Screen, bool*);
 
 bool screen_multi_game(Piece*, Info*, Kings*, Move*, Screen, bool*);
 

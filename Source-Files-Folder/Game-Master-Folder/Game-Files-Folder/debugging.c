@@ -19,11 +19,11 @@ void print_chess_board(const Piece board[])
 
 			if((piece & PIECE_TEAM_MASK) == PIECE_TEAM_WHITE)
 			{
-				symbol = WHITE_SYMBOLS[type];
+				symbol = WHITE_TYPE_SYMBOLS[type];
 			}
 			else if((piece & PIECE_TEAM_MASK) == PIECE_TEAM_BLACK)
 			{
-				symbol = BLACK_SYMBOLS[type];
+				symbol = BLACK_TYPE_SYMBOLS[type];
 			}
 
 			printf("%c ", symbol);
@@ -66,6 +66,25 @@ int main(int argAmount, char* arguments[])
 	if(best_computer_move(&bestMove, board, info, kings, TEAM_WHITE, 3))
 	{
 		printf("BestMove: [%d -> %d]\n", MOVE_START_MACRO(bestMove), MOVE_STOP_MACRO(bestMove));
+	}
+
+
+	short depth = 2, amount = 20;
+
+	Move* bestMoves;
+	if(amount_engine_moves(&bestMoves, board, info, kings, INFO_TEAM_MACRO(info), depth, amount))
+	{
+		for(short index = 0; index < amount; index += 1)
+		{
+			printf("#%d (%d,%d) -> (%d,%d)\n", index + 1,
+				POINT_RANK_MACRO(MOVE_START_MACRO(bestMoves[index])),
+				POINT_FILE_MACRO(MOVE_START_MACRO(bestMoves[index])),
+				POINT_RANK_MACRO(MOVE_STOP_MACRO(bestMoves[index])),
+				POINT_FILE_MACRO(MOVE_STOP_MACRO(bestMoves[index]))
+			);
+		}
+
+		free(bestMoves);
 	}
 
 

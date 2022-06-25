@@ -1,26 +1,83 @@
 
 #include "../Header-Files-Folder/master-include-file.h"
 
-bool screen_single_game(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen, bool* inverted)
+bool screen_single_game(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen, bool* inverted, bool starting)
 {
+	Info userTeam = (starting) ? INFO_TEAM_WHITE : INFO_TEAM_BLACK;
+	Info engineTeam = info_team_enemy(userTeam);
+	if(engineTeam == INFO_TEAM_NONE) return false;
+
 	while(game_still_running(board, *info, *kings))
 	{
 		Info infoTeam = (*info & INFO_TEAM_MASK);
+		if(infoTeam == INFO_TEAM_NONE) return false;
 
 		if(!display_chess_board(screen, board, *info, *kings, moves, *inverted)) return false;
 
-		printf("[%d] is moving!\n\n", (unsigned short) infoTeam);
-
-		if(infoTeam == INFO_TEAM_WHITE)
+		if(infoTeam == userTeam)
 		{
 			if(!screen_user_handler(board, info, kings, moves, screen, inverted)) return false;
 		}
-		else if(infoTeam == INFO_TEAM_BLACK)
+		else if(infoTeam == engineTeam)
 		{
 			if(!screen_computer_handler(board, info, kings, moves, screen)) return false;
 		}
 		else return false;
 	}
+	return true;
+}
+
+bool screen_cheat_game(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen, bool* inverted)
+{
+	while(game_still_running(board, *info, *kings))
+	{
+		Info infoTeam = (*info & INFO_TEAM_MASK);
+		if(infoTeam == INFO_TEAM_NONE) return false;
+
+		if(!display_chess_board(screen, board, *info, *kings, moves, *inverted)) return false;
+
+		if(!screen_cheat_handler(board, info, kings, moves, screen, inverted)) return false;
+	}
+	return true;
+}
+
+bool screen_cheat_handler(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen, bool* inverted)
+{
+	Move move = MOVE_NONE;
+
+
+	short depth = 2, amount = 25;
+
+	Move* bestMoves;
+	if(amount_engine_moves(&bestMoves, board, *info, *kings, INFO_TEAM_MACRO(*info), depth, amount))
+	{
+		for(short index = 0; index < amount; index += 1)
+		{
+
+			if(bestMoves[index] == MOVE_NONE) printf("#%d\n", index + 1);
+
+			else printf("#%d (%d,%d) -> (%d,%d)\n", index + 1,
+				POINT_RANK_MACRO(MOVE_START_MACRO(bestMoves[index])),
+				POINT_FILE_MACRO(MOVE_START_MACRO(bestMoves[index])),
+				POINT_RANK_MACRO(MOVE_STOP_MACRO(bestMoves[index])),
+				POINT_FILE_MACRO(MOVE_STOP_MACRO(bestMoves[index]))
+			);
+		}
+
+		free(bestMoves);
+	}
+
+	if(!input_screen_move(&move, screen, board, *info, *kings, moves, inverted)) return false;
+
+
+	if(!move_chess_piece(board, info, kings, move))
+	{
+		return screen_cheat_handler(board, info, kings, moves, screen, inverted);
+	}
+
+	unsigned short movesAmount = move_array_amount(moves);
+	moves[movesAmount] = move;
+
 	return true;
 }
 
@@ -98,7 +155,7 @@ bool screen_multi_game(Piece* board, Info* info, Kings* kings, Move* moves, Scre
 bool screen_computer_handler(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen)
 {
 	unsigned short depth = 2;
-	
+
 	Move computerMove;
 
 	unsigned short team = INFO_TEAM_MACRO(*info);
