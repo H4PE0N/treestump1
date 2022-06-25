@@ -4,9 +4,9 @@
 
 bool mouse_event_check(Event, Uint8, Uint32);
 
-bool board_point_position(Rect*, Screen, Point);
+bool board_point_position(Rect*, Screen, Point, bool);
 
-Point parse_mouse_point(Event, Screen);
+Point parse_mouse_point(Event, Screen, bool);
 
 bool parse_quit_input(Event);
 

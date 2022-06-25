@@ -1,71 +1,71 @@
 
 #include "../Header-Files-Folder/screen-include-file.h"
 
-bool render_chess_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[])
+bool render_chess_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], bool inverted)
 {
-	if(!render_board_squares(screen)) return false;
+	if(!render_board_squares(screen, inverted)) return false;
 
-	if(!render_latest_move(screen, moveArray)) return false;
+	if(!render_latest_move(screen, moveArray, inverted)) return false;
 
-	if(!render_check_squares(screen, board, info, kings)) return false;
+	if(!render_check_squares(screen, board, info, kings, inverted)) return false;
 
-	if(!render_board_pieces(screen, board)) return false;
+	if(!render_board_pieces(screen, board, inverted)) return false;
 
 	return true;
 }
 
-bool render_move_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], Point point)
+bool render_move_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], Point point, bool inverted)
 {
-	if(!render_board_squares(screen)) return false;
+	if(!render_board_squares(screen, inverted)) return false;
 
-	if(!render_latest_move(screen, moveArray)) return false;
+	if(!render_latest_move(screen, moveArray, inverted)) return false;
 
-	if(!render_check_squares(screen, board, info, kings)) return false;
-
-
-	if(!render_move_squares(screen, board, info, kings, point)) return false;
+	if(!render_check_squares(screen, board, info, kings, inverted)) return false;
 
 
-	if(!render_board_pieces(screen, board)) return false;
+	if(!render_move_squares(screen, board, info, kings, point, inverted)) return false;
+
+
+	if(!render_board_pieces(screen, board, inverted)) return false;
 
 	return true;
 }
 
-bool render_mark_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], const Point markPoints[])
+bool render_mark_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], const Point markPoints[], bool inverted)
 {
-	if(!render_board_squares(screen)) return false;
+	if(!render_board_squares(screen, inverted)) return false;
 
-	if(!render_latest_move(screen, moveArray)) return false;
+	if(!render_latest_move(screen, moveArray, inverted)) return false;
 
-	if(!render_check_squares(screen, board, info, kings)) return false;
-
-
-	if(!render_board_pieces(screen, board)) return false;
+	if(!render_check_squares(screen, board, info, kings, inverted)) return false;
 
 
-	if(!render_input_marks(screen, markPoints)) return false;
+	if(!render_board_pieces(screen, board, inverted)) return false;
+
+
+	if(!render_input_marks(screen, markPoints, inverted)) return false;
 
 	return true;
 }
 
-bool render_promote_board(Screen screen, unsigned short team)
+bool render_promote_board(Screen screen, unsigned short team, bool inverted)
 {
 	Piece pieceTeam = TEAM_PIECE_MACRO(team);
 
-	if(!render_board_squares(screen)) return false;
+	if(!render_board_squares(screen, inverted)) return false;
 
-	if(!render_board_piece(screen, (PIECE_TYPE_KNIGHT | pieceTeam), PROM_KNIGHT_POINT)) return false;
+	if(!render_board_piece(screen, (PIECE_TYPE_KNIGHT | pieceTeam), PROM_KNIGHT_POINT, inverted)) return false;
 
-	if(!render_board_piece(screen, (PIECE_TYPE_BISHOP | pieceTeam), PROM_BISHOP_POINT)) return false;
+	if(!render_board_piece(screen, (PIECE_TYPE_BISHOP | pieceTeam), PROM_BISHOP_POINT, inverted)) return false;
 
-	if(!render_board_piece(screen, (PIECE_TYPE_ROOK | pieceTeam), PROM_ROOK_POINT)) return false;
+	if(!render_board_piece(screen, (PIECE_TYPE_ROOK | pieceTeam), PROM_ROOK_POINT, inverted)) return false;
 
-	if(!render_board_piece(screen, (PIECE_TYPE_QUEEN | pieceTeam), PROM_QUEEN_POINT)) return false;
+	if(!render_board_piece(screen, (PIECE_TYPE_QUEEN | pieceTeam), PROM_QUEEN_POINT, inverted)) return false;
 
 	return true;
 }
 
-bool render_result_board(Screen screen, const Piece board[], Info info, Kings kings)
+bool render_result_board(Screen screen, const Piece board[], Info info, Kings kings, bool inverted)
 {
 	unsigned short team = INFO_TEAM_MACRO(info);
 
@@ -73,24 +73,24 @@ bool render_result_board(Screen screen, const Piece board[], Info info, Kings ki
 
 	if(check_mate_ending(board, info, kings, team))
 	{
-		if(!render_team_squares(screen, winningTeam)) return false;
+		if(!render_team_squares(screen, winningTeam, inverted)) return false;
 	}
 	else if(check_draw_ending(board, info, kings, team))
 	{
-		if(!render_board_squares(screen)) return false;
+		if(!render_board_squares(screen, inverted)) return false;
 	}
 	// else: The game has not ended
 
-	if(!render_check_squares(screen, board, info, kings)) return false;
+	if(!render_check_squares(screen, board, info, kings, inverted)) return false;
 
-	if(!render_board_pieces(screen, board)) return false;
+	if(!render_board_pieces(screen, board, inverted)) return false;
 
 	return true;
 }
 
 // ############################################################################################
 
-bool render_input_marks(Screen screen, const Point markPoints[])
+bool render_input_marks(Screen screen, const Point markPoints[], bool inverted)
 {
 	Surface* image;
 
@@ -102,12 +102,12 @@ bool render_input_marks(Screen screen, const Point markPoints[])
 	{
 		Point point = markPoints[index];
 
-		if(!render_point_image(screen, image, point, 255)) return false;
+		if(!render_point_image(screen, image, point, 255, inverted)) return false;
 	}
 	return true;
 }
 
-bool render_team_squares(Screen screen, unsigned short team)
+bool render_team_squares(Screen screen, unsigned short team, bool inverted)
 {
 	Surface* squareImage;
 
@@ -115,23 +115,23 @@ bool render_team_squares(Screen screen, unsigned short team)
 
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
-		if(!render_point_image(screen, squareImage, point, 255)) return false;
+		if(!render_point_image(screen, squareImage, point, 255, inverted)) return false;
 	}
   return true;
 }
 
-bool render_board_pieces(Screen screen, const Piece board[])
+bool render_board_pieces(Screen screen, const Piece board[], bool inverted)
 {
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
 		if(!chess_piece_exists(board[point])) continue;
 
-		if(!render_board_piece(screen, board[point], point)) return false;
+		if(!render_board_piece(screen, board[point], point, inverted)) return false;
 	}
 	return true;
 }
 
-bool render_board_piece(Screen screen, Piece piece, Point point)
+bool render_board_piece(Screen screen, Piece piece, Point point, bool inverted)
 {
 	if(!chess_piece_exists(piece)) return false;
 
@@ -139,12 +139,12 @@ bool render_board_piece(Screen screen, Piece piece, Point point)
 
 	if(!extract_piece_image(&pieceImage, piece)) return false;
 
-	if(!render_point_image(screen, pieceImage, point, 255)) return false;
+	if(!render_point_image(screen, pieceImage, point, 255, inverted)) return false;
 
 	return true;
 }
 
-bool render_check_square(Screen screen, const Piece board[], Info info, Point kingPoint)
+bool render_check_square(Screen screen, const Piece board[], Info info, Point kingPoint, bool inverted)
 {
 	if(!king_inside_check(board, info, kingPoint)) return true;
 
@@ -152,24 +152,24 @@ bool render_check_square(Screen screen, const Piece board[], Info info, Point ki
 
 	if(!extract_file_image(&checkSquare, CHECK_SQUARE_FILE)) return false;
 
-	if(!render_point_image(screen, checkSquare, kingPoint, 255)) return false;
+	if(!render_point_image(screen, checkSquare, kingPoint, 255, inverted)) return false;
 
 	return true;
 }
 
-bool render_check_squares(Screen screen, const Piece board[], Info info, Kings kings)
+bool render_check_squares(Screen screen, const Piece board[], Info info, Kings kings, bool inverted)
 {
 	Point whiteKing = KINGS_WHITE_MACRO(kings);
 	Point blackKing = KINGS_BLACK_MACRO(kings);
 
-	if(!render_check_square(screen, board, info, whiteKing)) return false;
+	if(!render_check_square(screen, board, info, whiteKing, inverted)) return false;
 
-	if(!render_check_square(screen, board, info, blackKing)) return false;
+	if(!render_check_square(screen, board, info, blackKing, inverted)) return false;
 
 	return true;
 }
 
-bool render_move_squares(Screen screen, const Piece board[], Info info, Kings kings, Point point)
+bool render_move_squares(Screen screen, const Piece board[], Info info, Kings kings, Point point, bool inverted)
 {
 	if(!point_inside_board(point)) return true;
 
@@ -200,7 +200,7 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Kings ki
 	{
 		Point stopPoint = MOVE_STOP_MACRO(moveArray[index]);
 
-		if(!render_point_image(screen, moveSquare, stopPoint, 255))
+		if(!render_point_image(screen, moveSquare, stopPoint, 255, inverted))
 		{
       free(moveArray); return false;
 		}
@@ -208,7 +208,7 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Kings ki
 	free(moveArray); return true;
 }
 
-bool render_latest_move(Screen screen, const Move moveArray[])
+bool render_latest_move(Screen screen, const Move moveArray[], bool inverted)
 {
 	unsigned short moveAmount = move_array_amount(moveArray);
 
@@ -220,12 +220,12 @@ bool render_latest_move(Screen screen, const Move moveArray[])
 	if(!extract_file_image(&movedSquare, MOVED_SQUARE_FILE)) return false;
 
 
-  if(!render_board_move(screen, movedSquare, moveArray[moveAmount - 1], 255)) return false;
+  if(!render_board_move(screen, movedSquare, moveArray[moveAmount - 1], 255, inverted)) return false;
 
   return true;
 }
 
-bool render_board_squares(Screen screen)
+bool render_board_squares(Screen screen, bool inverted)
 {
 	Surface* whiteSquare, *blackSquare;
 
@@ -240,36 +240,36 @@ bool render_board_squares(Screen screen)
 
 		Surface* image = (rank + file) % 2 == 0 ? whiteSquare : blackSquare;
 
-		if(!render_point_image(screen, image, point, 255)) return false;
+		if(!render_point_image(screen, image, point, 255, inverted)) return false;
 	}
 
   return true;
 }
 
-bool render_board_move(Screen screen, Surface* moveImage, Move move, Uint8 opacity)
+bool render_board_move(Screen screen, Surface* moveImage, Move move, Uint8 opacity, bool inverted)
 {
 	Point stopPoint = MOVE_STOP_MACRO(move);
 	Point startPoint = MOVE_START_MACRO(move);
 
-	if(!render_point_image(screen, moveImage, stopPoint, opacity)) return false;
+	if(!render_point_image(screen, moveImage, stopPoint, opacity, inverted)) return false;
 
-	if(!render_point_image(screen, moveImage, startPoint, opacity)) return false;
+	if(!render_point_image(screen, moveImage, startPoint, opacity, inverted)) return false;
 
 	return true;
 }
 
-bool render_point_image(Screen screen, Surface* image, Point point, Uint8 opacity)
+bool render_point_image(Screen screen, Surface* image, Point point, Uint8 opacity, bool inverted)
 {
 	Rect position;
 
-	if(!board_point_position(&position, screen, point)) return false;
+	if(!board_point_position(&position, screen, point, inverted)) return false;
 
-	if(!render_board_image(screen.render, image, position, opacity)) return false;
+	if(!render_screen_image(screen.render, image, position, opacity)) return false;
 
 	return true;
 }
 
-bool render_board_image(Render* render, Surface* surface, Rect position, Uint8 opacity)
+bool render_screen_image(Render* render, Surface* surface, Rect position, Uint8 opacity)
 {
 	Texture* texture = NULL;
 

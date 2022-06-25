@@ -35,11 +35,13 @@ int main(int argAmount, char* arguments[])
 
 	Move* moves = create_move_array(256);
 
+	bool inverted = false;
+
 	if(strcmp(arguments[1], MULTI_KEYWORD) == 0)
 	{
-		if(screen_multi_game(board, &info, &kings, moves, screen))
+		if(screen_multi_game(board, &info, &kings, moves, screen, &inverted))
 		{
-			if(!game_result_handler(screen, board, info, kings))
+			if(!game_result_handler(screen, board, info, kings, &inverted))
 			{
 				printf("if(!game_result_handler(screen, board, info, kings))\n");
 			}
@@ -47,9 +49,9 @@ int main(int argAmount, char* arguments[])
 	}
 	else if(strcmp(arguments[1], SINGLE_KEYWORD) == 0)
 	{
-		if(screen_single_game(board, &info, &kings, moves, screen))
+		if(screen_single_game(board, &info, &kings, moves, screen, &inverted))
 		{
-			if(!game_result_handler(screen, board, info, kings))
+			if(!game_result_handler(screen, board, info, kings, &inverted))
 			{
 				printf("if(!game_result_handler(screen, board, info, kings))\n");
 			}
