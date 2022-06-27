@@ -25,12 +25,24 @@ bool split_string_delim(char* stringArray[], const char string[], unsigned short
 	return true;
 }
 
+bool merge_string_delim(char* string, char* stringArray[], unsigned short amount, const char delim[])
+{
+	if(amount < 1) return false;
+
+	for(unsigned short index = 0; index < amount; index += 1)
+	{
+		strcat(string, stringArray[index]);
+
+		if(index < (amount - 1)) strcat(string, delim);
+	}
+	return true;
+}
+
 void alloc_array_strings(char* stringArray[], unsigned short amount, unsigned short length)
 {
 	for(unsigned short index = 0; index < amount; index += 1)
 	{
-		stringArray[index] = malloc(sizeof(char) * (length + 1));
-		memset(stringArray[index], '\0', (length + 1));
+		stringArray[index] = create_char_string(length);
 	}
 }
 
@@ -49,4 +61,12 @@ signed short string_symbol_index(const char string[], unsigned short length, cha
 		if(symbol == string[index]) return index;
 	}
 	return INDEX_NONE;
+}
+
+char* create_char_string(unsigned short length)
+{
+	char* string = malloc(sizeof(char) * (length + 1));
+	memset(string, '\0', sizeof(char) * (length + 1));
+
+	return string;
 }

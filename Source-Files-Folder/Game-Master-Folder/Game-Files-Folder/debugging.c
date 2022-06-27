@@ -63,28 +63,37 @@ int main(int argAmount, char* arguments[])
 
 	Move bestMove;
 
-	if(best_computer_move(&bestMove, board, info, kings, TEAM_WHITE, 3))
+	if(best_computer_move(&bestMove, board, info, kings, TEAM_WHITE, 2))
 	{
 		printf("BestMove: [%d -> %d]\n", MOVE_START_MACRO(bestMove), MOVE_STOP_MACRO(bestMove));
 	}
 
 
-	short depth = 2, amount = 20;
+	// short depth = 2, amount = 20;
+	//
+	// Move* bestMoves;
+	// if(amount_engine_moves(&bestMoves, board, info, kings, INFO_TEAM_MACRO(info), depth, amount))
+	// {
+	// 	for(short index = 0; index < amount; index += 1)
+	// 	{
+	// 		printf("#%d (%d,%d) -> (%d,%d)\n", index + 1,
+	// 			POINT_RANK_MACRO(MOVE_START_MACRO(bestMoves[index])),
+	// 			POINT_FILE_MACRO(MOVE_START_MACRO(bestMoves[index])),
+	// 			POINT_RANK_MACRO(MOVE_STOP_MACRO(bestMoves[index])),
+	// 			POINT_FILE_MACRO(MOVE_STOP_MACRO(bestMoves[index]))
+	// 		);
+	// 	}
+	//
+	// 	free(bestMoves);
+	// }
 
-	Move* bestMoves;
-	if(amount_engine_moves(&bestMoves, board, info, kings, INFO_TEAM_MACRO(info), depth, amount))
+
+	char* fenString;
+
+	if(create_game_string(&fenString, board, info))
 	{
-		for(short index = 0; index < amount; index += 1)
-		{
-			printf("#%d (%d,%d) -> (%d,%d)\n", index + 1,
-				POINT_RANK_MACRO(MOVE_START_MACRO(bestMoves[index])),
-				POINT_FILE_MACRO(MOVE_START_MACRO(bestMoves[index])),
-				POINT_RANK_MACRO(MOVE_STOP_MACRO(bestMoves[index])),
-				POINT_FILE_MACRO(MOVE_STOP_MACRO(bestMoves[index]))
-			);
-		}
-
-		free(bestMoves);
+		printf("[ %s ]\n", fenString);
+		free(fenString);
 	}
 
 

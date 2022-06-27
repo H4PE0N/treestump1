@@ -23,6 +23,15 @@ bool screen_single_game(Piece* board, Info* info, Kings* kings, Move* moves, Scr
 			if(!screen_computer_handler(board, info, kings, moves, screen)) return false;
 		}
 		else return false;
+
+
+		char* fenString;
+
+		if(create_game_string(&fenString, board, *info))
+		{
+			printf("[ %s ]\n", fenString);
+			free(fenString);
+		}
 	}
 	return true;
 }

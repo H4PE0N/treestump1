@@ -10,4 +10,8 @@ void free_array_strings(char*[], unsigned short);
 
 signed short string_symbol_index(const char[], unsigned short, char);
 
+bool merge_string_delim(char*, char*[], unsigned short, const char[]);
+
+char* create_char_string(unsigned short);
+
 #endif
