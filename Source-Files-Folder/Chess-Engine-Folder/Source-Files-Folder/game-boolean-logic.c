@@ -98,7 +98,6 @@ bool team_pieces_movable(const Piece board[], Info info, Kings kings, unsigned s
 	return false;
 }
 
-// This function can be optimized
 bool chess_piece_movable(const Piece board[], Info info, Kings kings, Point piecePoint)
 {
 	if(!point_inside_board(piecePoint)) return false;
@@ -106,24 +105,24 @@ bool chess_piece_movable(const Piece board[], Info info, Kings kings, Point piec
 	Piece piece = board[piecePoint];
 
 	Move* moves;
-	if(piece_pattern_moves(&moves, board, piecePoint))
+	if(!piece_pattern_moves(&moves, board, piecePoint)) return false;
+
+	bool result = piece_movable_test(board, info, kings, moves, piece);
+
+	free(moves); return result;
+}
+
+bool piece_movable_test(const Piece board[], Info info, Kings kings, const Move moves[], Piece piece)
+{
+	unsigned short moveAmount = move_array_amount(moves);
+
+	for(unsigned short index = 0; index < moveAmount; index += 1)
 	{
-		unsigned short moveAmount = move_array_amount(moves);
+		Move move = moves[index];
 
-		for(unsigned short index = 0; index < moveAmount; index += 1)
-		{
-			Move move = moves[index];
+		if(!correct_move_flag(&move, piece, info)) continue;
 
-			if(!correct_move_flag(&move, piece, info)) continue;
-
-			if(move_fully_legal(board, info, kings, move))
-			{
-				free(moves);
-
-				return true;
-			}
-		}
-		free(moves);
+		if(move_fully_legal(board, info, kings, move)) return true;
 	}
 	return false;
 }

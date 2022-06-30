@@ -10,15 +10,23 @@ bool move_pattern_fits(const Piece[], Move);
 
 bool clear_moving_path(const Piece[], Move);
 
-bool moving_path_points(Point*, const Piece[], Move);
+bool testing_clear_path(const Piece[], const Point[], unsigned short, Move);
+
+bool moving_path_points(Point**, const Piece[], Move);
+
+bool moving_path_values(signed short*, signed short*, unsigned short*, Move);
 
 bool move_ability_valid(Move, Piece, Info);
 
 bool move_prevent_check(const Piece[], Info, Kings, Move);
 
+bool prevent_check_test(Piece*, Info, Kings, Move);
+
 bool move_check_handler(const Piece[], Info, Kings, Move);
 
 bool castle_prevent_check(const Piece[], Info, Kings, Move);
+
+Point castle_middle_move(Move);
 
 bool current_team_move(Info, Piece);
 
