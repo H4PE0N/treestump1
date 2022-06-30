@@ -163,7 +163,7 @@ bool screen_multi_game(Piece* board, Info* info, Kings* kings, Move* moves, Scre
 
 bool screen_computer_handler(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen)
 {
-	unsigned short depth = 2;
+	unsigned short depth = 3;
 
 	Move computerMove;
 

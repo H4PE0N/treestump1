@@ -58,6 +58,8 @@ Info info_team_enemy(Info);
 
 // ##############################################################################
 
+Move start_stop_move(Point, Point);
+
 bool move_inside_board(Move);
 
 bool move_points_team(const Piece[], Move);

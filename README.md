@@ -1,5 +1,5 @@
 # treestump
 Treestump is going to be a smart, simple and fast chess engine. The name comes from the tree in the minimax algorithm.
 
-Todo:
-When castling, there cant be check on any of the squares the king moves over
+Notes:
+move_deliver_check and move_prevent_check are almost the same

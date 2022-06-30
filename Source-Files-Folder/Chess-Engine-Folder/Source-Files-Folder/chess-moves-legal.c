@@ -35,38 +35,37 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 	return true;
 }
 
-// This function creates memory for an array of legal moves
-// The memory has to be freed after use!! OBS!
-// This function is trash, make it more specific for the pieces:
 bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Kings kings, Point piecePoint)
 {
 	if(!point_inside_board(piecePoint)) return false;
 
 	*moveArray = create_move_array(32);
-	// 32: Because the QUEEN is the one that can move the most,
-	// and she can move to 28 squares (7 horizontal, 7 vertical, 7 right diagonal, 7 left diagonal)
+	unsigned short moveAmount = 0;
 
 	Piece startPiece = board[piecePoint];
 
-	unsigned short moveAmount = 0;
-
-	for(Point stopPoint = 0; stopPoint < BOARD_LENGTH; stopPoint += 1)
+	Move* pattMoves;
+	if(piece_pattern_moves(&pattMoves, board, piecePoint))
 	{
-		// This is just a simple and easy check, that can determine if the move is un-valid,
-		// before we let the function determine if the move is valid or not:
-		Piece currentPiece = board[stopPoint];
-		if(piece_teams_team(currentPiece, startPiece)) continue;
+		unsigned short pattAmount = move_array_amount(pattMoves);
 
+		for(unsigned short index = 0; index < pattAmount; index += 1)
+		{
+			Move currentMove = pattMoves[index];
 
-		Move currentMove = (START_MOVE_MACRO(piecePoint) | STOP_MOVE_MACRO(stopPoint));
+			Point stopPoint = MOVE_STOP_MACRO(currentMove);
+			Piece stopPiece = board[stopPoint];
 
-		if(!correct_move_flag(&currentMove, startPiece, info)) continue;
+			if(piece_teams_team(stopPiece, startPiece)) continue;
 
-		if(!move_fully_legal(board, info, kings, currentMove)) continue;
+			if(!correct_move_flag(&currentMove, startPiece, info)) continue;
 
-		(*moveArray)[moveAmount++] = currentMove;
+			if(!move_fully_legal(board, info, kings, currentMove)) continue;
+
+			(*moveArray)[moveAmount++] = currentMove;
+		}
+		free(pattMoves);
 	}
-
 	return true;
 }
 

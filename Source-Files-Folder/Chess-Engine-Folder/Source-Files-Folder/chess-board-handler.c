@@ -89,7 +89,7 @@ Point rank_file_point(unsigned short rank, unsigned short file)
 
 bool point_inside_board(Point point)
 {
-	return NUMBER_IN_BOUNDS(point, 0, BOARD_LENGTH);
+	return NUMBER_IN_BOUNDS(point, 0, BOARD_LENGTH - 1);
 }
 
 bool board_points_team(const Piece board[], Point firstPoint, Point secondPoint)
@@ -177,6 +177,11 @@ bool info_team_exists(Info infoTeam)
 
 // ##############################################################################
 
+Move start_stop_move(Point start, Point stop)
+{
+	return (START_MOVE_MACRO(start) | STOP_MOVE_MACRO(stop));
+}
+
 unsigned short move_array_amount(const Move moveArray[])
 {
 	unsigned short movesAmount = 0;
@@ -189,6 +194,17 @@ unsigned short move_array_amount(const Move moveArray[])
 	return movesAmount;
 }
 
+void append_moves_array(Move* moves, const Move adding[])
+{
+	int movesAmount = move_array_amount(moves);
+	int addingAmount = move_array_amount(adding);
+
+	for(unsigned short index = 0; index < addingAmount; index += 1)
+	{
+		moves[movesAmount + index] = adding[index];
+	}
+}
+
 Move* create_move_array(unsigned short arrayLength)
 {
 	Move* moveArray = malloc(sizeof(Move) * (arrayLength + 1));
@@ -197,7 +213,6 @@ Move* create_move_array(unsigned short arrayLength)
 	{
 		moveArray[index] = MOVE_NONE;
 	}
-
 	return moveArray;
 }
 

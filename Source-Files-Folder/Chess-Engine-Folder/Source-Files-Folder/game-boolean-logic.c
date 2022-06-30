@@ -105,13 +105,25 @@ bool chess_piece_movable(const Piece board[], Info info, Kings kings, Point piec
 
 	Piece piece = board[piecePoint];
 
-	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	Move* moves;
+	if(piece_pattern_moves(&moves, board, piecePoint))
 	{
-		Move move = (START_MOVE_MACRO(piecePoint) | STOP_MOVE_MACRO(point));
+		unsigned short moveAmount = move_array_amount(moves);
 
-		if(!correct_move_flag(&move, piece, info)) continue;
+		for(unsigned short index = 0; index < moveAmount; index += 1)
+		{
+			Move move = moves[index];
 
-		if(move_fully_legal(board, info, kings, move)) return true;
+			if(!correct_move_flag(&move, piece, info)) continue;
+
+			if(move_fully_legal(board, info, kings, move))
+			{
+				free(moves);
+
+				return true;
+			}
+		}
+		free(moves);
 	}
 	return false;
 }

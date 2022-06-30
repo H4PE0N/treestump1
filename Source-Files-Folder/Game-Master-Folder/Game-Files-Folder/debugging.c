@@ -63,7 +63,7 @@ int main(int argAmount, char* arguments[])
 
 	Move bestMove;
 
-	if(best_computer_move(&bestMove, board, info, kings, TEAM_WHITE, 2))
+	if(best_computer_move(&bestMove, board, info, kings, TEAM_WHITE, 6))
 	{
 		printf("BestMove: [%d -> %d]\n", MOVE_START_MACRO(bestMove), MOVE_STOP_MACRO(bestMove));
 	}
