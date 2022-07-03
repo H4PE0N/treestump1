@@ -61,11 +61,14 @@ int main(int argAmount, char* arguments[])
 		printf("\n");
 	}
 
+	printf("INFO TEAM: %d\n", INFO_TEAM_MACRO(info));
+
+
 	unsigned short startTeam = INFO_TEAM_MACRO(info);
 
 	Move bestMove;
 
-	if(create_engine_move(&bestMove, board, info, kings, startTeam, 4))
+	if(create_engine_move(&bestMove, board, info, kings, startTeam, 5))
 	{
 		printf("BestMove: [%d -> %d]\n", MOVE_START_MACRO(bestMove), MOVE_STOP_MACRO(bestMove));
 	}

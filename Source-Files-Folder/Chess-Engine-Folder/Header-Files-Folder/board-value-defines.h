@@ -14,11 +14,14 @@ extern const signed short QUEEN_MATRIX[8][8];
 
 extern const signed short KING_MATRIX[8][8];
 
-extern const signed short PIECE_VALUES[7];
+extern const signed short PIECE_TYPE_VALUES[7];
 
-const float MATRIX_FACTOR;
+extern const signed short MATE_VALUE;
+extern const signed short DRAW_VALUE;
 
-extern const signed short MIN_BOARD_VALUE;
-extern const signed short MAX_BOARD_VALUE;
+extern const float MATRIX_FACTOR;
+
+extern const signed short MIN_STATE_VALUE;
+extern const signed short MAX_STATE_VALUE;
 
 #endif
