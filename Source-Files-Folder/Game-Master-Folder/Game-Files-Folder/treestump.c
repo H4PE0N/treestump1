@@ -47,7 +47,7 @@ int main(int argAmount, char* arguments[])
 	}
 	else if(strcmp(arguments[1], SINGLE_KEYWORD) == 0)
 	{
-		if(screen_single_game(board, &info, &kings, moves, screen, &inverted, true))
+		if(screen_single_game(board, &info, &kings, moves, screen, &inverted, false))
 		{
 			if(!game_result_handler(screen, board, info, kings, &inverted))
 			{

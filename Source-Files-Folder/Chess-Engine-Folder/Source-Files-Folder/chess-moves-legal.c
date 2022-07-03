@@ -80,6 +80,7 @@ bool team_legal_moves(Move** moveArray, const Piece board[], Info info, Kings ki
 		if(!piece_legal_moves(&addingMoves, board, info, kings, point)) continue;
 
 		unsigned short addingAmount = move_array_amount(addingMoves);
+		//printf("Point: %d Type: %d Team: %d Amount: %d\n", point, PIECE_TYPE_MACRO(board[point]), PIECE_TEAM_MACRO(board[point]), addingAmount);
 
 		for(unsigned short index = 0; index < addingAmount; index += 1)
 		{

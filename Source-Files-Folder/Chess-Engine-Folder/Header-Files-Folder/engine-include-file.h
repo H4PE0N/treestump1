@@ -24,7 +24,7 @@
 #include "string-board-parser.h"
 #include "board-value-defines.h"
 #include "create-board-value.h"
-#include "create-computer-move.h"
+#include "create-engine-move.h"
 #include "piece-pattern-moves.h"
 
 #endif

@@ -1,6 +1,8 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
+int totalMoves = 0;
+
 bool amount_engine_moves(Move** moveArray, const Piece board[], Info info, Kings kings, unsigned short team, signed short depth, unsigned short amount)
 {
 	Move* engineMoves;
@@ -146,53 +148,56 @@ bool simulate_move_value(signed short* moveValue, Piece* boardCopy, Info infoCop
 	return true;
 }
 
-bool best_computer_move(Move* move, const Piece board[], Info info, Kings kings, unsigned short team, signed short depth)
+bool create_engine_move(Move* move, const Piece board[], Info info, Kings kings, unsigned short team, signed short depth)
 {
 	if(depth <= 0) return false;
 
 	Move* moveArray;
 	if(!team_legal_moves(&moveArray, board, info, kings, team)) return false;
 
-	unsigned short movesAmount = move_array_amount(moveArray);
-
-	if(movesAmount <= 0) { free(moveArray); return false; }
+	unsigned short moveAmount = move_array_amount(moveArray);
+	if(moveAmount <= 0) { free(moveArray); return false; }
 
 	Move bestMove = moveArray[0];
 	signed short bestValue = MIN_BOARD_VALUE;
 
-	for(unsigned short index = 0; index < movesAmount; index += 1)
+	for(unsigned short index = 0; index < moveAmount; index += 1)
 	{
 		Move currentMove = moveArray[index];
 
 		short currentValue;
 		if(!chess_move_value(&currentValue, board, info, kings, (depth - 1), MIN_BOARD_VALUE, MAX_BOARD_VALUE, team, team, currentMove)) continue;
 
-		printf("CurrentMove: [%d -> %d]\tCurrentValue: %d\n", MOVE_START_MACRO(currentMove), MOVE_STOP_MACRO(currentMove), currentValue);
-
 		if(currentValue > bestValue)
 		{
 			bestMove = currentMove; bestValue = currentValue;
 		}
 	}
-	free(moveArray); *move = bestMove; return true;
+	printf("Total Moves: %d\n", totalMoves);
+
+	*move = bestMove; free(moveArray); return true;
 }
 
 unsigned short board_depth_value(const Piece board[], Info info, Kings kings, signed short depth, signed short alpha, signed short beta, unsigned short team, unsigned short currentTeam)
 {
 	if(!normal_team_exists(team) || !normal_team_exists(currentTeam)) return 0;
 
-	if(depth <= 0) return team_state_value(board, info, kings, team);
+	if(depth <= 0) {
 
+		totalMoves += 1;
+
+		return team_state_value(board, info, kings, team);
+	}
 
 	Info infoCopy = info;
 	infoCopy = ALLOC_INFO_TEAM(infoCopy, TEAM_INFO_MACRO(currentTeam));
 
 	Move* moveArray;
-	if(!team_legal_moves(&moveArray, board, infoCopy, kings, currentTeam)) return false;
+	if(!team_legal_moves(&moveArray, board, infoCopy, kings, currentTeam)) return 0;
 
-	unsigned short movesAmount = move_array_amount(moveArray);
+	unsigned short moveAmount = move_array_amount(moveArray);
 
-	if(movesAmount <= 0)
+	if(moveAmount <= 0)
 	{
 		free(moveArray);
 
@@ -201,7 +206,7 @@ unsigned short board_depth_value(const Piece board[], Info info, Kings kings, si
 
 	signed short bestValue = (currentTeam == team) ? MIN_BOARD_VALUE : MAX_BOARD_VALUE;
 
-	for(unsigned short index = 0; index < movesAmount; index += 1)
+	for(unsigned short index = 0; index < moveAmount; index += 1)
 	{
 		Move currentMove = moveArray[index];
 
@@ -210,7 +215,7 @@ unsigned short board_depth_value(const Piece board[], Info info, Kings kings, si
 
 		update_engine_vals(team, currentTeam, currentValue, &bestValue, &alpha, &beta);
 
-		if(beta <= alpha) break;
+		//if(beta <= alpha) break;
 	}
 	free(moveArray); return bestValue;
 }

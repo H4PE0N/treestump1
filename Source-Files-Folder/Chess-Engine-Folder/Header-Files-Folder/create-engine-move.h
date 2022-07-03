@@ -23,7 +23,7 @@ bool chess_move_value(signed short*, const Piece[], Info, Kings, signed short, s
 bool simulate_move_value(signed short*, Piece*, Info, Kings, signed short, short, short, unsigned short, unsigned short, Move);
 
 
-bool best_computer_move(Move*, const Piece[], Info, Kings, unsigned short, signed short);
+bool create_engine_move(Move*, const Piece[], Info, Kings, unsigned short, signed short);
 
 unsigned short board_depth_value(const Piece[], Info, Kings, signed short, signed short, signed short, unsigned short, unsigned short);
 

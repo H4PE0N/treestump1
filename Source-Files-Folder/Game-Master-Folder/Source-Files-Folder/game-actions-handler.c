@@ -163,13 +163,13 @@ bool screen_multi_game(Piece* board, Info* info, Kings* kings, Move* moves, Scre
 
 bool screen_computer_handler(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen)
 {
-	unsigned short depth = 3;
+	unsigned short depth = 6;
 
 	Move computerMove;
 
 	unsigned short team = INFO_TEAM_MACRO(*info);
 
-	if(!best_computer_move(&computerMove, board, *info, *kings, team, depth)) return false;
+	if(!create_engine_move(&computerMove, board, *info, *kings, team, depth)) return false;
 
 	if(!move_chess_piece(board, info, kings, computerMove))
 	{
