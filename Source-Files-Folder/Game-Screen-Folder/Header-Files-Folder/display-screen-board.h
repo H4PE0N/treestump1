@@ -8,7 +8,7 @@ bool display_move_board(Screen, const Piece[], Info, Kings, const Move[], Point,
 
 bool display_result_board(Screen, const Piece[], Info, Kings, bool);
 
-bool display_promote_board(Screen, unsigned short, bool);
+bool display_promote_board(Screen, unsigned short);
 
 bool display_mark_board(Screen, const Piece[], Info, Kings, const Move[], const Point[], bool);
 

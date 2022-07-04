@@ -8,7 +8,7 @@ bool render_mark_board(Screen, const Piece[], Info, Kings, const Move[], const P
 
 bool render_move_board(Screen, const Piece[], Info, Kings, const Move[], Point, bool);
 
-bool render_promote_board(Screen, unsigned short, bool);
+bool render_promote_board(Screen, unsigned short);
 
 bool render_result_board(Screen, const Piece[], Info, Kings, bool);
 
@@ -17,6 +17,8 @@ bool render_result_board(Screen, const Piece[], Info, Kings, bool);
 bool render_move_squares(Screen, const Piece[], Info, Kings, Point, bool);
 
 bool render_latest_move(Screen, const Move[], bool);
+
+bool render_engine_moves(Screen, const Move[], bool);
 
 bool render_check_squares(Screen, const Piece[], Info, Kings, bool);
 

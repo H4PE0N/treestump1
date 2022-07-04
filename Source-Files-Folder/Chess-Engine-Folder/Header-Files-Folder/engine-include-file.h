@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
+#include <limits.h>
 
 #include "chess-engine-structs.h"
 #include "engine-struct-macros.h"

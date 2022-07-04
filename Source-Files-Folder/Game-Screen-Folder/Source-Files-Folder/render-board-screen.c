@@ -48,19 +48,19 @@ bool render_mark_board(Screen screen, const Piece board[], Info info, Kings king
 	return true;
 }
 
-bool render_promote_board(Screen screen, unsigned short team, bool inverted)
+bool render_promote_board(Screen screen, unsigned short team)
 {
 	Piece pieceTeam = TEAM_PIECE_MACRO(team);
 
-	if(!render_board_squares(screen, inverted)) return false;
+	if(!render_board_squares(screen, false)) return false;
 
-	if(!render_board_piece(screen, (PIECE_TYPE_KNIGHT | pieceTeam), PROM_KNIGHT_POINT, inverted)) return false;
+	if(!render_board_piece(screen, (PIECE_TYPE_KNIGHT | pieceTeam), PROM_KNIGHT_POINT, false)) return false;
 
-	if(!render_board_piece(screen, (PIECE_TYPE_BISHOP | pieceTeam), PROM_BISHOP_POINT, inverted)) return false;
+	if(!render_board_piece(screen, (PIECE_TYPE_BISHOP | pieceTeam), PROM_BISHOP_POINT, false)) return false;
 
-	if(!render_board_piece(screen, (PIECE_TYPE_ROOK | pieceTeam), PROM_ROOK_POINT, inverted)) return false;
+	if(!render_board_piece(screen, (PIECE_TYPE_ROOK | pieceTeam), PROM_ROOK_POINT, false)) return false;
 
-	if(!render_board_piece(screen, (PIECE_TYPE_QUEEN | pieceTeam), PROM_QUEEN_POINT, inverted)) return false;
+	if(!render_board_piece(screen, (PIECE_TYPE_QUEEN | pieceTeam), PROM_QUEEN_POINT, false)) return false;
 
 	return true;
 }
@@ -223,6 +223,21 @@ bool render_latest_move(Screen screen, const Move moveArray[], bool inverted)
   if(!render_board_move(screen, movedSquare, moveArray[moveAmount - 1], 255, inverted)) return false;
 
   return true;
+}
+
+bool render_engine_moves(Screen screen, const Move engineMoves[], bool inverted)
+{
+	unsigned short moveAmount = move_array_amount(engineMoves);
+
+	Surface* movedSquare;
+
+	if(!extract_file_image(&movedSquare, MOVED_SQUARE_FILE)) return false;
+
+	for(unsigned short index = 0; index < moveAmount; index += 1)
+	{
+		if(!render_board_move(screen, movedSquare, engineMoves[index], 255, inverted)) return false;
+	}
+	return true;
 }
 
 bool render_board_squares(Screen screen, bool inverted)

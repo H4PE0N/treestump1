@@ -24,9 +24,9 @@ signed short board_pieces_value(const Piece board[])
 
 		if(!chess_piece_exists(piece)) continue;
 
-		piecesValue += chess_piece_value(piece);
+		piecesValue += chess_piece_value(piece) * PIECE_FACTOR;
 
-		piecesValue += piece_matrix_value(piece, point);
+		piecesValue += piece_matrix_value(piece, point) * MATRIX_FACTOR;
 	}
 	return piecesValue;
 }
@@ -35,9 +35,9 @@ signed short check_mate_value(const Piece board[], Info info, Kings kings)
 {
 	signed short mateValue = 0;
 
-	if(check_mate_ending(board, info, kings, TEAM_WHITE)) mateValue += MATE_VALUE;
+	if(check_mate_ending(board, info, kings, TEAM_WHITE)) mateValue -= MATE_VALUE;
 
-	if(check_mate_ending(board, info, kings, TEAM_BLACK)) mateValue -= MATE_VALUE;
+	if(check_mate_ending(board, info, kings, TEAM_BLACK)) mateValue += MATE_VALUE;
 
 	return mateValue;
 }
@@ -46,9 +46,9 @@ signed short check_draw_value(const Piece board[], Info info, Kings kings)
 {
 	signed short drawValue = 0;
 
-	if(check_draw_ending(board, info, kings, TEAM_WHITE)) drawValue += DRAW_VALUE;
+	if(check_draw_ending(board, info, kings, TEAM_WHITE)) drawValue -= DRAW_VALUE;
 
-	if(check_draw_ending(board, info, kings, TEAM_BLACK)) drawValue -= DRAW_VALUE;
+	if(check_draw_ending(board, info, kings, TEAM_BLACK)) drawValue += DRAW_VALUE;
 
 	return drawValue;
 }

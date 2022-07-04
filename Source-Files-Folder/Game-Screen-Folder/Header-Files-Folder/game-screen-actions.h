@@ -2,7 +2,7 @@
 #ifndef GAME_SCREEN_ACTIONS_H
 #define GAME_SCREEN_ACTIONS_H
 
-bool input_promote_flag(Move*, Screen, unsigned short, bool);
+bool input_promote_flag(Move*, Screen, unsigned short);
 
 bool input_mark_parser(Point*, Screen, const Piece[], Info, Kings, const Move[], Event, bool);
 

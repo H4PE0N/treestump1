@@ -14,7 +14,7 @@ bool input_screen_move(Move* move, Screen screen, const Piece board[], Info info
 	{
 		Move promoteFlag = MOVE_FLAG_NONE;
 
-		if(!input_promote_flag(&promoteFlag, screen, startTeam, *inverted)) return false;
+		if(!input_promote_flag(&promoteFlag, screen, startTeam)) return false;
 
 		if(promoteFlag == MOVE_FLAG_NONE)
 			return input_screen_move(move, screen, board, info, kings, moveArray, inverted);
@@ -44,11 +44,11 @@ bool input_legal_move(Move* move, Screen screen, const Piece board[], Info info,
 	*move = inputMove; return true;
 }
 
-bool input_promote_flag(Move* promoteFlag, Screen screen, unsigned short team, bool inverted)
+bool input_promote_flag(Move* promoteFlag, Screen screen, unsigned short team)
 {
 	*promoteFlag = MOVE_FLAG_NONE;
 
-	if(!display_promote_board(screen, team, inverted)) return false;
+	if(!display_promote_board(screen, team)) return false;
 
 	Event event;
 	while(!mouse_event_check(event, LEFT_BUTTON, BUTTON_DOWN))
@@ -57,7 +57,7 @@ bool input_promote_flag(Move* promoteFlag, Screen screen, unsigned short team, b
 
 		if(parse_quit_input(event)) return false;
 	}
-	Point piecePoint = parse_mouse_point(event, screen, inverted);
+	Point piecePoint = parse_mouse_point(event, screen, false);
 
 	parse_promote_point(promoteFlag, piecePoint); return true;
 }

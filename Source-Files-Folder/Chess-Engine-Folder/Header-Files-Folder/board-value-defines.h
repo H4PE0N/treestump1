@@ -20,6 +20,7 @@ extern const signed short MATE_VALUE;
 extern const signed short DRAW_VALUE;
 
 extern const float MATRIX_FACTOR;
+extern const float PIECE_FACTOR;
 
 extern const signed short MIN_STATE_VALUE;
 extern const signed short MAX_STATE_VALUE;

@@ -73,12 +73,13 @@ const signed short KING_MATRIX[8][8] =
 	{+20, +30, +10, +0, +0, +10, +30, +20}
 };
 
-const signed short PIECE_TYPE_VALUES[] = {0, 10, 30, 30, 50, 90, 900};
+const signed short PIECE_TYPE_VALUES[] = {0, +10, +30, +30, +50, +90, +900};
 
 const signed short MATE_VALUE = +10000;
 const signed short DRAW_VALUE = -10000;
 
-const float MATRIX_FACTOR = 0.1;
+const float MATRIX_FACTOR = 1.0;
+const float PIECE_FACTOR = 5.0;
 
-const signed short MIN_STATE_VALUE = -10000;
-const signed short MAX_STATE_VALUE = +10000;
+const signed short MIN_STATE_VALUE = -20000;
+const signed short MAX_STATE_VALUE = +20000;

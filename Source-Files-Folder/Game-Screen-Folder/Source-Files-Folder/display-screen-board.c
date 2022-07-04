@@ -19,11 +19,11 @@ bool display_result_board(Screen screen, const Piece board[], Info info, Kings k
 	SDL_RenderPresent(screen.render); return true;
 }
 
-bool display_promote_board(Screen screen, unsigned short team, bool inverted)
+bool display_promote_board(Screen screen, unsigned short team)
 {
 	SDL_RenderClear(screen.render);
 
-	if(!render_promote_board(screen, team, inverted)) return false;
+	if(!render_promote_board(screen, team)) return false;
 
 	SDL_RenderPresent(screen.render); return true;
 }

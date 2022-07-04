@@ -55,7 +55,7 @@ bool screen_cheat_handler(Piece* board, Info* info, Kings* kings, Move* moves, S
 	Move move = MOVE_NONE;
 
 
-	short depth = 2, amount = 25;
+	short depth = 3, amount = 25;
 
 	Move* bestMoves;
 	if(amount_engine_moves(&bestMoves, board, *info, *kings, INFO_TEAM_MACRO(*info), depth, amount))
@@ -65,11 +65,9 @@ bool screen_cheat_handler(Piece* board, Info* info, Kings* kings, Move* moves, S
 
 			if(bestMoves[index] == MOVE_NONE) printf("#%d\n", index + 1);
 
-			else printf("#%d (%d,%d) -> (%d,%d)\n", index + 1,
-				POINT_RANK_MACRO(MOVE_START_MACRO(bestMoves[index])),
-				POINT_FILE_MACRO(MOVE_START_MACRO(bestMoves[index])),
-				POINT_RANK_MACRO(MOVE_STOP_MACRO(bestMoves[index])),
-				POINT_FILE_MACRO(MOVE_STOP_MACRO(bestMoves[index]))
+			else printf("#%d %d -> %d\n", index + 1,
+				MOVE_START_MACRO(bestMoves[index]),
+				MOVE_STOP_MACRO(bestMoves[index])
 			);
 		}
 
