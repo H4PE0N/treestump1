@@ -8,14 +8,6 @@ void paste_engine_moves(Move**, unsigned short, const Move[]);
 
 bool sorted_engine_moves(Move**, const Piece[], Info, Kings, unsigned short, signed short);
 
-void qsort_moves_values(Move*, short*, unsigned short, unsigned short);
-
-void qsort_moves_indexis(Move*, short*, short, short, unsigned short);
-
-short partly_qsort_moves(Move*, short*, short, short, unsigned short);
-
-void qswap_moves_values(Move*, short*, short, short);
-
 bool move_array_values(short**, const Piece[], Info, Kings, unsigned short, signed short, const Move[]);
 
 short* create_short_array(unsigned short);

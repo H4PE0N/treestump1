@@ -199,3 +199,8 @@ bool create_point_string(char* pointString, Point point)
 
 	return true;
 }
+
+signed short move_offset_factor(signed short moveOffset)
+{
+	return (moveOffset == 0 ? 0 : (moveOffset > 0 ? 1 : -1) );
+}

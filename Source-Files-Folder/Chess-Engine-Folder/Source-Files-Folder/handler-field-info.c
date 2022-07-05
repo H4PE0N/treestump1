@@ -41,3 +41,12 @@ Point passant_pawn_point(Info info)
 
 	return (RANK_POINT_MACRO(pawnRank) | FILE_POINT_MACRO(pawnFile));
 }
+
+bool current_team_move(Info info, unsigned short team)
+{
+	if(!normal_team_exists(team)) return false;
+
+	unsigned short infoTeamValue = INFO_TEAM_MACRO(info);
+
+	return normal_teams_team(infoTeamValue, team);
+}

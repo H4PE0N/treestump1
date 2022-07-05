@@ -8,4 +8,6 @@ Info info_team_enemy(Info);
 
 Point passant_pawn_point(Info);
 
+bool current_team_move(Info, unsigned short);
+
 #endif

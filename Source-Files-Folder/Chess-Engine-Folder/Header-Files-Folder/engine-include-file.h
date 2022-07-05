@@ -27,10 +27,14 @@
 #include "field-parts-handler.h"
 
 #include "game-boolean-logic.h"
-#include "chess-moves-legal.h"
 #include "execute-chess-moves.h"
 #include "ident-board-moves.h"
 #include "chess-game-actions.h"
+
+#include "chess-moves-legal.h"
+#include "move-ability-valid.h"
+#include "move-pattern-fits.h"
+#include "move-prevent-check.h"
 
 #include "piece-pattern-moves.h"
 #include "move-patterns-valid.h"
@@ -38,6 +42,7 @@
 #include "board-value-defines.h"
 #include "create-board-value.h"
 #include "create-engine-move.h"
+#include "move-array-sorter.h"
 
 #include "string-board-parser.h"
 #include "create-string-board.h"

@@ -28,4 +28,6 @@ bool create_move_string(char*, const Piece[], Info, Kings, Move);
 
 bool create_point_string(char*, Point);
 
+signed short move_offset_factor(signed short);
+
 #endif
