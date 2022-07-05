@@ -1,0 +1,25 @@
+
+#ifndef ENGINE_FIELD_POINT_H
+#define ENGINE_FIELD_POINT_H
+
+typedef signed short Point;
+
+#define POINT_RANK_MACRO(POINT) ( (POINT & POINT_RANK_MASK) >> POINT_RANK_SHIFT)
+#define POINT_FILE_MACRO(POINT) ( (POINT & POINT_FILE_MASK) >> POINT_FILE_SHIFT)
+
+#define RANK_POINT_MACRO(RANK) ( (RANK << POINT_RANK_SHIFT) & POINT_RANK_MASK)
+#define FILE_POINT_MACRO(FILE) ( (FILE << POINT_FILE_SHIFT) & POINT_FILE_MASK)
+
+#define ALLOC_POINT_RANK(POINT, RANK) ( (POINT & ~POINT_RANK_MASK) | (RANK & POINT_RANK_MASK) )
+#define ALLOC_POINT_FILE(POINT, FILE) ( (POINT & ~POINT_FILE_MASK) | (FILE & POINT_FILE_MASK) )
+
+extern const Point POINT_RANK_MASK;
+extern const Point POINT_FILE_MASK;
+
+extern const unsigned short POINT_RANK_SHIFT;
+extern const unsigned short POINT_FILE_SHIFT;
+
+extern const Point POINT_NONE;
+extern const Point POINT_BLANK;
+
+#endif
