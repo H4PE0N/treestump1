@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <limits.h>
+#include <time.h>
 
 #include "engine-field-point.h"
 #include "engine-field-piece.h"

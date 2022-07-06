@@ -30,6 +30,15 @@ unsigned short move_start_team(Move move, const Piece board[])
 	return board_point_team(MOVE_START_MACRO(move), board);
 }
 
+unsigned short move_start_enemy(Move move, const Piece board[])
+{
+	if(!move_inside_board(move)) return TEAM_NONE;
+
+	unsigned short team = move_start_team(move, board);
+
+	return normal_team_enemy(team);
+}
+
 bool piece_team_exists(Piece pieceTeam)
 {
 	unsigned short team = PIECE_TEAM_MACRO(pieceTeam);

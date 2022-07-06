@@ -118,6 +118,9 @@ bool choose_engine_move(Move* move, const Piece board[], Info info, Kings kings,
 	if(moveAmount <= 0) return false;
 
 
+	totalMoves = 0;
+
+
 	Move bestMove = moveArray[0];
 	signed short bestValue = team_weight_value(MIN_STATE_VALUE, team);
 

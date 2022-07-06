@@ -74,7 +74,10 @@ int main(int argAmount, char* arguments[])
 	// }
 
 
-	short depth = 3, amount = 30;
+	long startClock = clock();
+
+
+	short depth = 3, amount = 3;
 
 	Move* bestMoves;
 	if(amount_engine_moves(&bestMoves, board, info, kings, INFO_TEAM_MACRO(info), depth, amount))
@@ -93,15 +96,22 @@ int main(int argAmount, char* arguments[])
 	}
 
 
-	char* fenString;
 
-	if(create_game_string(&fenString, board, info))
-	{
-		printf("[ %s ]\n", fenString);
-		free(fenString);
-	}
+	long stopClock = clock();
 
-	printf("Value: %d\n", board_state_value(board, info, kings));
+
+	printf("Time: %.2f\n", (double) (stopClock - startClock) / CLOCKS_PER_SEC);
+
+
+	// char* fenString;
+	//
+	// if(create_game_string(&fenString, board, info))
+	// {
+	// 	printf("[ %s ]\n", fenString);
+	// 	free(fenString);
+	// }
+	//
+	// printf("Value: %d\n", board_state_value(board, info, kings));
 
 
 	free(board);

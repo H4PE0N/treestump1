@@ -23,21 +23,19 @@ bool king_inside_check(const Piece board[], Info info, Point kingPoint)
 bool piece_does_check(const Piece board[], Info info, Point kingPoint, Point point)
 {
 	if(!point_inside_board(point)) return false;
-
 	if(!point_inside_board(kingPoint)) return false;
 
-	// If the two pieces are not enemies, they cant make check on each other.
 	if(!board_points_enemy(board, kingPoint, point)) return false;
 
+	Move move = start_stop_move(point, kingPoint);
 
-	Move move = (START_MOVE_MACRO(point) | STOP_MOVE_MACRO(kingPoint));
+	if(!move_pattern_valid(move, board[point])) return false;
 
+	return move_pattern_fits(board, move);
 
-	if(!correct_move_flag(&move, board[point], info)) return false;
-
-	if(!move_pseudo_legal(board, info, move)) return false;
-
-	return true;
+	// if(!correct_move_flag(&move, board[point], info)) return false;
+	//
+	// return move_pseudo_legal(board, info, move);
 }
 
 bool game_still_running(const Piece board[], Info info, Kings kings)
@@ -142,10 +140,7 @@ bool move_deliver_check(const Piece board[], Info info, Kings kings, Move move)
 
 bool deliver_check_test(Piece* boardCopy, Info infoCopy, Kings kingsCopy, Move move)
 {
-	Point startPoint = MOVE_START_MACRO(move);
-
-	unsigned short startTeam = PIECE_TEAM_MACRO(boardCopy[startPoint]);
-	unsigned short enemyTeam = normal_team_enemy(startTeam);
+	unsigned short enemyTeam = move_start_enemy(move, boardCopy);
 
 	if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move)) return false;
 
@@ -171,10 +166,7 @@ bool move_deliver_mate(const Piece board[], Info info, Kings kings, Move move)
 
 bool deliver_mate_test(Piece* boardCopy, Info infoCopy, Kings kingsCopy, Move move)
 {
-	Point startPoint = MOVE_START_MACRO(move);
-
-	unsigned short startTeam = PIECE_TEAM_MACRO(boardCopy[startPoint]);
-	unsigned short enemyTeam = normal_team_enemy(startTeam);
+	unsigned short enemyTeam = move_start_enemy(move, boardCopy);
 
 	if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move)) return false;
 

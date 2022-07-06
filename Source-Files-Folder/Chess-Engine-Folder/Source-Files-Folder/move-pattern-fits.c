@@ -43,9 +43,7 @@ bool passant_pattern_fits(const Piece board[], Move move)
 
 	if(start_piece_type(move, board) != PIECE_TYPE_PAWN) return false;
 
-	Point stopPoint = MOVE_STOP_MACRO(move);
-
-	return !chess_piece_exists(board[stopPoint]);
+	return !chess_piece_exists(board[MOVE_STOP_MACRO(move)]);
 }
 
 // - King is moving

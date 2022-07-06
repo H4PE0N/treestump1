@@ -23,15 +23,6 @@ bool screen_single_game(Piece* board, Info* info, Kings* kings, Move* moves, Scr
 			if(!screen_computer_handler(board, info, kings, moves, screen)) return false;
 		}
 		else return false;
-
-
-		char* fenString;
-
-		if(create_game_string(&fenString, board, *info))
-		{
-			printf("[ %s ]\n", fenString);
-			free(fenString);
-		}
 	}
 	return true;
 }
@@ -55,7 +46,7 @@ bool screen_cheat_handler(Piece* board, Info* info, Kings* kings, Move* moves, S
 	Move move = MOVE_NONE;
 
 
-	short depth = 3, amount = 25;
+	short depth = 4, amount = 3;
 
 	Move* bestMoves;
 	if(amount_engine_moves(&bestMoves, board, *info, *kings, INFO_TEAM_MACRO(*info), depth, amount))
@@ -161,7 +152,7 @@ bool screen_multi_game(Piece* board, Info* info, Kings* kings, Move* moves, Scre
 
 bool screen_computer_handler(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen)
 {
-	unsigned short depth = 4;
+	unsigned short depth = 3;
 
 	Move computerMove;
 
