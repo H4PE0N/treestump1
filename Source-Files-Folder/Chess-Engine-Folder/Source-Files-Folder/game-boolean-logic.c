@@ -131,8 +131,7 @@ bool move_deliver_check(const Piece board[], Info info, Kings kings, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	Piece* boardCopy = malloc(sizeof(Piece) * BOARD_LENGTH);
-	memcpy(boardCopy, board, sizeof(Piece) * BOARD_LENGTH);
+	Piece* boardCopy = copy_chess_board(board);
 
 	Info infoCopy = info; Kings kingsCopy = kings;
 
@@ -161,8 +160,7 @@ bool move_deliver_mate(const Piece board[], Info info, Kings kings, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	Piece* boardCopy = malloc(sizeof(Piece) * BOARD_LENGTH);
-	memcpy(boardCopy, board, sizeof(Piece) * BOARD_LENGTH);
+	Piece* boardCopy = copy_chess_board(board);
 
 	Info infoCopy = info; Kings kingsCopy = kings;
 

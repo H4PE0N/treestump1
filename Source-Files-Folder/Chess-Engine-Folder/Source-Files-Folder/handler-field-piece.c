@@ -1,6 +1,35 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
+Piece* copy_chess_board(const Piece board[])
+{
+	Piece* boardCopy = malloc(sizeof(Piece) * BOARD_LENGTH);
+	memcpy(boardCopy, board, sizeof(Piece) * BOARD_LENGTH);
+
+	return boardCopy;
+}
+
+unsigned short board_point_team(Point point, const Piece board[])
+{
+	if(!point_inside_board(point)) return TEAM_NONE;
+
+	return PIECE_TEAM_MACRO(board[point]);
+}
+
+Piece point_piece_type(Point point, const Piece board[])
+{
+	if(!point_inside_board(point)) return PIECE_TYPE_NONE;
+
+	return (board[point] & PIECE_TYPE_MASK);
+}
+
+unsigned short move_start_team(Move move, const Piece board[])
+{
+	if(!move_inside_board(move)) return TEAM_NONE;
+
+	return board_point_team(MOVE_START_MACRO(move), board);
+}
+
 bool piece_team_exists(Piece pieceTeam)
 {
 	unsigned short team = PIECE_TEAM_MACRO(pieceTeam);

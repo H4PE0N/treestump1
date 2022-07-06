@@ -5,8 +5,7 @@ bool move_chess_piece(Piece* board, Info* info, Kings* kings, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	Piece startPiece = board[MOVE_START_MACRO(move)];
-
+	Piece startPiece = move_start_piece(move, board);
 	unsigned short startTeam = PIECE_TEAM_MACRO(startPiece);
 
 	if(!current_team_move(*info, startTeam)) return false;
@@ -15,36 +14,48 @@ bool move_chess_piece(Piece* board, Info* info, Kings* kings, Move move)
 
 	if(!move_fully_legal(board, *info, *kings, move)) return false;
 
-	if(!execute_chess_move(board, info, kings, move)) return false;
-
-	return true;
+	return execute_chess_move(board, info, kings, move);
 }
 
-// This function should give the move its correct flag
-// To do that, it checks for patterns, but the move don't have to be legal,
-// this function just sets the flag that it would have had to have.
 bool correct_move_flag(Move* move, Piece piece, Info info)
 {
 	if(!move_inside_board(*move)) return false;
 
-	Move moveFlag = (*move & MOVE_FLAG_MASK);
+	Piece pieceType = MASK_PIECE_TYPE(piece);
 
-	bool flagIsPromote = (moveFlag == MOVE_FLAG_KNIGHT || moveFlag == MOVE_FLAG_BISHOP || moveFlag == MOVE_FLAG_ROOK || moveFlag == MOVE_FLAG_QUEEN);
+	Move moveFlag = MOVE_FLAG_NONE;
 
-	if(double_move_ident(info, *move, piece)) moveFlag = MOVE_FLAG_DOUBLE;
+	if(pieceType == PIECE_TYPE_PAWN)
+		moveFlag = extract_pawn_flag(*move, piece, info);
 
-	else if(castle_move_ident(info, *move, piece)) moveFlag = MOVE_FLAG_CASTLE;
+	else if(pieceType == PIECE_TYPE_KING)
+		moveFlag = extract_king_flag(*move, piece, info);
 
-	else if(passant_move_ident(info, *move, piece)) moveFlag = MOVE_FLAG_PASSANT;
+	*move = ALLOC_MOVE_FLAG(*move, moveFlag); return true;
+}
 
-	else if(promote_move_ident(info, *move, piece))
+Move extract_pawn_flag(Move move, Piece piece, Info info)
+{
+	if(double_move_ident(info, move, piece)) return MOVE_FLAG_DOUBLE;
+
+	else if(passant_move_ident(info, move, piece)) return MOVE_FLAG_PASSANT;
+
+	else if(promote_move_ident(info, move, piece))
 	{
-		if(!flagIsPromote) moveFlag = MOVE_FLAG_QUEEN;
+		Move moveFlag = MASK_MOVE_FLAG(move);
+
+		bool flagIsPromote = (moveFlag == MOVE_FLAG_KNIGHT || moveFlag == MOVE_FLAG_BISHOP || moveFlag == MOVE_FLAG_ROOK || moveFlag == MOVE_FLAG_QUEEN);
+
+		if(flagIsPromote) return moveFlag;
+
+		else return MOVE_FLAG_QUEEN;
 	}
+	else return MOVE_FLAG_NONE;
+}
 
-	else moveFlag = MOVE_FLAG_NONE;
+Move extract_king_flag(Move move, Piece piece, Info info)
+{
+	if(castle_move_ident(info, move, piece)) return MOVE_FLAG_CASTLE;
 
-	*move = ALLOC_MOVE_FLAG(*move, moveFlag);
-
-	return true;
+	else return MOVE_FLAG_NONE;
 }

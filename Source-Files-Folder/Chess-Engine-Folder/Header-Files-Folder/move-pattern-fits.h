@@ -4,6 +4,8 @@
 
 bool move_pattern_fits(const Piece[], Move);
 
+bool normal_pattern_fits(const Piece[], Move);
+
 bool clear_moving_path(const Piece[], Move);
 
 bool testing_clear_path(const Piece[], const Point[], unsigned short, Move);

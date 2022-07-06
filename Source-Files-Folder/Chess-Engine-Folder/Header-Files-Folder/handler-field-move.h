@@ -30,4 +30,10 @@ bool create_point_string(char*, Point);
 
 signed short move_offset_factor(signed short);
 
+Piece move_start_piece(Move, const Piece[]);
+
+Piece move_stop_piece(Move, const Piece[]);
+
+Piece start_piece_type(Move, const Piece[]);
+
 #endif

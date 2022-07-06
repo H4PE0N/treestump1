@@ -1,6 +1,27 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
+Piece start_piece_type(Move move, const Piece board[])
+{
+	if(!move_inside_board(move)) return PIECE_TYPE_NONE;
+
+	return point_piece_type(MOVE_START_MACRO(move), board);
+}
+
+Piece move_start_piece(Move move, const Piece board[])
+{
+	if(!move_inside_board(move)) return PIECE_NONE;
+
+	return board[MOVE_START_MACRO(move)];
+}
+
+Piece move_stop_piece(Move move, const Piece board[])
+{
+	if(!move_inside_board(move)) return PIECE_NONE;
+
+	return board[MOVE_STOP_MACRO(move)];
+}
+
 Move start_stop_move(Point start, Point stop)
 {
 	return (START_MOVE_MACRO(start) | STOP_MOVE_MACRO(stop));

@@ -13,6 +13,8 @@ typedef unsigned short Piece;
 #define ALLOC_PIECE_TEAM(PIECE, TEAM) ( (PIECE & ~PIECE_TEAM_MASK) | (TEAM & PIECE_TEAM_MASK) )
 #define ALLOC_PIECE_TYPE(PIECE, TYPE) ( (PIECE & ~PIECE_TYPE_MASK) | (TYPE & PIECE_TYPE_MASK) )
 
+#define MASK_PIECE_TYPE(PIECE) (PIECE & PIECE_TYPE_MASK)
+
 extern const Piece PIECE_TYPE_NONE;
 extern const Piece PIECE_TYPE_PAWN;
 extern const Piece PIECE_TYPE_KNIGHT;

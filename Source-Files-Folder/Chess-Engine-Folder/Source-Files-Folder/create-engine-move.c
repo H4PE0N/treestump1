@@ -81,12 +81,9 @@ bool chess_move_value(signed short* moveValue, const Piece board[], Info info, K
 	Info infoCopy = info;
 	infoCopy = ALLOC_INFO_TEAM(infoCopy, TEAM_INFO_MACRO(currentTeam));
 
-	Kings kingsCopy = kings;
+	Piece* boardCopy = copy_chess_board(board);
 
-	Piece* boardCopy = malloc(sizeof(Piece) * BOARD_LENGTH);
-	memcpy(boardCopy, board, sizeof(Piece) * BOARD_LENGTH);
-
-	bool result = simulate_move_value(moveValue, boardCopy, infoCopy, kingsCopy, currentTeam, depth, alpha, beta, move);
+	bool result = simulate_move_value(moveValue, boardCopy, infoCopy, kings, currentTeam, depth, alpha, beta, move);
 
 	free(boardCopy); return result;
 }
@@ -102,19 +99,19 @@ bool simulate_move_value(signed short* moveValue, Piece* boardCopy, Info infoCop
 	return true;
 }
 
-bool create_engine_move(Move* move, const Piece board[], Info info, Kings kings, unsigned short currentTeam, signed short depth)
+bool create_engine_move(Move* move, const Piece board[], Info info, Kings kings, unsigned short team, signed short depth)
 {
 	if(depth <= 0) return false;
 
 	Move* moveArray;
-	if(!team_legal_moves(&moveArray, board, info, kings, currentTeam)) return false;
+	if(!team_legal_moves(&moveArray, board, info, kings, team)) return false;
 
-	bool result = choose_engine_move(move, board, info, kings, currentTeam, depth, moveArray);
+	bool result = choose_engine_move(move, board, info, kings, team, depth, moveArray);
 
 	free(moveArray); return result;
 }
 
-bool choose_engine_move(Move* move, const Piece board[], Info info, Kings kings, unsigned short currentTeam, signed short depth, const Move moveArray[])
+bool choose_engine_move(Move* move, const Piece board[], Info info, Kings kings, unsigned short team, signed short depth, const Move moveArray[])
 {
 	unsigned short moveAmount = move_array_amount(moveArray);
 
@@ -122,19 +119,19 @@ bool choose_engine_move(Move* move, const Piece board[], Info info, Kings kings,
 
 
 	Move bestMove = moveArray[0];
-	signed short bestValue = team_weight_value(MIN_STATE_VALUE, currentTeam);
+	signed short bestValue = team_weight_value(MIN_STATE_VALUE, team);
 
 	for(unsigned short index = 0; index < moveAmount; index += 1)
 	{
 		Move currentMove = moveArray[index];
 
 		short currentValue;
-		if(!chess_move_value(&currentValue, board, info, kings, currentTeam, (depth - 1), MIN_STATE_VALUE, MAX_STATE_VALUE, currentMove)) continue;
+		if(!chess_move_value(&currentValue, board, info, kings, team, (depth - 1), MIN_STATE_VALUE, MAX_STATE_VALUE, currentMove)) continue;
 
 		printf("CurrentMove: [%d -> %d]\tCurrentValue: %d\n", MOVE_START_MACRO(currentMove), MOVE_STOP_MACRO(currentMove), currentValue);
 
-		if((currentTeam == TEAM_WHITE && currentValue > bestValue) ||
-			(currentTeam == TEAM_BLACK && currentValue < bestValue))
+		if((team == TEAM_WHITE && currentValue > bestValue) ||
+			(team == TEAM_BLACK && currentValue < bestValue))
 		{
 			bestMove = currentMove; bestValue = currentValue;
 		}

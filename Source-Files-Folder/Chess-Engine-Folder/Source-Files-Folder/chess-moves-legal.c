@@ -6,13 +6,9 @@
 // - the own king is not set in check
 bool move_fully_legal(const Piece board[], Info info, Kings kings, Move move)
 {
-	if(!move_inside_board(move)) return false;
-
 	if(!move_pseudo_legal(board, info, move)) return false;
 
-	if(!move_check_handler(board, info, kings, move)) return false;
-
-	return true;
+	return move_check_handler(board, info, kings, move);
 }
 
 // This function should check:
@@ -23,16 +19,13 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	Piece startPiece = board[MOVE_START_MACRO(move)];
-
+	Piece startPiece = move_start_piece(move, board);
 
 	if(!move_ability_valid(move, startPiece, info)) return false;
 
 	if(!move_pattern_valid(move, startPiece)) return false;
 
-	if(!move_pattern_fits(board, move)) return false;
-
-	return true;
+	return move_pattern_fits(board, move);
 }
 
 bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Kings kings, Point piecePoint)
@@ -52,7 +45,7 @@ bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Kings k
 	for(unsigned short index = 0; index < pattAmount; index += 1)
 	{
 		Move currentMove = pattMoves[index];
-		Piece stopPiece = board[MOVE_STOP_MACRO(currentMove)];
+		Piece stopPiece = move_stop_piece(currentMove, board);
 
 		if(piece_teams_team(stopPiece, startPiece)) continue;
 

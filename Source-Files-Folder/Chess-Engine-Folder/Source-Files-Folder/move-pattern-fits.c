@@ -11,159 +11,119 @@ bool move_pattern_fits(const Piece board[], Move move)
 {
 	if(!move_inside_board(move)) return false;
 
+	Move moveFlag = MASK_MOVE_FLAG(move);
+
+	if(moveFlag == MOVE_FLAG_CASTLE)
+		return castle_pattern_fits(board, move);
+
+	else if(moveFlag == MOVE_FLAG_PASSANT)
+		return passant_pattern_fits(board, move);
+
+	else if(start_piece_type(move, board) == PIECE_TYPE_PAWN)
+		return pawn_pattern_fits(board, move);
+
+	return normal_pattern_fits(board, move);
+}
+
+bool normal_pattern_fits(const Piece board[], Move move)
+{
+	if(!move_inside_board(move)) return false;
+
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	Piece startType = (board[startPoint] & PIECE_TYPE_MASK);
-
-
 	if(board_points_team(board, startPoint, stopPoint)) return false;
 
-
-	Move moveFlag = (move & MOVE_FLAG_MASK);
-
-	if(moveFlag == MOVE_FLAG_CASTLE)
-	{
-		return castle_pattern_fits(board, move);
-	}
-	else if(startType == PIECE_TYPE_PAWN && moveFlag == MOVE_FLAG_PASSANT)
-	{
-		return passant_pattern_fits(board, move);
-	}
-	else if(startType == PIECE_TYPE_PAWN)
-	{
-		return pawn_pattern_fits(board, move);
-	}
-
-	if(!clear_moving_path(board, move)) return false;
-
-	return true;
+	return clear_moving_path(board, move);
 }
 
 bool passant_pattern_fits(const Piece board[], Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	Point startPoint = MOVE_START_MACRO(move);
+	if(start_piece_type(move, board) != PIECE_TYPE_PAWN) return false;
+
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	Piece startType = (board[startPoint] & PIECE_TYPE_MASK);
-
-
-	if(startType != PIECE_TYPE_PAWN) return false;
-
-	if(chess_piece_exists(board[stopPoint])) return false;
-
-	// ememy pawn must be at its place
-
-	if(!clear_moving_path(board, move)) return false;
-
-	return true;
+	return !chess_piece_exists(board[stopPoint]);
 }
 
+// - King is moving
+// - Rook in the corner
+// - Clear moving path
 bool castle_pattern_fits(const Piece board[], Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	Point startPoint = MOVE_START_MACRO(move);
+	unsigned short startTeam = move_start_team(move, board);
 
-	Piece startPieceType = (board[startPoint] & PIECE_TYPE_MASK);
-	Piece startPieceTeam = (board[startPoint] & PIECE_TEAM_MASK);
-
-	unsigned short startTeam = PIECE_TEAM_MACRO(board[startPoint]);
-
-
-	if(startPieceType != PIECE_TYPE_KING) return false;
-
+	if(start_piece_type(move, board) != PIECE_TYPE_KING) return false;
 
 	Point rookPoint = castle_rook_point(move, startTeam);
-
 	if(rookPoint == POINT_NONE) return false;
 
+	Piece rookPieceType = point_piece_type(rookPoint, board);
+	unsigned short rookTeam = board_point_team(rookPoint, board);
 
-	Piece rookPieceType = (board[rookPoint] & PIECE_TYPE_MASK);
-	Piece rookPieceTeam = (board[rookPoint] & PIECE_TEAM_MASK);
+	if(rookPieceType != PIECE_TYPE_ROOK || rookTeam != startTeam) return false;
 
-	if(rookPieceType != PIECE_TYPE_ROOK || rookPieceTeam != startPieceTeam) return false;
-
-	if(!clear_moving_path(board, move)) return false;
-
-	return true;
+	return clear_moving_path(board, move);
 }
 
 Point castle_rook_point(Move move, unsigned short team)
 {
-	if(!move_inside_board(move)) return false;
+	if(!move_inside_board(move)) return POINT_NONE;
+	if(!normal_team_exists(team)) return POINT_NONE;
 
-	if(!normal_team_exists(team)) return false;
-
-	Point kingPoint = MOVE_START_MACRO(move);
-	unsigned short kingRank = POINT_RANK_MACRO(kingPoint);
-
+	unsigned short kingRank = MOVE_START_RANK(move);
 	signed short fileOffset = move_file_offset(move, team);
 
-	Point rookPoint = POINT_NONE;
-
 	if(kingRank == WHITE_START_RANK && fileOffset == KING_CASTLE_PAT)
-	{
-		rookPoint = FILE_POINT_MACRO((BOARD_FILES - 1)) | RANK_POINT_MACRO(WHITE_START_RANK);
-	}
+		return rank_file_point(WHITE_START_RANK, BOARD_FILES - 1);
+
 	else if(kingRank == WHITE_START_RANK && fileOffset == QUEEN_CASTLE_PAT)
-	{
-		rookPoint = FILE_POINT_MACRO(0) | RANK_POINT_MACRO(WHITE_START_RANK);
-	}
+		return rank_file_point(WHITE_START_RANK, 0);
+
 	else if(kingRank == BLACK_START_RANK && fileOffset == KING_CASTLE_PAT)
-	{
-		rookPoint = FILE_POINT_MACRO((BOARD_FILES - 1)) | RANK_POINT_MACRO(BLACK_START_RANK);
-	}
+		return rank_file_point(BLACK_START_RANK, BOARD_FILES - 1);
+
 	else if(kingRank == BLACK_START_RANK && fileOffset == QUEEN_CASTLE_PAT)
-	{
-		rookPoint = FILE_POINT_MACRO(0) | RANK_POINT_MACRO(BLACK_START_RANK);
-	}
-	return rookPoint;
+		return rank_file_point(BLACK_START_RANK, 0);
+
+	return POINT_NONE;
 }
 
 bool pawn_pattern_fits(const Piece board[], Move move)
 {
 	if(!move_inside_board(move)) return false;
 
+	if(start_piece_type(move, board) != PIECE_TYPE_PAWN) return false;
+
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-
-	Piece startPieceType = (board[startPoint] & PIECE_TYPE_MASK);
-
-	if(startPieceType != PIECE_TYPE_PAWN) return false;
-
-
-	unsigned short startTeam = PIECE_TEAM_MACRO(board[startPoint]);
-	unsigned short stopTeam = PIECE_TEAM_MACRO(board[stopPoint]);
+	unsigned short startTeam = board_point_team(startPoint, board);
+	unsigned short stopTeam = board_point_team(stopPoint, board);
 
 	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, startTeam));
 	signed short rankOffset = move_rank_offset(move, startTeam);
-
 
 	if(fileOffset == 0 && (rankOffset == 1 || rankOffset == 2))
 	{
 		if(chess_piece_exists(board[stopPoint])) return false;
 	}
-
 	else if(fileOffset == 1 && rankOffset == 1)
 	{
 		if(!normal_teams_enemy(startTeam, stopTeam)) return false;
 	}
-
-	if(!clear_moving_path(board, move)) return false;
-
-	return true;
+	return clear_moving_path(board, move);
 }
 
 bool clear_moving_path(const Piece board[], Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	Point startPoint = MOVE_START_MACRO(move);
-	if((board[startPoint] & PIECE_TYPE_MASK) == PIECE_TYPE_KNIGHT) return true;
+	if(start_piece_type(move, board) == PIECE_TYPE_KNIGHT) return true;
 
 	Point* movePoints;
 	if(!moving_path_points(&movePoints, move)) return false;

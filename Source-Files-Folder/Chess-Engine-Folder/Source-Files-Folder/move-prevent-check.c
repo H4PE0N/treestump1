@@ -7,11 +7,12 @@ bool move_check_handler(const Piece board[], Info info, Kings kings, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	if(castle_pattern_fits(board, move))
-	{
+	Piece piece = move_start_piece(move, board);
+
+	if(castle_move_ident(info, move, piece))
 		return castle_prevent_check(board, info, kings, move);
-	}
-	else return move_prevent_check(board, info, kings, move);
+
+	return move_prevent_check(board, info, kings, move);
 }
 
 bool castle_prevent_check(const Piece board[], Info info, Kings kings, Move castleMove)
@@ -47,8 +48,7 @@ bool move_prevent_check(const Piece board[], Info info, Kings kings, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	Piece* boardCopy = malloc(sizeof(Piece) * BOARD_LENGTH);
-	memcpy(boardCopy, board, sizeof(Piece) * BOARD_LENGTH);
+	Piece* boardCopy = copy_chess_board(board);
 
 	Info infoCopy = info; Kings kingsCopy = kings;
 
@@ -59,9 +59,7 @@ bool move_prevent_check(const Piece board[], Info info, Kings kings, Move move)
 
 bool prevent_check_test(Piece* boardCopy, Info infoCopy, Kings kingsCopy, Move move)
 {
-	Point startPoint = MOVE_START_MACRO(move);
-
-	unsigned short startTeam = PIECE_TEAM_MACRO(boardCopy[startPoint]);
+	unsigned short startTeam = move_start_team(move, boardCopy);
 
 	if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move)) return false;
 

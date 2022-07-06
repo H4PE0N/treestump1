@@ -38,6 +38,7 @@
 
 #include "piece-pattern-moves.h"
 #include "move-patterns-valid.h"
+#include "move-pattern-handler.h"
 
 #include "board-value-defines.h"
 #include "create-board-value.h"
