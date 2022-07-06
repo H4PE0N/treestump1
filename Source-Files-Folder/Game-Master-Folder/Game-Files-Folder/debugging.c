@@ -68,40 +68,18 @@ int main(int argAmount, char* arguments[])
 
 	// Move bestMove;
 	//
-	// if(create_engine_move(&bestMove, board, info, kings, startTeam, 3))
+	// if(engine_depth_move(&bestMove, board, info, kings, startTeam, 3))
 	// {
 	// 	printf("BestMove: [%d -> %d]\n", MOVE_START_MACRO(bestMove), MOVE_STOP_MACRO(bestMove));
 	// }
 
+	unsigned short seconds = 5;
 
-	long startClock = clock();
-
-
-	short depth = 3, amount = 3;
-
-	Move* bestMoves;
-	if(amount_engine_moves(&bestMoves, board, info, kings, INFO_TEAM_MACRO(info), depth, amount))
+	Move engineMove;
+	if(!optimal_depth_move(&engineMove, board, info, kings, INFO_TEAM_MACRO(info), seconds))
 	{
-		for(short index = 0; index < amount; index += 1)
-		{
-			if(bestMoves[index] == MOVE_NONE) printf("#%d -\n", index + 1);
-
-			else printf("#%d %d -> %d\n", index + 1,
-				MOVE_START_MACRO(bestMoves[index]),
-				MOVE_STOP_MACRO(bestMoves[index])
-			);
-		}
-
-		free(bestMoves);
+		printf("optimal_depth_move failed!\n");
 	}
-
-
-
-	long stopClock = clock();
-
-
-	printf("Time: %.2f\n", (double) (stopClock - startClock) / CLOCKS_PER_SEC);
-
 
 	// char* fenString;
 	//
@@ -113,6 +91,8 @@ int main(int argAmount, char* arguments[])
 	//
 	// printf("Value: %d\n", board_state_value(board, info, kings));
 
+
+	printf("free(board);\n");
 
 	free(board);
 

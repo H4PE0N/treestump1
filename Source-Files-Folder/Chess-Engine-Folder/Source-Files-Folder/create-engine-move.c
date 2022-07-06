@@ -99,7 +99,75 @@ bool simulate_move_value(signed short* moveValue, Piece* boardCopy, Info infoCop
 	return true;
 }
 
-bool create_engine_move(Move* move, const Piece board[], Info info, Kings kings, unsigned short team, signed short depth)
+bool optimal_depth_move(Move* move, const Piece board[], Info info, Kings kings, unsigned short team, unsigned short seconds)
+{
+	Move* moveArray;
+	if(!team_legal_moves(&moveArray, board, info, kings, team)) return false;
+
+	bool result = search_depths_move(move, board, info, kings, team, seconds, moveArray);
+
+	free(moveArray); return result;
+}
+
+bool search_depths_move(Move* move, const Piece board[], Info info, Kings kings, unsigned short team, unsigned short seconds, const Move moveArray[])
+{
+	long startClock = clock();
+
+	Move engineMove = MOVE_NONE;
+	signed short engineValue = 0;
+
+	for(unsigned short depth = 1;; depth += 1)
+	{
+		if(!choose_timing_move(&engineMove, &engineValue, board, info, kings, team, depth, startClock, seconds, moveArray)) return false;
+
+		if((team == TEAM_WHITE && engineValue > team_weight_value(MATE_VALUE, team)) ||
+			(team == TEAM_BLACK && engineValue < team_weight_value(MATE_VALUE, team))) break;
+
+		double time = (double) (clock() - startClock) / CLOCKS_PER_SEC;
+
+		printf("Depth: %d Time: %.2f Move: %d -> %d\n", depth, time, MOVE_START_MACRO(engineMove), MOVE_STOP_MACRO(engineMove));
+
+		if(time >= seconds) break;
+	}
+	*move = engineMove; return true;
+}
+
+bool choose_timing_move(Move* move, signed short* value, const Piece board[], Info info, Kings kings, unsigned short team, unsigned short depth, long startClock, unsigned short seconds, const Move moveArray[])
+{
+	unsigned short moveAmount = move_array_amount(moveArray);
+	if(moveAmount <= 0) return false;
+
+	Move bestMove = moveArray[0];
+	signed short bestValue = team_weight_value(MIN_STATE_VALUE, team);
+
+	for(unsigned short index = 0; index < moveAmount; index += 1)
+	{
+		double time = (double) (clock() - startClock) / CLOCKS_PER_SEC;
+		if(time >= seconds) return true;
+
+		Move currentMove = moveArray[index];
+
+		short currentValue;
+		if(!chess_move_value(&currentValue, board, info, kings, team, (depth - 1), MIN_STATE_VALUE, MAX_STATE_VALUE, currentMove)) continue;
+
+		if((team == TEAM_WHITE && currentValue > team_weight_value(MATE_VALUE, team)) ||
+			(team == TEAM_BLACK && currentValue < team_weight_value(MATE_VALUE, team)))
+		{
+			bestMove = currentMove; bestValue = currentValue;
+
+			break;
+		}
+
+		if((team == TEAM_WHITE && currentValue > bestValue) ||
+			(team == TEAM_BLACK && currentValue < bestValue))
+		{
+			bestMove = currentMove; bestValue = currentValue;
+		}
+	}
+	*move = bestMove; *value = bestValue; return true;
+}
+
+bool engine_depth_move(Move* move, const Piece board[], Info info, Kings kings, unsigned short team, signed short depth)
 {
 	if(depth <= 0) return false;
 

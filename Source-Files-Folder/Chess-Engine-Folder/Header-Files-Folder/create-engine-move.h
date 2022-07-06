@@ -32,4 +32,11 @@ void update_best_value(signed short, signed short*, unsigned short);
 
 void update_alpha_beta(signed short, signed short*, signed short*, unsigned short);
 
+
+bool optimal_depth_move(Move*, const Piece[], Info, Kings, unsigned short, unsigned short);
+
+bool search_depths_move(Move*, const Piece[], Info, Kings, unsigned short, unsigned short, const Move[]);
+
+bool choose_timing_move(Move*, signed short*, const Piece[], Info, Kings, unsigned short, unsigned short, long, unsigned short, const Move[]);
+
 #endif
