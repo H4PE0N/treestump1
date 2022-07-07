@@ -133,7 +133,7 @@ bool clear_moving_path(const Piece board[], Move move)
 	free(movePoints); return result;
 }
 
-bool testing_clear_path(const Piece board[], const Point movePoints[], unsigned short amount, Move move)
+bool testing_clear_path(const Piece board[], const Point movePoints[], short amount, Move move)
 {
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
@@ -153,8 +153,7 @@ bool moving_path_points(Point** movePoints, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	signed short rankFactor, fileFactor;
-	unsigned short moveSteps;
+	short rankFactor, fileFactor, moveSteps;
 
 	if(!moving_path_values(&rankFactor, &fileFactor, &moveSteps, move)) return false;
 
@@ -173,7 +172,7 @@ bool moving_path_points(Point** movePoints, Move move)
 	return true;
 }
 
-bool moving_path_values(signed short* rankFactor, signed short* fileFactor, unsigned short* moveSteps, Move move)
+bool moving_path_values(signed short* rankFactor, signed short* fileFactor, short* moveSteps, Move move)
 {
 	// if(!move_inside_board(move)) return false;
 

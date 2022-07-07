@@ -102,21 +102,21 @@ bool chess_piece_movable(const Piece board[], Info info, Kings kings, Point piec
 
 	Piece piece = board[piecePoint];
 
-	Move* moves;
-	if(!piece_pattern_moves(&moves, board, piecePoint)) return false;
+	Move* moveArray;
+	if(!piece_pattern_moves(&moveArray, board, piecePoint)) return false;
 
-	bool result = piece_movable_test(board, info, kings, moves, piece);
+	unsigned short moveAmount = move_array_amount(moveArray);
 
-	free(moves); return result;
+	bool result = piece_movable_test(board, info, kings, piece, moveArray, moveAmount);
+
+	free(moveArray); return result;
 }
 
-bool piece_movable_test(const Piece board[], Info info, Kings kings, const Move moves[], Piece piece)
+bool piece_movable_test(const Piece board[], Info info, Kings kings, Piece piece, const Move moveArray[], short moveAmount)
 {
-	unsigned short moveAmount = move_array_amount(moves);
-
 	for(unsigned short index = 0; index < moveAmount; index += 1)
 	{
-		Move move = moves[index];
+		Move move = moveArray[index];
 
 		if(!correct_move_flag(&move, piece, info)) continue;
 

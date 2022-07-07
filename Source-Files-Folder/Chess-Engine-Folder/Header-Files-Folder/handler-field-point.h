@@ -10,13 +10,13 @@ bool board_points_enemy(const Piece[], Point, Point);
 
 bool board_point_exists(const Piece[], Point);
 
-signed short array_point_index(const Point[], unsigned short, Point);
+short array_point_index(const Point[], short, Point);
 
-bool delete_array_point(Point*, unsigned short, short);
+bool delete_array_point(Point*, short, short);
 
 unsigned short point_array_amount(const Point[]);
 
-Point* create_point_array(unsigned short);
+Point* create_point_array(short);
 
 Point rank_file_point(unsigned short, unsigned short);
 

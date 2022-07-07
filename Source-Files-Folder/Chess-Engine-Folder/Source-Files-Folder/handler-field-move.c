@@ -35,22 +35,21 @@ unsigned short move_array_amount(const Move moveArray[])
 	{
 		movesAmount += 1;
 	}
-
 	return movesAmount;
 }
 
-void append_moves_array(Move* moves, const Move adding[])
+void append_moves_array(Move* moveArray, const Move addingArray[])
 {
-	int movesAmount = move_array_amount(moves);
-	int addingAmount = move_array_amount(adding);
+	int moveAmount = move_array_amount(moveArray);
+	int addingAmount = move_array_amount(addingArray);
 
 	for(unsigned short index = 0; index < addingAmount; index += 1)
 	{
-		moves[movesAmount + index] = adding[index];
+		moveArray[moveAmount + index] = addingArray[index];
 	}
 }
 
-Move* create_move_array(unsigned short arrayLength)
+Move* create_move_array(short arrayLength)
 {
 	Move* moveArray = malloc(sizeof(Move) * (arrayLength + 1));
 

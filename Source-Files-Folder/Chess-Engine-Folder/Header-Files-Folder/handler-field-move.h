@@ -20,7 +20,7 @@ short normal_file_offset(Move);
 
 unsigned short move_array_amount(const Move[]);
 
-Move* create_move_array(unsigned short);
+Move* create_move_array(short);
 
 signed short board_move_pattern(Move);
 

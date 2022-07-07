@@ -1,7 +1,7 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool split_string_delim(char* stringArray[], const char string[], unsigned short length, const char delim[], unsigned short amount)
+bool split_string_delim(char* stringArray[], const char string[], short length, const char delim[], short amount)
 {
 	if(amount < 1) return false;
 
@@ -25,7 +25,7 @@ bool split_string_delim(char* stringArray[], const char string[], unsigned short
 	return true;
 }
 
-bool merge_string_delim(char* string, char* stringArray[], unsigned short amount, const char delim[])
+bool merge_string_delim(char* string, char* stringArray[], short amount, const char delim[])
 {
 	if(amount < 1) return false;
 
@@ -38,7 +38,7 @@ bool merge_string_delim(char* string, char* stringArray[], unsigned short amount
 	return true;
 }
 
-void alloc_array_strings(char* stringArray[], unsigned short amount, unsigned short length)
+void alloc_array_strings(char* stringArray[], short amount, short length)
 {
 	for(unsigned short index = 0; index < amount; index += 1)
 	{
@@ -46,7 +46,7 @@ void alloc_array_strings(char* stringArray[], unsigned short amount, unsigned sh
 	}
 }
 
-void free_array_strings(char* stringArray[], unsigned short amount)
+void free_array_strings(char* stringArray[], short amount)
 {
 	for(unsigned short index = 0; index < amount; index += 1)
 	{
@@ -54,7 +54,7 @@ void free_array_strings(char* stringArray[], unsigned short amount)
 	}
 }
 
-signed short string_symbol_index(const char string[], unsigned short length, char symbol)
+short string_symbol_index(const char string[], short length, char symbol)
 {
 	for(unsigned short index = 0; index < length; index += 1)
 	{
@@ -63,7 +63,7 @@ signed short string_symbol_index(const char string[], unsigned short length, cha
 	return INDEX_NONE;
 }
 
-char* create_char_string(unsigned short length)
+char* create_char_string(short length)
 {
 	char* string = malloc(sizeof(char) * (length + 1));
 	memset(string, '\0', sizeof(char) * (length + 1));

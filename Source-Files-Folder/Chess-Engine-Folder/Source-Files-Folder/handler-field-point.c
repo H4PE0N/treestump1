@@ -43,9 +43,9 @@ bool board_point_exists(const Piece board[], Point point)
 	return chess_piece_exists(piece);
 }
 
-signed short array_point_index(const Point pointArray[], unsigned short amount, Point point)
+short array_point_index(const Point pointArray[], short amount, Point point)
 {
-	signed short pointIndex = -1;
+	short pointIndex = -1;
 
 	for(unsigned short index = 0; index < amount; index += 1)
 	{
@@ -54,7 +54,7 @@ signed short array_point_index(const Point pointArray[], unsigned short amount, 
 	return pointIndex;
 }
 
-bool delete_array_point(Point* pointArray, unsigned short amount, short delIndex)
+bool delete_array_point(Point* pointArray, short amount, short delIndex)
 {
 	if(!(delIndex >= 0 && delIndex < amount)) return false;
 
@@ -65,7 +65,7 @@ bool delete_array_point(Point* pointArray, unsigned short amount, short delIndex
 	pointArray[amount - 1] = POINT_NONE; return true;
 }
 
-Point* create_point_array(unsigned short amount)
+Point* create_point_array(short amount)
 {
 	Point* pointArray = malloc(sizeof(Point) * (amount + 1));
 

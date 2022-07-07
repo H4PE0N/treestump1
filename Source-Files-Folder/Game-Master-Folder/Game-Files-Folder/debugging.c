@@ -73,7 +73,7 @@ int main(int argAmount, char* arguments[])
 	// 	printf("BestMove: [%d -> %d]\n", MOVE_START_MACRO(bestMove), MOVE_STOP_MACRO(bestMove));
 	// }
 
-	unsigned short seconds = 5;
+	unsigned short seconds = 2;
 
 	Move engineMove;
 	if(!optimal_depth_move(&engineMove, board, info, kings, INFO_TEAM_MACRO(info), seconds))

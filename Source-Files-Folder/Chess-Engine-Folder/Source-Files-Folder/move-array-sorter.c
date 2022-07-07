@@ -1,7 +1,7 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-void qsort_moves_values(Move* moveArray, short* moveValues, unsigned short length, unsigned short team)
+void qsort_moves_values(Move* moveArray, short* moveValues, short length, unsigned short team)
 {
 	qsort_moves_indexis(moveArray, moveValues, 0, length - 1, team);
 }

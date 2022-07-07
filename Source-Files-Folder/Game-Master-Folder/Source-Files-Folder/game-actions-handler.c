@@ -154,7 +154,7 @@ bool screen_computer_handler(Piece* board, Info* info, Kings* kings, Move* moves
 {
 	unsigned short team = INFO_TEAM_MACRO(*info);
 
-	unsigned short seconds = 3;
+	unsigned short seconds = 2;
 
 	printf("-------------------------\n");
 
