@@ -12,7 +12,7 @@ bool move_check_handler(const Piece board[], Info info, Kings kings, Move move)
 	if(castle_move_ident(info, move, piece))
 		return castle_prevent_check(board, info, kings, move);
 
-	return move_prevent_check(board, info, kings, move);
+	else return move_prevent_check(board, info, kings, move);
 }
 
 bool castle_prevent_check(const Piece board[], Info info, Kings kings, Move castleMove)
@@ -63,7 +63,8 @@ bool prevent_check_test(Piece* boardCopy, Info infoCopy, Kings kingsCopy, Move m
 
 	if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move)) return false;
 
-	Point kingPoint = team_king_point(kingsCopy, startTeam);
+	//Point kingPoint = team_king_point(kingsCopy, startTeam);
+	Point kingPoint = board_king_point(boardCopy, startTeam);
 
 	if(kingPoint == POINT_NONE) return false;
 

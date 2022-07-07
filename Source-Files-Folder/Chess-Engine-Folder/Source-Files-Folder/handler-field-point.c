@@ -1,11 +1,14 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-Point board_piece_point(const Piece board[], Piece piece)
+Point board_king_point(const Piece board[], unsigned short team)
 {
-	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	Piece kingPiece = (PIECE_TYPE_KING | TEAM_PIECE_MACRO(team));
+
+	for(unsigned short index = 0; index < BOARD_LENGTH; index += 1)
 	{
-		if(board[point] == piece) return point;
+		Point point = (team == TEAM_WHITE) ? (BOARD_LENGTH - index - 1) : index;
+		if(board[point] == kingPiece) return point;
 	}
 	return POINT_NONE;
 }

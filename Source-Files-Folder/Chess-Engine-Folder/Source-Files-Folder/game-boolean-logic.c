@@ -53,7 +53,8 @@ bool check_mate_ending(const Piece board[], Info info, Kings kings, unsigned sho
 {
 	if(!normal_team_exists(team)) return false;
 
-	Point kingPoint = team_king_point(kings, team);
+	// Point kingPoint = team_king_point(kings, team);
+	Point kingPoint = board_king_point(board, team);
 
 	if(kingPoint == POINT_NONE) return false;
 
@@ -69,7 +70,8 @@ bool check_draw_ending(const Piece board[], Info info, Kings kings, unsigned sho
 {
 	if(!normal_team_exists(team)) return false;
 
-	Point kingPoint = team_king_point(kings, team);
+	// Point kingPoint = team_king_point(kings, team);
+	Point kingPoint = board_king_point(board, team);
 
 	if(kingPoint == POINT_NONE) return false;
 
@@ -144,7 +146,8 @@ bool deliver_check_test(Piece* boardCopy, Info infoCopy, Kings kingsCopy, Move m
 
 	if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move)) return false;
 
-	Point kingPoint = team_king_point(kingsCopy, enemyTeam);
+	// Point kingPoint = team_king_point(kingsCopy, enemyTeam);
+	Point kingPoint = board_king_point(boardCopy, enemyTeam);
 
 	if(kingPoint == POINT_NONE) return false;
 
@@ -170,7 +173,8 @@ bool deliver_mate_test(Piece* boardCopy, Info infoCopy, Kings kingsCopy, Move mo
 
 	if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move)) return false;
 
-	Point kingPoint = team_king_point(kingsCopy, enemyTeam);
+	// Point kingPoint = team_king_point(kingsCopy, enemyTeam);
+	Point kingPoint = board_king_point(boardCopy, enemyTeam);
 
 	if(kingPoint == POINT_NONE) return false;
 

@@ -20,6 +20,6 @@ Point* create_point_array(short);
 
 Point rank_file_point(unsigned short, unsigned short);
 
-Point board_piece_point(const Piece[], Piece);
+Point board_king_point(const Piece[], unsigned short);
 
 #endif

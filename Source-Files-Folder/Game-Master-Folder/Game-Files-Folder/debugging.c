@@ -61,10 +61,15 @@ int main(int argAmount, char* arguments[])
 		printf("\n");
 	}
 
-	printf("INFO TEAM: %d\n", INFO_TEAM_MACRO(info));
 
 
-	// unsigned short startTeam = INFO_TEAM_MACRO(info);
+
+	unsigned short startTeam = INFO_TEAM_MACRO(info);
+
+	printf("START TEAM: %d\n", startTeam);
+
+
+
 
 	// Move bestMove;
 	//
@@ -73,13 +78,17 @@ int main(int argAmount, char* arguments[])
 	// 	printf("BestMove: [%d -> %d]\n", MOVE_START_MACRO(bestMove), MOVE_STOP_MACRO(bestMove));
 	// }
 
-	unsigned short seconds = 2;
+	unsigned short seconds = 30;
 
 	Move engineMove;
-	if(!optimal_depth_move(&engineMove, board, info, kings, INFO_TEAM_MACRO(info), seconds))
+	if(!optimal_depth_move(&engineMove, board, info, kings, startTeam, seconds))
 	{
 		printf("optimal_depth_move failed!\n");
 	}
+
+	// printf("WK Point: %d BK Point: %d\n",
+	// 	board_king_point(board, TEAM_WHITE),
+	// 	board_king_point(board, TEAM_BLACK));
 
 	// char* fenString;
 	//

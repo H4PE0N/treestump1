@@ -48,8 +48,8 @@ bool parse_string_info(Info* info, char* stringArray[])
 
 bool parse_king_points(Kings* kings, const Piece board[])
 {
-	Point whitePoint = board_piece_point(board, PIECE_TEAM_WHITE | PIECE_TYPE_KING);
-	Point blackPoint = board_piece_point(board, PIECE_TEAM_BLACK | PIECE_TYPE_KING);
+	Point whitePoint = board_king_point(board, TEAM_WHITE);
+	Point blackPoint = board_king_point(board, TEAM_BLACK);
 
 	if(whitePoint == POINT_NONE || blackPoint == POINT_NONE) return false;
 
@@ -230,7 +230,7 @@ bool parse_string_board(Piece** board, const char stringToken[])
 	free_array_strings(stringArray, BOARD_RANKS); return true;
 }
 
-bool parse_board_files(Piece** board, unsigned short rank, const char rankString[], unsigned short length)
+bool parse_board_files(Piece** board, unsigned short rank, const char rankString[], short length)
 {
 	unsigned short file = 0;
 
@@ -265,7 +265,7 @@ bool parse_board_symbol(Piece** board, unsigned short rank, unsigned short* file
 	*file += 1; return true;
 }
 
-bool parse_board_blanks(Piece** board, unsigned short rank, unsigned short* file, unsigned short blanks)
+bool parse_board_blanks(Piece** board, unsigned short rank, unsigned short* file, short blanks)
 {
 	unsigned short totalFiles = (*file + blanks);
 
@@ -273,9 +273,7 @@ bool parse_board_blanks(Piece** board, unsigned short rank, unsigned short* file
 
 	for(; *file < totalFiles; *file += 1)
 	{
-		Point point = rank_file_point(rank, *file);
-
-		(*board)[point] = PIECE_NONE;
+		(*board)[rank_file_point(rank, *file)] = PIECE_NONE;
 	}
 	return true;
 }

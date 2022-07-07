@@ -30,11 +30,11 @@ bool parse_string_current(Info*, const char[]);
 
 bool parse_king_points(Kings*, const Piece[]);
 
-bool parse_board_files(Piece**, unsigned short, const char[], unsigned short);
+bool parse_board_files(Piece**, unsigned short, const char[], short);
 
 bool parse_board_symbol(Piece**, unsigned short, unsigned short*, char);
 
-bool parse_board_blanks(Piece**, unsigned short, unsigned short*, unsigned short);
+bool parse_board_blanks(Piece**, unsigned short, unsigned short*, short);
 
 
 

@@ -18,7 +18,7 @@ bool chess_move_value(signed short*, const Piece[], Info, Kings, unsigned short,
 bool simulate_move_value(signed short*, Piece*, Info, Kings, unsigned short, short, signed short, signed short, Move);
 
 
-bool create_engine_move(Move*, const Piece[], Info, Kings, unsigned short, short);
+bool engine_depth_move(Move*, const Piece[], Info, Kings, unsigned short, short);
 
 bool choose_engine_move(Move*, const Piece[], Info, Kings, unsigned short, short, const Move[], short);
 

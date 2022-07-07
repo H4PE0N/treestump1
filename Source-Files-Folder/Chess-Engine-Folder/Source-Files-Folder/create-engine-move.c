@@ -1,7 +1,10 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-int totalMoves = 0;
+long totalNodes = 0;
+long totalPassant = 0;
+long totalCastles = 0;
+long totalPromote = 0;
 
 bool amount_engine_moves(Move** moveArray, const Piece board[], Info info, Kings kings, unsigned short team, short depth, short amount)
 {
@@ -82,6 +85,19 @@ bool chess_move_value(signed short* moveValue, const Piece board[], Info info, K
 
 	Piece* boardCopy = copy_chess_board(board);
 
+	if(depth <= 0)
+	{
+		totalNodes += 1;
+
+		Move moveFlag = MASK_MOVE_FLAG(move);
+
+		if(moveFlag == MOVE_FLAG_CASTLE) totalCastles += 1;
+
+		if(moveFlag == MOVE_FLAG_PASSANT) totalPassant += 1;
+
+		if(moveFlag == MOVE_FLAG_KNIGHT || moveFlag == MOVE_FLAG_BISHOP || moveFlag == MOVE_FLAG_ROOK || moveFlag == MOVE_FLAG_QUEEN) totalPromote += 1;
+	}
+
 	bool result = simulate_move_value(moveValue, boardCopy, infoCopy, kings, currentTeam, depth, alpha, beta, move);
 
 	free(boardCopy); return result;
@@ -146,6 +162,13 @@ bool choose_timing_move(Move* move, signed short* value, const Piece board[], In
 {
 	if(moveAmount <= 0) return false;
 
+
+	totalNodes = 0;
+	totalPassant = 0;
+	totalCastles = 0;
+	totalPromote = 0;
+
+
 	Move bestMove = moveArray[0];
 	signed short bestValue = team_weight_value(MIN_STATE_VALUE, team);
 
@@ -173,6 +196,8 @@ bool choose_timing_move(Move* move, signed short* value, const Piece board[], In
 			bestMove = currentMove; bestValue = currentValue;
 		}
 	}
+	printf("Nodes=%ld Passant=%ld Castles=%ld Promote=%ld\n", totalNodes, totalPassant, totalCastles, totalPromote);
+
 	*move = bestMove; *value = bestValue; return true;
 }
 
@@ -195,7 +220,10 @@ bool choose_engine_move(Move* move, const Piece board[], Info info, Kings kings,
 	if(moveAmount <= 0) return false;
 
 
-	totalMoves = 0;
+	totalNodes = 0;
+	totalPassant = 0;
+	totalCastles = 0;
+	totalPromote = 0;
 
 
 	Move bestMove = moveArray[0];
@@ -216,19 +244,14 @@ bool choose_engine_move(Move* move, const Piece board[], Info info, Kings kings,
 			bestMove = currentMove; bestValue = currentValue;
 		}
 	}
-	printf("Total Moves: %d\n", totalMoves);
+	printf("Nodes=%ld Passant=%ld Castles=%ld Promote=%ld\n", totalNodes, totalPassant, totalCastles, totalPromote);
 
 	*move = bestMove; return true;
 }
 
 unsigned short board_depth_value(const Piece board[], Info info, Kings kings, unsigned short currentTeam, short depth, signed short alpha, signed short beta)
 {
-	if(depth <= 0)
-	{
-		totalMoves += 1;
-
-		return board_state_value(board, info, kings);
-	}
+	if(depth <= 0) return board_state_value(board, info, kings);
 
 	Move* moveArray;
 	if(!team_legal_moves(&moveArray, board, info, kings, currentTeam))
@@ -258,7 +281,7 @@ signed short choose_move_value(const Piece board[], Info info, Kings kings, unsi
 
 		update_alpha_beta(currentValue, &alpha, &beta, currentTeam);
 
-		if(beta <= alpha) break;
+		// if(beta <= alpha) break;
 	}
 	return bestValue;
 }

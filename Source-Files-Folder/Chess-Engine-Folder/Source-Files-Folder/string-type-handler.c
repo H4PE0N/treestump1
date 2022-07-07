@@ -5,7 +5,7 @@ bool split_string_delim(char* stringArray[], const char string[], short length, 
 {
 	if(amount < 1) return false;
 
-	char stringCopy[length]; strcpy(stringCopy, string);
+	char stringCopy[length + 1]; strcpy(stringCopy, string);
 
 	alloc_array_strings(stringArray, amount, length);
 
