@@ -8,6 +8,13 @@ Piece start_piece_type(Move move, const Piece board[])
 	return point_piece_type(MOVE_START_MACRO(move), board);
 }
 
+Piece stop_piece_type(Move move, const Piece board[])
+{
+	if(!move_inside_board(move)) return PIECE_TYPE_NONE;
+
+	return point_piece_type(MOVE_STOP_MACRO(move), board);
+}
+
 Piece move_start_piece(Move move, const Piece board[])
 {
 	if(!move_inside_board(move)) return PIECE_NONE;

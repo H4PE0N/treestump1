@@ -186,6 +186,32 @@ bool execute_castle_move(Piece* board, Info* info, Kings* kings, Move move)
 	return true;
 }
 
+Piece promote_piece_type(Move move)
+{
+	Move moveFlag = MASK_MOVE_FLAG(move);
+
+	if(moveFlag == MOVE_FLAG_ROOK) return PIECE_TYPE_ROOK;
+
+	else if(moveFlag == MOVE_FLAG_BISHOP) return PIECE_TYPE_BISHOP;
+
+	else if(moveFlag == MOVE_FLAG_KNIGHT) return PIECE_TYPE_KNIGHT;
+
+	else if(moveFlag == MOVE_FLAG_QUEEN) return PIECE_TYPE_QUEEN;
+
+	else return PIECE_TYPE_NONE;
+}
+
+Piece move_promote_piece(Move move, unsigned short team)
+{
+	if(!normal_team_exists(team)) return PIECE_NONE;
+
+	Piece pieceType = promote_piece_type(move);
+
+	if(pieceType == PIECE_TYPE_NONE) return PIECE_NONE;
+
+	return (TEAM_PIECE_MACRO(team) | pieceType);
+}
+
 // This function is going to execute a promotion
 // - It has to get the promotion (KNIGHT, BISHOP, ROOK, QUEEN)
 // and swap the piece at the STOP point in the move
@@ -198,25 +224,14 @@ bool execute_promote_move(Piece* board, Info* info, Kings* kings, Move move)
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
 
-	Piece pieceTeam = (board[startPoint] & PIECE_TEAM_MASK);
-	Piece pieceType = PIECE_BLANK;
+	unsigned short startTeam = move_start_team(move, board);
 
 
-	Move moveFlag = (move & MOVE_FLAG_MASK);
+	Piece promotePiece = move_promote_piece(move, startTeam);
+	if(promotePiece == PIECE_NONE) return false;
 
 
-	if(moveFlag == MOVE_FLAG_ROOK) pieceType = PIECE_TYPE_ROOK;
-
-	else if(moveFlag == MOVE_FLAG_BISHOP) pieceType = PIECE_TYPE_BISHOP;
-
-	else if(moveFlag == MOVE_FLAG_KNIGHT) pieceType = PIECE_TYPE_KNIGHT;
-
-	else if(moveFlag == MOVE_FLAG_QUEEN) pieceType = PIECE_TYPE_QUEEN;
-
-	else return false;
-
-
-	board[stopPoint] = (pieceTeam | pieceType);
+	board[stopPoint] = promotePiece;
 	board[startPoint] = PIECE_NONE;
 
 

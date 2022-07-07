@@ -36,4 +36,6 @@ Piece move_stop_piece(Move, const Piece[]);
 
 Piece start_piece_type(Move, const Piece[]);
 
+Piece stop_piece_type(Move, const Piece[]);
+
 #endif

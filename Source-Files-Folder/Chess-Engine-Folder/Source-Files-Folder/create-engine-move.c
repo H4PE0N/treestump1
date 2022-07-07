@@ -68,6 +68,64 @@ bool move_array_values(short** moveValues, const Piece board[], Info info, Kings
 	return true;
 }
 
+bool guess_order_moves(Move* moveArray, short moveAmount, const Piece board[], Info info, Kings kings)
+{
+	if(moveAmount <= 0) return false;
+
+	signed short* moveValues = NULL;
+	if(!guess_moves_values(&moveValues, moveArray, moveAmount, board, info, kings)) return false;
+
+	unsigned short team = move_start_team(moveArray[0], board);
+
+	qsort_moves_values(moveArray, moveValues, moveAmount, team);
+
+	free(moveValues); return true;
+}
+
+bool guess_moves_values(signed short** moveValues, const Move moveArray[], short moveAmount, const Piece board[], Info info, Kings kings)
+{
+	if(moveAmount <= 0) return false;
+
+	*moveValues = create_short_array(moveAmount);
+
+	for(unsigned short index = 0; index < moveAmount; index += 1)
+	{
+		Move currentMove = moveArray[index];
+
+		signed short moveValue = guess_move_value(board, info, kings, currentMove);
+
+		(*moveValues)[index] = moveValue;
+	}
+	return true;
+}
+
+signed short guess_move_value(const Piece board[], Info info, Kings kings, Move move)
+{
+	signed short moveScore = 0;
+
+	Piece startPieceType = start_piece_type(move, board);
+	Piece stopPieceType = stop_piece_type(move, board);
+
+	unsigned short startTeam = move_start_team(move, board);
+
+	if(stopPieceType != PIECE_TYPE_NONE)
+	{
+		signed short stopPieceValue = PIECE_TYPE_VALUES[stopPieceType];
+		signed short startPieceValue = PIECE_TYPE_VALUES[startPieceType];
+
+		moveScore = 10 * stopPieceValue - startPieceValue;
+	}
+
+	Move moveFlag = MASK_MOVE_FLAG(move);
+
+	if(moveFlag == MOVE_FLAG_KNIGHT || moveFlag == MOVE_FLAG_BISHOP || moveFlag == MOVE_FLAG_ROOK || moveFlag == MOVE_FLAG_QUEEN)
+	{
+		moveScore += move_promote_piece(move, startTeam);
+	}
+
+	return team_weight_value(moveScore, startTeam);
+}
+
 short* create_short_array(unsigned short length)
 {
 	short* moveValues = malloc(sizeof(short) * (length + 1));
@@ -196,9 +254,20 @@ bool choose_timing_move(Move* move, signed short* value, const Piece board[], In
 			bestMove = currentMove; bestValue = currentValue;
 		}
 	}
-	printf("Nodes=%ld Passant=%ld Castles=%ld Promote=%ld\n", totalNodes, totalPassant, totalCastles, totalPromote);
+	//printf("Nodes=%ld Passant=%ld Castles=%ld Promote=%ld\n", totalNodes, totalPassant, totalCastles, totalPromote);
 
 	*move = bestMove; *value = bestValue; return true;
+}
+
+bool ordered_legal_moves(Move** moveArray, const Piece board[], Info info, Kings kings, unsigned short team)
+{
+	if(!team_legal_moves(moveArray, board, info, kings, team)) return false;
+
+	// return true;
+
+	unsigned short moveAmount = move_array_amount(*moveArray);
+
+	return guess_order_moves(*moveArray, moveAmount, board, info, kings);
 }
 
 bool engine_depth_move(Move* move, const Piece board[], Info info, Kings kings, unsigned short team, signed short depth)
@@ -236,7 +305,7 @@ bool choose_engine_move(Move* move, const Piece board[], Info info, Kings kings,
 		short currentValue;
 		if(!chess_move_value(&currentValue, board, info, kings, team, (depth - 1), MIN_STATE_VALUE, MAX_STATE_VALUE, currentMove)) continue;
 
-		printf("CurrentMove: [%d -> %d]\tCurrentValue: %d\n", MOVE_START_MACRO(currentMove), MOVE_STOP_MACRO(currentMove), currentValue);
+		// printf("CurrentMove: [%d -> %d]\tCurrentValue: %d\n", MOVE_START_MACRO(currentMove), MOVE_STOP_MACRO(currentMove), currentValue);
 
 		if((team == TEAM_WHITE && currentValue > bestValue) ||
 			(team == TEAM_BLACK && currentValue < bestValue))
@@ -244,17 +313,17 @@ bool choose_engine_move(Move* move, const Piece board[], Info info, Kings kings,
 			bestMove = currentMove; bestValue = currentValue;
 		}
 	}
-	printf("Nodes=%ld Passant=%ld Castles=%ld Promote=%ld\n", totalNodes, totalPassant, totalCastles, totalPromote);
+	//printf("Nodes=%ld Passant=%ld Castles=%ld Promote=%ld\n", totalNodes, totalPassant, totalCastles, totalPromote);
 
 	*move = bestMove; return true;
 }
 
-unsigned short board_depth_value(const Piece board[], Info info, Kings kings, unsigned short currentTeam, short depth, signed short alpha, signed short beta)
+signed short board_depth_value(const Piece board[], Info info, Kings kings, unsigned short currentTeam, short depth, signed short alpha, signed short beta)
 {
 	if(depth <= 0) return board_state_value(board, info, kings);
 
 	Move* moveArray;
-	if(!team_legal_moves(&moveArray, board, info, kings, currentTeam))
+	if(!ordered_legal_moves(&moveArray, board, info, kings, currentTeam))
 		return board_state_value(board, info, kings);
 
 	unsigned short moveAmount = move_array_amount(moveArray);
@@ -281,7 +350,7 @@ signed short choose_move_value(const Piece board[], Info info, Kings kings, unsi
 
 		update_alpha_beta(currentValue, &alpha, &beta, currentTeam);
 
-		// if(beta <= alpha) break;
+		if(beta <= alpha) break;
 	}
 	return bestValue;
 }

@@ -23,7 +23,7 @@ bool engine_depth_move(Move*, const Piece[], Info, Kings, unsigned short, short)
 bool choose_engine_move(Move*, const Piece[], Info, Kings, unsigned short, short, const Move[], short);
 
 
-unsigned short board_depth_value(const Piece[], Info, Kings, unsigned short, short, signed short, signed short);
+signed short board_depth_value(const Piece[], Info, Kings, unsigned short, short, signed short, signed short);
 
 signed short choose_move_value(const Piece[], Info, Kings, unsigned short, short, signed short, signed short, const Move[], short);
 
@@ -38,5 +38,15 @@ bool optimal_depth_move(Move*, const Piece[], Info, Kings, unsigned short, short
 bool search_depths_move(Move*, const Piece[], Info, Kings, unsigned short, short, const Move[], short);
 
 bool choose_timing_move(Move*, signed short*, const Piece[], Info, Kings, unsigned short, short, long, short, const Move[], short);
+
+
+bool guess_moves_values(signed short**, const Move[], short, const Piece[], Info, Kings);
+
+signed short guess_move_value(const Piece[], Info, Kings, Move);
+
+bool guess_order_moves(Move*, short, const Piece[], Info, Kings);
+
+
+bool ordered_legal_moves(Move**, const Piece[], Info, Kings, unsigned short);
 
 #endif
