@@ -154,7 +154,7 @@ signed short board_move_pattern(Move move)
 	return (stopPoint - startPoint);
 }
 
-bool create_move_string(char* moveString, const Piece board[], Info info, Kings kings, Move move)
+bool create_move_string(char* moveString, const Piece board[], Info info, Move move)
 {
 	if(move == MOVE_NONE || move < 0)
 	{
@@ -188,11 +188,11 @@ bool create_move_string(char* moveString, const Piece board[], Info info, Kings 
 		printf("if(!create_point_string(stopPointString, stopPoint))\n");
 	}
 
-	if(move_deliver_mate(board, info, kings, move))
+	if(move_deliver_mate(board, info, move))
 	{
 		mateSymbol = '#';
 	}
-	else if(move_deliver_check(board, info, kings, move))
+	else if(move_deliver_check(board, info, move))
 	{
 		checkSymbol = '+';
 	}

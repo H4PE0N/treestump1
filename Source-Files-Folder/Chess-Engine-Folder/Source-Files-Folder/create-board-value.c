@@ -2,15 +2,15 @@
 #include "../Header-Files-Folder/engine-include-file.h"
 
 // The value of the board is positive for whites favour and negative for blacks favour
-signed short board_state_value(const Piece board[], Info info, Kings kings)
+signed short board_state_value(const Piece board[], Info info)
 {
 	signed short boardValue = 0;
 
 	boardValue += board_pieces_value(board);
 
-	boardValue += check_draw_value(board, info, kings);
+	boardValue += check_draw_value(board, info);
 
-	boardValue += check_mate_value(board, info, kings);
+	boardValue += check_mate_value(board, info);
 
 	return boardValue;
 }
@@ -31,24 +31,24 @@ signed short board_pieces_value(const Piece board[])
 	return piecesValue;
 }
 
-signed short check_mate_value(const Piece board[], Info info, Kings kings)
+signed short check_mate_value(const Piece board[], Info info)
 {
 	signed short mateValue = 0;
 
-	if(check_mate_ending(board, info, kings, TEAM_WHITE)) mateValue -= MATE_VALUE;
+	if(check_mate_ending(board, info, TEAM_WHITE)) mateValue -= MATE_VALUE;
 
-	if(check_mate_ending(board, info, kings, TEAM_BLACK)) mateValue += MATE_VALUE;
+	if(check_mate_ending(board, info, TEAM_BLACK)) mateValue += MATE_VALUE;
 
 	return mateValue;
 }
 
-signed short check_draw_value(const Piece board[], Info info, Kings kings)
+signed short check_draw_value(const Piece board[], Info info)
 {
 	signed short drawValue = 0;
 
-	if(check_draw_ending(board, info, kings, TEAM_WHITE)) drawValue -= DRAW_VALUE;
+	if(check_draw_ending(board, info, TEAM_WHITE)) drawValue -= DRAW_VALUE;
 
-	if(check_draw_ending(board, info, kings, TEAM_BLACK)) drawValue += DRAW_VALUE;
+	if(check_draw_ending(board, info, TEAM_BLACK)) drawValue += DRAW_VALUE;
 
 	return drawValue;
 }

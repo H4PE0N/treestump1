@@ -8,12 +8,14 @@
 // "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8"
 // "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10"
 
-void foo(const Piece board[], Info info, Kings kings)
+// "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1"
+
+void foo(const Piece board[], Info info)
 {
 	unsigned short team = INFO_TEAM_MACRO(info);
 
 	Move* moveArray = NULL;
-	if(!team_legal_moves(&moveArray, board, info, kings, team)) return;
+	if(!team_legal_moves(&moveArray, board, info, team)) return;
 
 
 	unsigned short moveAmount = move_array_amount(moveArray);
@@ -21,12 +23,12 @@ void foo(const Piece board[], Info info, Kings kings)
 
 
 	signed short* engineValues = NULL;
-	if(!move_array_values(&engineValues, board, info, kings, team, 1, moveArray, moveAmount))
+	if(!move_array_values(&engineValues, board, info, team, 1, moveArray, moveAmount))
 	{ free(moveArray); return; }
 
 
 	signed short* guessValues = NULL;
-	if(!guess_moves_values(&guessValues, moveArray, moveAmount, board, info, kings))
+	if(!guess_moves_values(&guessValues, moveArray, moveAmount, board, info))
 	{ free(moveArray); free(engineValues); return; }
 
 	for(unsigned short index = 0; index < moveAmount; index += 1)
@@ -72,12 +74,11 @@ int main(int argAmount, char* arguments[])
 
 	Piece* board;
 	Info info;
-	Kings kings;
 
 
 	char* gameString = arguments[1];
 
-	if(!parse_game_string(&board, &info, &kings, gameString))
+	if(!parse_game_string(&board, &info, gameString))
 	{
 		printf("Could not parse game string!\n");
 
@@ -98,31 +99,31 @@ int main(int argAmount, char* arguments[])
 
 
 
-	//foo(board, info, kings);
+	//foo(board, info);
 
 
 
 
 	unsigned short startTeam = INFO_TEAM_MACRO(info);
 
-	// long startClock = clock();
-	//
-	// Move bestMove;
-	//
-	// if(engine_depth_move(&bestMove, board, info, kings, startTeam, 4))
-	// {
-	// 	printf("BestMove: [%d -> %d]\n", MOVE_START_MACRO(bestMove), MOVE_STOP_MACRO(bestMove));
-	// }
-	//
-	// printf("Time: %.2f\n", (double) (clock() - startClock) / CLOCKS_PER_SEC);
+	long startClock = clock();
 
-	unsigned short seconds = 60;
+	Move bestMove;
 
-	Move engineMove;
-	if(!optimal_depth_move(&engineMove, board, info, kings, startTeam, seconds))
+	if(engine_depth_move(&bestMove, board, info, startTeam, 4))
 	{
-		printf("optimal_depth_move failed!\n");
+		printf("BestMove: [%d -> %d]\n", MOVE_START_MACRO(bestMove), MOVE_STOP_MACRO(bestMove));
 	}
+
+	printf("Time: %.2f\n", (double) (clock() - startClock) / CLOCKS_PER_SEC);
+
+	// unsigned short seconds = 2;
+	//
+	// Move engineMove;
+	// if(!optimal_depth_move(&engineMove, board, info, startTeam, seconds))
+	// {
+	// 	printf("optimal_depth_move failed!\n");
+	// }
 
 	// printf("WK Point: %d BK Point: %d\n",
 	// 	board_king_point(board, TEAM_WHITE),
@@ -136,7 +137,7 @@ int main(int argAmount, char* arguments[])
 	// 	free(fenString);
 	// }
 	//
-	// printf("Value: %d\n", board_state_value(board, info, kings));
+	// printf("Value: %d\n", board_state_value(board, info));
 
 
 	printf("free(board);\n");

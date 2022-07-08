@@ -1,7 +1,7 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool move_chess_piece(Piece* board, Info* info, Kings* kings, Move move)
+bool move_chess_piece(Piece* board, Info* info, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
@@ -12,9 +12,9 @@ bool move_chess_piece(Piece* board, Info* info, Kings* kings, Move move)
 
 	if(!correct_move_flag(&move, startPiece, *info)) return false;
 
-	if(!move_fully_legal(board, *info, *kings, move)) return false;
+	if(!move_fully_legal(board, *info, move)) return false;
 
-	return execute_chess_move(board, info, kings, move);
+	return execute_chess_move(board, info, move);
 }
 
 bool correct_move_flag(Move* move, Piece piece, Info info)

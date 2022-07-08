@@ -4,11 +4,11 @@
 // This function should check:
 // - the move is pseudo legal
 // - the own king is not set in check
-bool move_fully_legal(const Piece board[], Info info, Kings kings, Move move)
+bool move_fully_legal(const Piece board[], Info info, Move move)
 {
 	if(!move_pseudo_legal(board, info, move)) return false;
 
-	return move_check_handler(board, info, kings, move);
+	return move_check_handler(board, info, move);
 }
 
 // This function should check:
@@ -28,7 +28,7 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 	return move_pattern_fits(board, move);
 }
 
-bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Kings kings, Point piecePoint)
+bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Point piecePoint)
 {
 	if(!point_inside_board(piecePoint)) return false;
 
@@ -50,18 +50,18 @@ bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Kings k
 		if(piece_teams_team(stopPiece, startPiece)) continue;
 
 		if(!correct_move_flag(&currentMove, startPiece, info)) continue;
-		if(!move_fully_legal(board, info, kings, currentMove)) continue;
+		if(!move_fully_legal(board, info, currentMove)) continue;
 
 		(*moveArray)[moveAmount++] = currentMove;
 	}
 	free(pattMoves); return true;
 }
 
-bool team_legal_moves(Move** moveArray, const Piece board[], Info info, Kings kings, unsigned short team)
+bool team_legal_moves(Move** moveArray, const Piece board[], Info info, unsigned short team)
 {
 	if(!normal_team_exists(team)) return false;
 
-	*moveArray = create_move_array(376);
+	*moveArray = create_move_array(256);
 	unsigned short moveAmount = 0;
 
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
@@ -70,10 +70,9 @@ bool team_legal_moves(Move** moveArray, const Piece board[], Info info, Kings ki
 		if(!normal_teams_team(currentTeam, team)) continue;
 
 		Move* addingMoves;
-		if(!piece_legal_moves(&addingMoves, board, info, kings, point)) continue;
+		if(!piece_legal_moves(&addingMoves, board, info, point)) continue;
 
 		unsigned short addingAmount = move_array_amount(addingMoves);
-		//printf("Point: %d Type: %d Team: %d Amount: %d\n", point, PIECE_TYPE_MACRO(board[point]), PIECE_TEAM_MACRO(board[point]), addingAmount);
 
 		for(unsigned short index = 0; index < addingAmount; index += 1)
 		{

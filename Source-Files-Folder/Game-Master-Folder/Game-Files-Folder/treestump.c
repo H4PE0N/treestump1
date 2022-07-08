@@ -20,11 +20,10 @@ int main(int argAmount, char* arguments[])
 
 	Piece* board;
 	Info info;
-	Kings kings;
 
 	char* gameString = (argAmount >= 3) ? arguments[2] : (char*) FEN_START_STRING;
 
-	if(!parse_game_string(&board, &info, &kings, gameString))
+	if(!parse_game_string(&board, &info, gameString))
 	{
 		printf("Could not parse game string!\n");
 
@@ -37,31 +36,31 @@ int main(int argAmount, char* arguments[])
 
 	if(strcmp(arguments[1], MULTI_KEYWORD) == 0)
 	{
-		if(screen_multi_game(board, &info, &kings, moves, screen, &inverted))
+		if(screen_multi_game(board, &info, moves, screen, &inverted))
 		{
-			if(!game_result_handler(screen, board, info, kings, &inverted))
+			if(!game_result_handler(screen, board, info, &inverted))
 			{
-				printf("if(!game_result_handler(screen, board, info, kings))\n");
+				printf("if(!game_result_handler(screen, board, info))\n");
 			}
 		}
 	}
 	else if(strcmp(arguments[1], SINGLE_KEYWORD) == 0)
 	{
-		if(screen_single_game(board, &info, &kings, moves, screen, &inverted, true))
+		if(screen_single_game(board, &info, moves, screen, &inverted, true))
 		{
-			if(!game_result_handler(screen, board, info, kings, &inverted))
+			if(!game_result_handler(screen, board, info, &inverted))
 			{
-				printf("if(!game_result_handler(screen, board, info, kings))\n");
+				printf("if(!game_result_handler(screen, board, info))\n");
 			}
 		}
 	}
 	else if(strcmp(arguments[1], CHEAT_KEYWORD) == 0)
 	{
-		if(screen_cheat_game(board, &info, &kings, moves, screen, &inverted))
+		if(screen_cheat_game(board, &info, moves, screen, &inverted))
 		{
-			if(!game_result_handler(screen, board, info, kings, &inverted))
+			if(!game_result_handler(screen, board, info, &inverted))
 			{
-				printf("if(!game_result_handler(screen, board, info, kings))\n");
+				printf("if(!game_result_handler(screen, board, info))\n");
 			}
 		}
 	}

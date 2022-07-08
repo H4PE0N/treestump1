@@ -1,7 +1,7 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool parse_game_string(Piece** board, Info* info, Kings* kings, const char fenString[])
+bool parse_game_string(Piece** board, Info* info, const char fenString[])
 {
 	unsigned short stringLength = strlen(fenString);
 
@@ -9,23 +9,20 @@ bool parse_game_string(Piece** board, Info* info, Kings* kings, const char fenSt
 
 	if(!split_string_delim(stringArray, fenString, stringLength, FEN_STRING_DELIM, FEN_STRING_PARTS)) return false;
 
-	bool parseResult = parse_string_array(board, info, kings, stringArray);
+	bool parseResult = parse_string_array(board, info, stringArray);
 
 	free_array_strings(stringArray, FEN_STRING_PARTS);
 
 	return parseResult;
 }
 
-bool parse_string_array(Piece** board, Info* info, Kings* kings, char* stringArray[])
+bool parse_string_array(Piece** board, Info* info, char* stringArray[])
 {
 	*info = INFO_BLANK;
 
 	if(!parse_string_board(board, stringArray[0])) return false;
 
 	if(!parse_string_info(info, stringArray))
-	{ free(*board); return false; }
-
-	if(!parse_king_points(kings, *board))
 	{ free(*board); return false; }
 
 	return true;
@@ -42,19 +39,6 @@ bool parse_string_info(Info* info, char* stringArray[])
 	if(!parse_string_counter(info, stringArray[4])) return false;
 
 	if(!parse_string_turns(info, stringArray[5])) return false;
-
-	return true;
-}
-
-bool parse_king_points(Kings* kings, const Piece board[])
-{
-	Point whitePoint = board_king_point(board, TEAM_WHITE);
-	Point blackPoint = board_king_point(board, TEAM_BLACK);
-
-	if(whitePoint == POINT_NONE || blackPoint == POINT_NONE) return false;
-
-	*kings = ALLOC_KINGS_WHITE(*kings, WHITE_KINGS_MACRO(whitePoint));
-	*kings = ALLOC_KINGS_BLACK(*kings, BLACK_KINGS_MACRO(blackPoint));
 
 	return true;
 }

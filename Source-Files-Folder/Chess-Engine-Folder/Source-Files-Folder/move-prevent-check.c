@@ -3,19 +3,19 @@
 
 // This function should check if the inputted move prevents check.
 // It can do that by executing the move, and see if the king is in check
-bool move_check_handler(const Piece board[], Info info, Kings kings, Move move)
+bool move_check_handler(const Piece board[], Info info, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
 	Piece piece = move_start_piece(move, board);
 
 	if(castle_move_ident(info, move, piece))
-		return castle_prevent_check(board, info, kings, move);
+		return castle_prevent_check(board, info, move);
 
-	else return move_prevent_check(board, info, kings, move);
+	else return move_prevent_check(board, info, move);
 }
 
-bool castle_prevent_check(const Piece board[], Info info, Kings kings, Move castleMove)
+bool castle_prevent_check(const Piece board[], Info info, Move castleMove)
 {
 	if(!move_inside_board(castleMove)) return false;
 
@@ -25,9 +25,9 @@ bool castle_prevent_check(const Piece board[], Info info, Kings kings, Move cast
 
 	Move middleMove = castle_middle_move(castleMove);
 
-	if(!move_prevent_check(board, info, kings, middleMove)) return false;
+	if(!move_prevent_check(board, info, middleMove)) return false;
 
-	return move_prevent_check(board, info, kings, castleMove);
+	return move_prevent_check(board, info, castleMove);
 }
 
 Point castle_middle_move(Move castleMove)
@@ -44,26 +44,25 @@ Point castle_middle_move(Move castleMove)
 	return start_stop_move(kingPoint, middlePoint);
 }
 
-bool move_prevent_check(const Piece board[], Info info, Kings kings, Move move)
+bool move_prevent_check(const Piece board[], Info info, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
 	Piece* boardCopy = copy_chess_board(board);
 
-	Info infoCopy = info; Kings kingsCopy = kings;
+	Info infoCopy = info;
 
-	bool result = prevent_check_test(boardCopy, infoCopy, kingsCopy, move);
+	bool result = prevent_check_test(boardCopy, infoCopy, move);
 
 	free(boardCopy); return result;
 }
 
-bool prevent_check_test(Piece* boardCopy, Info infoCopy, Kings kingsCopy, Move move)
+bool prevent_check_test(Piece* boardCopy, Info infoCopy, Move move)
 {
 	unsigned short startTeam = move_start_team(move, boardCopy);
 
-	if(!execute_chess_move(boardCopy, &infoCopy, &kingsCopy, move)) return false;
+	if(!execute_chess_move(boardCopy, &infoCopy, move)) return false;
 
-	//Point kingPoint = team_king_point(kingsCopy, startTeam);
 	Point kingPoint = board_king_point(boardCopy, startTeam);
 
 	if(kingPoint == POINT_NONE) return false;

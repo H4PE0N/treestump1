@@ -1,47 +1,47 @@
 
 #include "../Header-Files-Folder/master-include-file.h"
 
-bool screen_single_game(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen, bool* inverted, bool starting)
+bool screen_single_game(Piece* board, Info* info, Move* moves, Screen screen, bool* inverted, bool starting)
 {
 	Info userTeam = (starting) ? INFO_TEAM_WHITE : INFO_TEAM_BLACK;
 	Info engineTeam = info_team_enemy(userTeam);
 	if(engineTeam == INFO_TEAM_NONE) return false;
 
-	while(game_still_running(board, *info, *kings))
+	while(game_still_running(board, *info))
 	{
 		Info infoTeam = (*info & INFO_TEAM_MASK);
 		if(infoTeam == INFO_TEAM_NONE) return false;
 
-		if(!display_chess_board(screen, board, *info, *kings, moves, *inverted)) return false;
+		if(!display_chess_board(screen, board, *info, moves, *inverted)) return false;
 
 		if(infoTeam == userTeam)
 		{
-			if(!screen_user_handler(board, info, kings, moves, screen, inverted)) return false;
+			if(!screen_user_handler(board, info, moves, screen, inverted)) return false;
 		}
 		else if(infoTeam == engineTeam)
 		{
-			if(!screen_computer_handler(board, info, kings, moves, screen)) return false;
+			if(!screen_computer_handler(board, info, moves, screen)) return false;
 		}
 		else return false;
 	}
 	return true;
 }
 
-bool screen_cheat_game(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen, bool* inverted)
+bool screen_cheat_game(Piece* board, Info* info, Move* moves, Screen screen, bool* inverted)
 {
-	while(game_still_running(board, *info, *kings))
+	while(game_still_running(board, *info))
 	{
 		Info infoTeam = (*info & INFO_TEAM_MASK);
 		if(infoTeam == INFO_TEAM_NONE) return false;
 
-		if(!display_chess_board(screen, board, *info, *kings, moves, *inverted)) return false;
+		if(!display_chess_board(screen, board, *info, moves, *inverted)) return false;
 
-		if(!screen_cheat_handler(board, info, kings, moves, screen, inverted)) return false;
+		if(!screen_cheat_handler(board, info, moves, screen, inverted)) return false;
 	}
 	return true;
 }
 
-bool screen_cheat_handler(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen, bool* inverted)
+bool screen_cheat_handler(Piece* board, Info* info, Move* moves, Screen screen, bool* inverted)
 {
 	Move move = MOVE_NONE;
 
@@ -49,7 +49,7 @@ bool screen_cheat_handler(Piece* board, Info* info, Kings* kings, Move* moves, S
 	short depth = 4, amount = 3;
 
 	Move* bestMoves;
-	if(amount_engine_moves(&bestMoves, board, *info, *kings, INFO_TEAM_MACRO(*info), depth, amount))
+	if(amount_engine_moves(&bestMoves, board, *info, INFO_TEAM_MACRO(*info), depth, amount))
 	{
 		for(short index = 0; index < amount; index += 1)
 		{
@@ -65,12 +65,12 @@ bool screen_cheat_handler(Piece* board, Info* info, Kings* kings, Move* moves, S
 		free(bestMoves);
 	}
 
-	if(!input_screen_move(&move, screen, board, *info, *kings, moves, inverted)) return false;
+	if(!input_screen_move(&move, screen, board, *info, moves, inverted)) return false;
 
 
-	if(!move_chess_piece(board, info, kings, move))
+	if(!move_chess_piece(board, info, move))
 	{
-		return screen_cheat_handler(board, info, kings, moves, screen, inverted);
+		return screen_cheat_handler(board, info, moves, screen, inverted);
 	}
 
 	unsigned short movesAmount = move_array_amount(moves);
@@ -79,15 +79,14 @@ bool screen_cheat_handler(Piece* board, Info* info, Kings* kings, Move* moves, S
 	return true;
 }
 
-bool screen_multi_game(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen, bool* inverted)
+bool screen_multi_game(Piece* board, Info* info, Move* moves, Screen screen, bool* inverted)
 {
 	char whiteMoveString[10];
 	char blackMoveString[10];
 
-	while(game_still_running(board, *info, *kings))
+	while(game_still_running(board, *info, ))
 	{
 		Info infoCopy = *info;
-		Kings kingsCopy = *kings;
 
 		Piece* boardCopy = malloc(sizeof(Piece) * BOARD_LENGTH);
 		memcpy(boardCopy, board, sizeof(Piece) * BOARD_LENGTH);
@@ -103,16 +102,16 @@ bool screen_multi_game(Piece* board, Info* info, Kings* kings, Move* moves, Scre
 		}
 
 
-		if(!display_chess_board(screen, board, *info, *kings, moves, *inverted))
+		if(!display_chess_board(screen, board, *info, moves, *inverted))
 		{
 			free(boardCopy);
 
 			return false;
 		}
 
-		if(!screen_user_handler(board, info, kings, moves, screen, inverted))
+		if(!screen_user_handler(board, info, moves, screen, inverted))
 		{
-			printf("if(!screen_user_handler(board, info, kings, moves, screen))\n");
+			printf("if(!screen_user_handler(board, info, moves, screen))\n");
 
 			free(boardCopy);
 
@@ -127,16 +126,16 @@ bool screen_multi_game(Piece* board, Info* info, Kings* kings, Move* moves, Scre
 
 		if(teamCopy == TEAM_WHITE)
 		{
-			if(!create_move_string(whiteMoveString, boardCopy, infoCopy, kingsCopy, moves[moveAmount - 1]))
+			if(!create_move_string(whiteMoveString, boardCopy, infoCopy, moves[moveAmount - 1]))
 			{
-				printf("if(!create_move_string(whiteMoveString, boardCopy, infoCopy, kingsCopy, moves[moveAmount - 1]))\n");
+				printf("if(!create_move_string(whiteMoveString, boardCopy, infoCopy, moves[moveAmount - 1]))\n");
 			}
 		}
 		else if(teamCopy == TEAM_BLACK)
 		{
-			if(!create_move_string(blackMoveString, boardCopy, infoCopy, kingsCopy, moves[moveAmount - 1]))
+			if(!create_move_string(blackMoveString, boardCopy, infoCopy, moves[moveAmount - 1]))
 			{
-				printf("if(!create_move_string(blackMoveString, boardCopy, infoCopy, kingsCopy, moves[moveAmount - 1]))\n");
+				printf("if(!create_move_string(blackMoveString, boardCopy, infoCopy, moves[moveAmount - 1]))\n");
 			}
 		}
 
@@ -150,7 +149,7 @@ bool screen_multi_game(Piece* board, Info* info, Kings* kings, Move* moves, Scre
 	return true;
 }
 
-bool screen_computer_handler(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen)
+bool screen_computer_handler(Piece* board, Info* info, Move* moves, Screen screen)
 {
 	unsigned short team = INFO_TEAM_MACRO(*info);
 
@@ -159,11 +158,11 @@ bool screen_computer_handler(Piece* board, Info* info, Kings* kings, Move* moves
 	printf("-------------------------\n");
 
 	Move computerMove;
-	if(!optimal_depth_move(&computerMove, board, *info, *kings, team, seconds)) return false;
+	if(!optimal_depth_move(&computerMove, board, *info, team, seconds)) return false;
 
-	if(!move_chess_piece(board, info, kings, computerMove))
+	if(!move_chess_piece(board, info, computerMove))
 	{
-		return screen_computer_handler(board, info, kings, moves, screen);
+		return screen_computer_handler(board, info, moves, screen);
 	}
 
 	unsigned short movesAmount = move_array_amount(moves);
@@ -172,16 +171,16 @@ bool screen_computer_handler(Piece* board, Info* info, Kings* kings, Move* moves
 	return true;
 }
 
-bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Screen screen, bool* inverted)
+bool screen_user_handler(Piece* board, Info* info, Move* moves, Screen screen, bool* inverted)
 {
 	Move move = MOVE_NONE;
 
-	if(!input_screen_move(&move, screen, board, *info, *kings, moves, inverted)) return false;
+	if(!input_screen_move(&move, screen, board, *info, moves, inverted)) return false;
 
 
-	if(!move_chess_piece(board, info, kings, move))
+	if(!move_chess_piece(board, info, move))
 	{
-		return screen_user_handler(board, info, kings, moves, screen, inverted);
+		return screen_user_handler(board, info, moves, screen, inverted);
 	}
 
 	unsigned short movesAmount = move_array_amount(moves);
@@ -190,9 +189,9 @@ bool screen_user_handler(Piece* board, Info* info, Kings* kings, Move* moves, Sc
 	return true;
 }
 
-bool game_result_handler(Screen screen, const Piece board[], Info info, Kings kings, bool* inverted)
+bool game_result_handler(Screen screen, const Piece board[], Info info, bool* inverted)
 {
-	if(!display_result_board(screen, board, info, kings, *inverted))
+	if(!display_result_board(screen, board, info, *inverted))
 	{
 		printf("Could not display result board!\n");
 	}

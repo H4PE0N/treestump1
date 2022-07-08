@@ -1,29 +1,29 @@
 
 #include "../Header-Files-Folder/screen-include-file.h"
 
-bool render_chess_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], bool inverted)
+bool render_chess_board(Screen screen, const Piece board[], Info info, const Move moveArray[], bool inverted)
 {
 	if(!render_board_squares(screen, inverted)) return false;
 
 	if(!render_latest_move(screen, moveArray, inverted)) return false;
 
-	if(!render_check_squares(screen, board, info, kings, inverted)) return false;
+	if(!render_check_squares(screen, board, info, inverted)) return false;
 
 	if(!render_board_pieces(screen, board, inverted)) return false;
 
 	return true;
 }
 
-bool render_move_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], Point point, bool inverted)
+bool render_move_board(Screen screen, const Piece board[], Info info, const Move moveArray[], Point point, bool inverted)
 {
 	if(!render_board_squares(screen, inverted)) return false;
 
 	if(!render_latest_move(screen, moveArray, inverted)) return false;
 
-	if(!render_check_squares(screen, board, info, kings, inverted)) return false;
+	if(!render_check_squares(screen, board, info, inverted)) return false;
 
 
-	if(!render_move_squares(screen, board, info, kings, point, inverted)) return false;
+	if(!render_move_squares(screen, board, info, point, inverted)) return false;
 
 
 	if(!render_board_pieces(screen, board, inverted)) return false;
@@ -31,13 +31,13 @@ bool render_move_board(Screen screen, const Piece board[], Info info, Kings king
 	return true;
 }
 
-bool render_mark_board(Screen screen, const Piece board[], Info info, Kings kings, const Move moveArray[], const Point markPoints[], bool inverted)
+bool render_mark_board(Screen screen, const Piece board[], Info info, const Move moveArray[], const Point markPoints[], bool inverted)
 {
 	if(!render_board_squares(screen, inverted)) return false;
 
 	if(!render_latest_move(screen, moveArray, inverted)) return false;
 
-	if(!render_check_squares(screen, board, info, kings, inverted)) return false;
+	if(!render_check_squares(screen, board, info, inverted)) return false;
 
 
 	if(!render_board_pieces(screen, board, inverted)) return false;
@@ -65,23 +65,23 @@ bool render_promote_board(Screen screen, unsigned short team)
 	return true;
 }
 
-bool render_result_board(Screen screen, const Piece board[], Info info, Kings kings, bool inverted)
+bool render_result_board(Screen screen, const Piece board[], Info info, bool inverted)
 {
 	unsigned short team = INFO_TEAM_MACRO(info);
 
 	unsigned short winningTeam = normal_team_enemy(team);
 
-	if(check_mate_ending(board, info, kings, team))
+	if(check_mate_ending(board, info, team))
 	{
 		if(!render_team_squares(screen, winningTeam, inverted)) return false;
 	}
-	else if(check_draw_ending(board, info, kings, team))
+	else if(check_draw_ending(board, info, team))
 	{
 		if(!render_board_squares(screen, inverted)) return false;
 	}
 	// else: The game has not ended
 
-	if(!render_check_squares(screen, board, info, kings, inverted)) return false;
+	if(!render_check_squares(screen, board, info, inverted)) return false;
 
 	if(!render_board_pieces(screen, board, inverted)) return false;
 
@@ -157,10 +157,10 @@ bool render_check_square(Screen screen, const Piece board[], Info info, Point ki
 	return true;
 }
 
-bool render_check_squares(Screen screen, const Piece board[], Info info, Kings kings, bool inverted)
+bool render_check_squares(Screen screen, const Piece board[], Info info, bool inverted)
 {
-	Point whiteKing = KINGS_WHITE_MACRO(kings);
-	Point blackKing = KINGS_BLACK_MACRO(kings);
+	Point whiteKing = board_king_point(board, TEAM_WHITE);
+	Point blackKing = board_king_point(board, TEAM_BLACK);
 
 	if(!render_check_square(screen, board, info, whiteKing, inverted)) return false;
 
@@ -169,7 +169,7 @@ bool render_check_squares(Screen screen, const Piece board[], Info info, Kings k
 	return true;
 }
 
-bool render_move_squares(Screen screen, const Piece board[], Info info, Kings kings, Point point, bool inverted)
+bool render_move_squares(Screen screen, const Piece board[], Info info, Point point, bool inverted)
 {
 	if(!point_inside_board(point)) return true;
 
@@ -180,7 +180,7 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Kings ki
 
 	Move* moveArray;
 
-	if(!piece_legal_moves(&moveArray, board, info, kings, point)) return true;
+	if(!piece_legal_moves(&moveArray, board, info, point)) return true;
 
   unsigned short moveAmount = move_array_amount(moveArray);
 
