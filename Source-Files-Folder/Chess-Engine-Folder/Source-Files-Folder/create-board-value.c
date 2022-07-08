@@ -8,8 +8,10 @@ signed short board_state_value(const Piece board[], Info info)
 
 	boardValue += board_pieces_value(board);
 
+	// boardValue = DRAW_VALUE (not higher or lower);
 	boardValue += check_draw_value(board, info);
 
+	// boardValue = MATE_VALUE (not higher or lower);
 	boardValue += check_mate_value(board, info);
 
 	return boardValue;

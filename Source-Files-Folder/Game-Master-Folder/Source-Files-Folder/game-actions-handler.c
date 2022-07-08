@@ -84,7 +84,7 @@ bool screen_multi_game(Piece* board, Info* info, Move* moves, Screen screen, boo
 	char whiteMoveString[10];
 	char blackMoveString[10];
 
-	while(game_still_running(board, *info, ))
+	while(game_still_running(board, *info))
 	{
 		Info infoCopy = *info;
 
@@ -153,7 +153,7 @@ bool screen_computer_handler(Piece* board, Info* info, Move* moves, Screen scree
 {
 	unsigned short team = INFO_TEAM_MACRO(*info);
 
-	unsigned short seconds = 2;
+	unsigned short seconds = 3;
 
 	printf("-------------------------\n");
 

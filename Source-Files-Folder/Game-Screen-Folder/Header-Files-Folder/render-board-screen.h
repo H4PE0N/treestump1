@@ -2,25 +2,25 @@
 #ifndef RENDER_BOARD_SCREEN_H
 #define RENDER_BOARD_SCREEN_H
 
-bool render_chess_board(Screen, const Piece[], Info, Kings, const Move[], bool);
+bool render_chess_board(Screen, const Piece[], Info, const Move[], bool);
 
-bool render_mark_board(Screen, const Piece[], Info, Kings, const Move[], const Point[], bool);
+bool render_mark_board(Screen, const Piece[], Info, const Move[], const Point[], bool);
 
-bool render_move_board(Screen, const Piece[], Info, Kings, const Move[], Point, bool);
+bool render_move_board(Screen, const Piece[], Info, const Move[], Point, bool);
 
 bool render_promote_board(Screen, unsigned short);
 
-bool render_result_board(Screen, const Piece[], Info, Kings, bool);
+bool render_result_board(Screen, const Piece[], Info, bool);
 
 // ####################################################################################
 
-bool render_move_squares(Screen, const Piece[], Info, Kings, Point, bool);
+bool render_move_squares(Screen, const Piece[], Info, Point, bool);
 
 bool render_latest_move(Screen, const Move[], bool);
 
 bool render_engine_moves(Screen, const Move[], bool);
 
-bool render_check_squares(Screen, const Piece[], Info, Kings, bool);
+bool render_check_squares(Screen, const Piece[], Info, bool);
 
 bool render_board_pieces(Screen, const Piece[], bool);
 

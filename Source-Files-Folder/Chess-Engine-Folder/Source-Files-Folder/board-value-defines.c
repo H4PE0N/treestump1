@@ -76,7 +76,7 @@ const signed short KING_MATRIX[8][8] =
 const signed short PIECE_TYPE_VALUES[] = {0, +10, +30, +30, +50, +90, +900};
 
 const signed short MATE_VALUE = +10000;
-const signed short DRAW_VALUE = -10000;
+const signed short DRAW_VALUE = -0;
 
 const float MATRIX_FACTOR = 1.0;
 const float PIECE_FACTOR = 5.0;

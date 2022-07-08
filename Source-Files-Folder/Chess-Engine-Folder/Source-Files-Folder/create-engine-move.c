@@ -263,8 +263,6 @@ bool ordered_legal_moves(Move** moveArray, const Piece board[], Info info, unsig
 {
 	if(!team_legal_moves(moveArray, board, info, team)) return false;
 
-	// return true;
-
 	unsigned short moveAmount = move_array_amount(*moveArray);
 
 	return guess_order_moves(*moveArray, moveAmount, board, info);
@@ -350,7 +348,7 @@ signed short choose_move_value(const Piece board[], Info info, unsigned short cu
 
 		update_alpha_beta(currentValue, &alpha, &beta, currentTeam);
 
-		// if(beta <= alpha) break;
+		if(beta <= alpha) break;
 	}
 	return bestValue;
 }
