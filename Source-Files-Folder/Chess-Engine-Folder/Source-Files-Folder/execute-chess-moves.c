@@ -148,9 +148,9 @@ Piece promote_piece_type(Move move)
 
 Piece promote_piece_team(Move move)
 {
-	if(MOVE_STOP_MACRO(move) == WHITE_START_RANK) return PIECE_TEAM_BLACK;
+	if(MOVE_STOP_RANK(move) == WHITE_START_RANK) return PIECE_TEAM_BLACK;
 
-	if(MOVE_STOP_MACRO(move) == BLACK_START_RANK) return PIECE_TEAM_WHITE;
+	if(MOVE_STOP_RANK(move) == BLACK_START_RANK) return PIECE_TEAM_WHITE;
 
 	return PIECE_TEAM_NONE;
 }
@@ -200,8 +200,8 @@ bool execute_promote_move(Piece* board, Info* info, Move move)
 	if(promotePiece == PIECE_NONE) return false;
 
 
-	board[stopPoint] = promotePiece;
 	board[startPoint] = PIECE_NONE;
+	board[stopPoint] = promotePiece;
 
 
 	*info = CLEAR_INFO_PASSANT(*info);

@@ -250,7 +250,7 @@ bool choose_timing_move(Move* move, signed short* value, const Piece board[], In
 			bestMove = currentMove; bestValue = currentValue;
 		}
 	}
-	printf("Nodes=%ld Passant=%ld Castles=%ld Promote=%ld\n", totalNodes, totalPassant, totalCastles, totalPromote);
+	//printf("Nodes=%ld Passant=%ld Castles=%ld Promote=%ld\n", totalNodes, totalPassant, totalCastles, totalPromote);
 
 	*move = bestMove; *value = bestValue; return true;
 }
@@ -344,7 +344,7 @@ signed short choose_move_value(const Piece board[], Info info, unsigned short cu
 
 		update_alpha_beta(currentValue, &alpha, &beta, currentTeam);
 
-		//if(beta <= alpha) break;
+		if(beta <= alpha) break;
 	}
 	return bestValue;
 }

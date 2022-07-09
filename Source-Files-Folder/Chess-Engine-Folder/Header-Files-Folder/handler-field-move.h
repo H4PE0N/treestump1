@@ -40,4 +40,6 @@ Piece start_piece_type(Move, const Piece[]);
 
 Piece stop_piece_type(Move, const Piece[]);
 
+bool start_stop_team(Move, const Piece[]);
+
 #endif

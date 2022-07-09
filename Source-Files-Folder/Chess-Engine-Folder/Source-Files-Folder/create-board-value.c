@@ -39,7 +39,7 @@ signed short check_mate_value(const Piece board[], Info info)
 
 	if(check_mate_ending(board, info, TEAM_WHITE)) mateValue -= MATE_VALUE;
 
-	if(check_mate_ending(board, info, TEAM_BLACK)) mateValue += MATE_VALUE;
+	else if(check_mate_ending(board, info, TEAM_BLACK)) mateValue += MATE_VALUE;
 
 	return mateValue;
 }
@@ -50,7 +50,7 @@ signed short check_draw_value(const Piece board[], Info info)
 
 	if(check_draw_ending(board, info, TEAM_WHITE)) drawValue -= DRAW_VALUE;
 
-	if(check_draw_ending(board, info, TEAM_BLACK)) drawValue += DRAW_VALUE;
+	else if(check_draw_ending(board, info, TEAM_BLACK)) drawValue += DRAW_VALUE;
 
 	return drawValue;
 }
@@ -97,7 +97,7 @@ signed short piece_matrix_value(Piece piece, Point point)
 
 unsigned short team_matrix_rank(unsigned short rank, Piece pieceTeam)
 {
-	return (pieceTeam == PIECE_TEAM_BLACK) ? (BOARD_RANKS-rank-1) : rank;
+	return ((pieceTeam == PIECE_TEAM_BLACK) ? (BOARD_RANKS - rank - 1) : rank);
 }
 
 signed short type_matrix_value(Piece pieceType, unsigned short rank, unsigned short file)

@@ -13,20 +13,14 @@ Point board_king_point(const Piece board[], unsigned short team)
 	return POINT_NONE;
 }
 
-bool board_points_team(const Piece board[], Point firstPoint, Point secondPoint)
+bool board_points_team(const Piece board[], Point point1, Point point2)
 {
-	Piece firstPiece = board[firstPoint];
-	Piece secondPiece = board[secondPoint];
-
-	return chess_pieces_team(firstPiece, secondPiece);
+	return chess_pieces_team(board[point1], board[point2]);
 }
 
-bool board_points_enemy(const Piece board[], Point firstPoint, Point secondPoint)
+bool board_points_enemy(const Piece board[], Point point1, Point point2)
 {
-	Piece firstPiece = board[firstPoint];
-	Piece secondPiece = board[secondPoint];
-
-	return chess_pieces_enemy(firstPiece, secondPiece);
+	return chess_pieces_enemy(board[point1], board[point2]);
 }
 
 bool board_point_exists(const Piece board[], Point point)

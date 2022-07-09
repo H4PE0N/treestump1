@@ -9,8 +9,7 @@ bool normal_team_exists(unsigned short team)
 unsigned short normal_team_enemy(unsigned short team)
 {
 	if(team == TEAM_WHITE) return TEAM_BLACK;
-
-	else if(team == TEAM_BLACK) return TEAM_WHITE;
+	if(team == TEAM_BLACK) return TEAM_WHITE;
 
 	return TEAM_NONE;
 }

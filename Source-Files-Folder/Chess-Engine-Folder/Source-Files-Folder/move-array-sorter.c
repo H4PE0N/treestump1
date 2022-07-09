@@ -13,7 +13,6 @@ void qsort_moves_indexis(Move* moveArray, signed short* moveValues, short index1
 	short partIndex = partly_qsort_moves(moveArray, moveValues, index1, index2, team);
 
 	qsort_moves_indexis(moveArray, moveValues, index1, partIndex - 1, team);
-
 	qsort_moves_indexis(moveArray, moveValues, partIndex + 1, index2, team);
 }
 

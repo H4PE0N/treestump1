@@ -61,36 +61,36 @@ bool chess_piece_exists(Piece piece)
 	return (pieceTeamExists && pieceTypeExists);
 }
 
-bool piece_teams_team(Piece firstPieceTeam, Piece secondPieceTeam)
+bool piece_teams_team(Piece pieceTeam1, Piece pieceTeam2)
 {
-	bool bothBlack = (firstPieceTeam == PIECE_TEAM_BLACK && secondPieceTeam == PIECE_TEAM_BLACK);
-	bool bothWhite = (firstPieceTeam == PIECE_TEAM_WHITE && secondPieceTeam == PIECE_TEAM_WHITE);
+	bool bothBlack = (pieceTeam1 == PIECE_TEAM_BLACK && pieceTeam2 == PIECE_TEAM_BLACK);
+	bool bothWhite = (pieceTeam1 == PIECE_TEAM_WHITE && pieceTeam2 == PIECE_TEAM_WHITE);
 
 	return (bothBlack || bothWhite);
 }
 
-bool piece_teams_enemy(Piece firstPieceTeam, Piece secondPieceTeam)
+bool piece_teams_enemy(Piece pieceTeam1, Piece pieceTeam2)
 {
-	bool enemyWhite = (firstPieceTeam == PIECE_TEAM_BLACK && secondPieceTeam == PIECE_TEAM_WHITE);
-	bool enemyBlack = (firstPieceTeam == PIECE_TEAM_WHITE && secondPieceTeam == PIECE_TEAM_BLACK);
+	bool enemyWhite = (pieceTeam1 == PIECE_TEAM_BLACK && pieceTeam2 == PIECE_TEAM_WHITE);
+	bool enemyBlack = (pieceTeam1 == PIECE_TEAM_WHITE && pieceTeam2 == PIECE_TEAM_BLACK);
 
 	return (enemyWhite || enemyBlack);
 }
 
-bool chess_pieces_team(Piece firstPiece, Piece secondPiece)
+bool chess_pieces_team(Piece piece1, Piece piece2)
 {
-	Piece firstPieceTeam = (firstPiece & PIECE_TEAM_MASK);
-	Piece secondPieceTeam = (secondPiece & PIECE_TEAM_MASK);
+	Piece pieceTeam1 = MASK_PIECE_TEAM(piece1);
+	Piece pieceTeam2 = MASK_PIECE_TEAM(piece2);
 
-	return piece_teams_team(firstPieceTeam, secondPieceTeam);
+	return piece_teams_team(pieceTeam1, pieceTeam2);
 }
 
-bool chess_pieces_enemy(Piece firstPiece, Piece secondPiece)
+bool chess_pieces_enemy(Piece piece1, Piece piece2)
 {
-	Piece firstPieceTeam = (firstPiece & PIECE_TEAM_MASK);
-	Piece secondPieceTeam = (secondPiece & PIECE_TEAM_MASK);
+	Piece pieceTeam1 = MASK_PIECE_TEAM(piece1);
+	Piece pieceTeam2 = MASK_PIECE_TEAM(piece2);
 
-	return piece_teams_enemy(firstPieceTeam, secondPieceTeam);
+	return piece_teams_enemy(pieceTeam1, pieceTeam2);
 }
 
 Piece piece_team_enemy(Piece pieceTeam)

@@ -8,6 +8,8 @@ bool move_pseudo_legal(const Piece[], Info, Move);
 
 bool piece_legal_moves(Move**, const Piece[], Info, Point);
 
+bool piece_legal_points(Point**, const Piece[], Info, Point);
+
 bool team_legal_moves(Move**, const Piece[], Info, unsigned short);
 
 void append_promote_moves(Move*, short*, Move);

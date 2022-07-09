@@ -231,3 +231,11 @@ signed short move_offset_factor(signed short moveOffset)
 {
 	return (moveOffset == 0 ? 0 : (moveOffset > 0 ? 1 : -1) );
 }
+
+bool start_stop_team(Move move, const Piece board[])
+{
+	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
+
+	return board_points_team(board, startPoint, stopPoint);
+}

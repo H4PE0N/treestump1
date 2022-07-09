@@ -27,10 +27,7 @@ bool normal_pattern_fits(const Piece board[], Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	Point startPoint = MOVE_START_MACRO(move);
-	Point stopPoint = MOVE_STOP_MACRO(move);
-
-	if(board_points_team(board, startPoint, stopPoint)) return false;
+	if(start_stop_team(move, board)) return false;
 
 	return clear_moving_path(board, move);
 }
@@ -47,15 +44,15 @@ bool passant_pattern_fits(const Piece board[], Move move)
 // - King is moving
 // - Rook in the corner
 // - Clear moving path
-bool castle_pattern_fits(const Piece board[], Move move)
+bool castle_pattern_fits(const Piece board[], Move castleMove)
 {
-	if(!move_inside_board(move)) return false;
+	if(!move_inside_board(castleMove)) return false;
 
-	unsigned short startTeam = move_start_team(move, board);
+	unsigned short startTeam = move_start_team(castleMove, board);
 
-	if(start_piece_type(move, board) != PIECE_TYPE_KING) return false;
+	if(start_piece_type(castleMove, board) != PIECE_TYPE_KING) return false;
 
-	Point rookPoint = castle_rook_point(move);
+	Point rookPoint = castle_rook_point(castleMove);
 	if(rookPoint == POINT_NONE) return false;
 
 	Piece rookPieceType = point_piece_type(rookPoint, board);
@@ -63,7 +60,9 @@ bool castle_pattern_fits(const Piece board[], Move move)
 
 	if(rookPieceType != PIECE_TYPE_ROOK || rookTeam != startTeam) return false;
 
-	return clear_moving_path(board, move);
+	Move kingRookMove = ALLOC_MOVE_STOP(castleMove, rookPoint);
+
+	return clear_moving_path(board, kingRookMove);
 }
 
 Point castle_rook_point(Move castleMove)

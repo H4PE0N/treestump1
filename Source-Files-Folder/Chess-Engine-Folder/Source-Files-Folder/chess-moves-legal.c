@@ -19,9 +19,9 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	Piece startPiece = move_start_piece(move, board);
-
 	if(!move_ability_valid(move, info)) return false;
+
+	Piece startPiece = move_start_piece(move, board);
 
 	if(!move_pattern_valid(move, startPiece)) return false;
 
@@ -58,6 +58,35 @@ bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Point p
 			append_promote_moves(*moveArray, &moveAmount, currentMove);
 		}
 		else (*moveArray)[moveAmount++] = currentMove;
+	}
+	free(pattMoves); return true;
+}
+
+bool piece_legal_points(Point** pointArray, const Piece board[], Info info, Point piecePoint)
+{
+	if(!POINT_INSIDE_BOARD(piecePoint)) return false;
+
+	Move* pattMoves;
+	if(!piece_pattern_moves(&pattMoves, board, piecePoint)) return false;
+
+	unsigned short pattAmount = move_array_amount(pattMoves);
+
+	*pointArray = create_point_array(32);
+	short pointAmount = 0;
+
+	Piece startPiece = board[piecePoint];
+
+	for(unsigned short index = 0; index < pattAmount; index += 1)
+	{
+		Move currentMove = pattMoves[index];
+		Piece stopPiece = move_stop_piece(currentMove, board);
+
+		if(piece_teams_team(stopPiece, startPiece)) continue;
+
+		if(!correct_move_flag(&currentMove, startPiece, info)) continue;
+		if(!move_fully_legal(board, info, currentMove)) continue;
+
+		(*pointArray)[pointAmount++] = MOVE_STOP_MACRO(currentMove);
 	}
 	free(pattMoves); return true;
 }

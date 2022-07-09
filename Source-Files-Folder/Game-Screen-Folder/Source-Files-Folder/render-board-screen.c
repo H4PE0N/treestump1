@@ -178,34 +178,33 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Point po
 	if(!current_team_move(info, team)) return false;
 
 
-	Move* moveArray;
+	Point* pointArray;
+	if(!piece_legal_points(&pointArray, board, info, point)) return true;
 
-	if(!piece_legal_moves(&moveArray, board, info, point)) return true;
-
-  unsigned short moveAmount = move_array_amount(moveArray);
+  unsigned short pointAmount = point_array_amount(pointArray);
 
 
-	if(moveAmount <= 0) { free(moveArray); return false; }
+	if(pointAmount <= 0) { free(pointArray); return false; }
 
 
   Surface* moveSquare;
 
 	if(!extract_file_image(&moveSquare, MOVE_SQUARE_FILE))
 	{
-		free(moveArray); return false;
+		free(pointArray); return false;
 	}
 
 
-	for(unsigned short index = 0; index < moveAmount; index += 1)
+	for(unsigned short index = 0; index < pointAmount; index += 1)
 	{
-		Point stopPoint = MOVE_STOP_MACRO(moveArray[index]);
+		Point stopPoint = pointArray[index];
 
 		if(!render_point_image(screen, moveSquare, stopPoint, 255, inverted))
 		{
-      free(moveArray); return false;
+      free(pointArray); return false;
 		}
 	}
-	free(moveArray); return true;
+	free(pointArray); return true;
 }
 
 bool render_latest_move(Screen screen, const Move moveArray[], bool inverted)
