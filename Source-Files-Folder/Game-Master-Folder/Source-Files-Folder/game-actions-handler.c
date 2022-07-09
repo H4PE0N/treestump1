@@ -153,17 +153,14 @@ bool screen_computer_handler(Piece* board, Info* info, Move* moves, Screen scree
 {
 	unsigned short team = INFO_TEAM_MACRO(*info);
 
-	unsigned short seconds = 3;
+	unsigned short seconds = 2;
 
 	printf("-------------------------\n");
 
 	Move computerMove;
 	if(!optimal_depth_move(&computerMove, board, *info, team, seconds)) return false;
 
-	if(!move_chess_piece(board, info, computerMove))
-	{
-		return screen_computer_handler(board, info, moves, screen);
-	}
+	if(!move_chess_piece(board, info, computerMove)) return false;
 
 	unsigned short movesAmount = move_array_amount(moves);
 	moves[movesAmount] = computerMove;

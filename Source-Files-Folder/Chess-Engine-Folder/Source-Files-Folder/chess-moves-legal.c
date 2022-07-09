@@ -1,9 +1,6 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-// This function should check:
-// - the move is pseudo legal
-// - the own king is not set in check
 bool move_fully_legal(const Piece board[], Info info, Move move)
 {
 	if(!move_pseudo_legal(board, info, move)) return false;
@@ -11,15 +8,16 @@ bool move_fully_legal(const Piece board[], Info info, Move move)
 	return move_check_handler(board, info, move);
 }
 
-// This function should check:
-// - the piece has the ability to move that way
-// - the piece theoretically can move that way
-// - there is not anyting that can block the piece when moving
 bool move_pseudo_legal(const Piece board[], Info info, Move move)
 {
-	if(!move_inside_board(move)) return false;
-
 	if(!move_ability_valid(move, info)) return false;
+
+	return board_move_legal(board, move);
+}
+
+bool board_move_legal(const Piece board[], Move move)
+{
+	if(!move_inside_board(move)) return false;
 
 	Piece startPiece = move_start_piece(move, board);
 

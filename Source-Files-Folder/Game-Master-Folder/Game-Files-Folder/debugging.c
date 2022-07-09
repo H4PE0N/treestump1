@@ -108,28 +108,40 @@ int main(int argAmount, char* arguments[])
 
 	unsigned short startTeam = INFO_TEAM_MACRO(info);
 
-	// long startClock = clock();
+	long startClock = clock();
+
+	unsigned short seconds = 1;
+
+
+	// unsigned short totalDepth = 10;
+	//
+	// for(unsigned short depth = 1; depth <= totalDepth; depth += 1)
+	// {
+	// 	printf("Depth=%d Nodes=%ld\n", depth, search_depth_nodes(board, info, startTeam, depth, startClock, seconds));
+	// }
 
 
 
 
 	// Move bestMove;
-	//
 	// if(engine_depth_move(&bestMove, board, info, startTeam, 4))
 	// {
 	// 	printf("BestMove: [%d -> %d]\n", MOVE_START_MACRO(bestMove), MOVE_STOP_MACRO(bestMove));
 	// }
 
-	//
-	// printf("Time: %.2f\n", (double) (clock() - startClock) / CLOCKS_PER_SEC);
-
-	unsigned short seconds = 10;
 
 	Move engineMove;
 	if(!optimal_depth_move(&engineMove, board, info, startTeam, seconds))
 	{
 		printf("optimal_depth_move failed!\n");
 	}
+
+	//
+	printf("Time: %.2f\n", time_passed_since(startClock));
+
+	//
+	//
+
 
 	// printf("WK Point: %d BK Point: %d\n",
 	// 	board_king_point(board, TEAM_WHITE),

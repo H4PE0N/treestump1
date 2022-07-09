@@ -36,7 +36,13 @@ bool passant_pattern_fits(const Piece board[], Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	if(start_piece_type(move, board) != PIECE_TYPE_PAWN) return false;
+	Point startPoint = MOVE_START_MACRO(move);
+	Point passantPoint = pawn_passant_point(move);
+
+	if(MASK_PIECE_TYPE(board[startPoint]) != PIECE_TYPE_PAWN) return false;
+	if(MASK_PIECE_TYPE(board[passantPoint]) != PIECE_TYPE_PAWN) return false;
+
+	if(!board_points_enemy(board, startPoint, passantPoint)) return false;
 
 	return !chess_piece_exists(board[MOVE_STOP_MACRO(move)]);
 }

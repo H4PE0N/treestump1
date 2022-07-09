@@ -25,9 +25,7 @@ bool piece_does_check(const Piece board[], Info info, Point kingPoint, Point poi
 
 	Move move = START_STOP_MOVE(point, kingPoint);
 
-	if(!move_pattern_valid(move, board[point])) return false;
-
-	return move_pattern_fits(board, move);
+	return board_move_legal(board, move);
 }
 
 bool game_still_running(const Piece board[], Info info)

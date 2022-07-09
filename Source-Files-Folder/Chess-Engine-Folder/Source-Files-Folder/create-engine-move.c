@@ -1,10 +1,44 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-long totalNodes = 0;
-long totalPassant = 0;
-long totalCastles = 0;
-long totalPromote = 0;
+long search_depth_nodes(const Piece board[], Info info, unsigned short currentTeam, short depth, long startClock, short seconds)
+{
+	if(depth <= 0) return 1;
+
+	if(timing_limit_ended(startClock, seconds)) return 1;
+
+	Move* moveArray;
+	if(!team_legal_moves(&moveArray, board, info, currentTeam)) return 1;
+
+	unsigned short moveAmount = move_array_amount(moveArray);
+
+	long localNodes = 0;
+
+	for(unsigned short index = 0; index < moveAmount; index += 1)
+	{
+		Move currentMove = moveArray[index];
+
+		localNodes += search_move_nodes(board, info, currentTeam, (depth - 1), currentMove, startClock, seconds);
+	}
+	free(moveArray); return localNodes;
+}
+
+long search_move_nodes(const Piece board[], Info info, unsigned short currentTeam, short depth, Move move, long startClock, short seconds)
+{
+	Info infoCopy = info;
+	infoCopy = ALLOC_INFO_TEAM(infoCopy, TEAM_INFO_MACRO(currentTeam));
+
+	Piece* boardCopy = copy_chess_board(board);
+
+	if(!move_chess_piece(boardCopy, &infoCopy, move))
+	{ free(boardCopy); return 1; }
+
+	unsigned short nextTeam = normal_team_enemy(currentTeam);
+
+	long moveNodes = search_depth_nodes(boardCopy, infoCopy, nextTeam, depth, startClock, seconds);
+
+	free(boardCopy); return moveNodes;
+}
 
 bool amount_engine_moves(Move** moveArray, const Piece board[], Info info, unsigned short team, short depth, short amount)
 {
@@ -116,10 +150,7 @@ signed short guess_move_value(const Piece board[], Info info, Move move)
 		moveScore = 10 * stopPieceValue - startPieceValue;
 	}
 
-	if(MOVE_PROMOTE_FLAG(move))
-	{
-		moveScore += move_promote_piece(move);
-	}
+	if(MOVE_PROMOTE_FLAG(move)) moveScore += move_promote_piece(move);
 
 	return team_weight_value(moveScore, startTeam);
 }
@@ -140,17 +171,6 @@ bool chess_move_value(signed short* moveValue, const Piece board[], Info info, u
 	infoCopy = ALLOC_INFO_TEAM(infoCopy, TEAM_INFO_MACRO(currentTeam));
 
 	Piece* boardCopy = copy_chess_board(board);
-
-	if(depth <= 0)
-	{
-		totalNodes += 1;
-
-		if(MOVE_STORE_FLAG(move, MOVE_FLAG_CASTLE)) totalCastles += 1;
-
-		if(MOVE_STORE_FLAG(move, MOVE_FLAG_PASSANT)) totalPassant += 1;
-
-		if(MOVE_PROMOTE_FLAG(move)) totalPromote += 1;
-	}
 
 	bool result = simulate_move_value(moveValue, boardCopy, infoCopy, currentTeam, depth, alpha, beta, move);
 
@@ -183,31 +203,21 @@ bool optimal_depth_move(Move* move, const Piece board[], Info info, unsigned sho
 bool search_depths_move(Move* move, const Piece board[], Info info, unsigned short team, short seconds, const Move moveArray[], short moveAmount)
 {
 	if(moveAmount <= 0) return false;
-
-	if(moveAmount == 1)
-	{
-		*move = moveArray[0];
-
-		return true;
-	}
+	if(moveAmount == 1) { *move = moveArray[0]; return true; }
 
 	long startClock = clock();
 
-	Move engineMove = moveArray[0];
-	signed short engineValue = 0;
+	Move engineMove = moveArray[0]; signed short engineValue = 0;
 
-	double time = (double) (clock() - startClock) / CLOCKS_PER_SEC;
-
-	for(unsigned short depth = 1; time < seconds; depth += 1)
+	for(unsigned short depth = 1;; depth += 1)
 	{
 		if(!choose_timing_move(&engineMove, &engineValue, board, info, team, depth, startClock, seconds, moveArray, moveAmount)) return false;
 
-		if((team == TEAM_WHITE && engineValue > team_weight_value(MATE_VALUE, team)) ||
-			(team == TEAM_BLACK && engineValue < team_weight_value(MATE_VALUE, team))) break;
+		if(timing_limit_ended(startClock, seconds)) break;
 
-		time = (double) (clock() - startClock) / CLOCKS_PER_SEC;
+		printf("Depth: %d Time: %.2f Move: %d -> %d\n", depth, time_passed_since(startClock), MOVE_START_MACRO(engineMove), MOVE_STOP_MACRO(engineMove));
 
-		printf("Depth: %d Time: %.2f Move: %d -> %d\n", depth, time, MOVE_START_MACRO(engineMove), MOVE_STOP_MACRO(engineMove));
+		if(current_mate_value(engineValue, team)) break;
 	}
 	*move = engineMove; return true;
 }
@@ -216,43 +226,48 @@ bool choose_timing_move(Move* move, signed short* value, const Piece board[], In
 {
 	if(moveAmount <= 0) return false;
 
-
-	totalNodes = 0;
-	totalPassant = 0;
-	totalCastles = 0;
-	totalPromote = 0;
-
-
 	Move bestMove = moveArray[0];
 	signed short bestValue = team_weight_value(MIN_STATE_VALUE, team);
 
 	for(unsigned short index = 0; index < moveAmount; index += 1)
 	{
-		double time = (double) (clock() - startClock) / CLOCKS_PER_SEC;
-		if(time >= seconds) return true;
+		if(timing_limit_ended(startClock, seconds)) return true;
 
 		Move currentMove = moveArray[index];
 
 		short currentValue;
 		if(!chess_move_value(&currentValue, board, info, team, (depth - 1), MIN_STATE_VALUE, MAX_STATE_VALUE, currentMove)) continue;
 
-		if((team == TEAM_WHITE && currentValue > team_weight_value(MATE_VALUE, team)) ||
-			(team == TEAM_BLACK && currentValue < team_weight_value(MATE_VALUE, team)))
-		{
-			bestMove = currentMove; bestValue = currentValue;
+		if(update_mate_value(currentMove, currentValue, &bestMove, &bestValue, team)) break;
 
-			break;
-		}
-
-		if((team == TEAM_WHITE && currentValue > bestValue) ||
-			(team == TEAM_BLACK && currentValue < bestValue))
-		{
-			bestMove = currentMove; bestValue = currentValue;
-		}
+		update_move_value(currentMove, currentValue, &bestMove, &bestValue, team);
 	}
-	//printf("Nodes=%ld Passant=%ld Castles=%ld Promote=%ld\n", totalNodes, totalPassant, totalCastles, totalPromote);
-
 	*move = bestMove; *value = bestValue; return true;
+}
+
+double time_passed_since(long startClock)
+{
+	return (double) (clock() - startClock) / CLOCKS_PER_SEC;
+}
+
+bool timing_limit_ended(long startClock, short seconds)
+{
+	return (time_passed_since(startClock) >= seconds);
+}
+
+bool current_mate_value(signed short currentValue, unsigned short team)
+{
+	if(team == TEAM_WHITE && currentValue > team_weight_value(MATE_VALUE, team)) return true;
+	if(team == TEAM_BLACK && currentValue < team_weight_value(MATE_VALUE, team)) return true;
+
+	return false;
+}
+
+bool update_mate_value(Move currentMove, signed short currentValue, Move* bestMove, signed short* bestValue, unsigned short team)
+{
+	if(!current_mate_value(currentValue, team)) return false;
+
+	*bestMove = currentMove; *bestValue = currentValue; return true;
 }
 
 bool ordered_legal_moves(Move** moveArray, const Piece board[], Info info, unsigned short team)
@@ -281,13 +296,7 @@ bool engine_depth_move(Move* move, const Piece board[], Info info, unsigned shor
 bool choose_engine_move(Move* move, const Piece board[], Info info, unsigned short team, short depth, const Move moveArray[], short moveAmount)
 {
 	if(moveAmount <= 0) return false;
-
-
-	totalNodes = 0;
-	totalPassant = 0;
-	totalCastles = 0;
-	totalPromote = 0;
-
+	if(moveAmount == 1) { *move = moveArray[0]; return true; }
 
 	Move bestMove = moveArray[0];
 	signed short bestValue = team_weight_value(MIN_STATE_VALUE, team);
@@ -299,16 +308,10 @@ bool choose_engine_move(Move* move, const Piece board[], Info info, unsigned sho
 		short currentValue;
 		if(!chess_move_value(&currentValue, board, info, team, (depth - 1), MIN_STATE_VALUE, MAX_STATE_VALUE, currentMove)) continue;
 
-		// printf("CurrentMove: [%d -> %d]\tCurrentValue: %d\n", MOVE_START_MACRO(currentMove), MOVE_STOP_MACRO(currentMove), currentValue);
+		printf("CurrentMove: [%d -> %d]\tCurrentValue: %d\n", MOVE_START_MACRO(currentMove), MOVE_STOP_MACRO(currentMove), currentValue);
 
-		if((team == TEAM_WHITE && currentValue > bestValue) ||
-			(team == TEAM_BLACK && currentValue < bestValue))
-		{
-			bestMove = currentMove; bestValue = currentValue;
-		}
+		update_move_value(currentMove, currentValue, &bestMove, &bestValue, team);
 	}
-	printf("Nodes=%ld Passant=%ld Castles=%ld Promote=%ld\n", totalNodes, totalPassant, totalCastles, totalPromote);
-
 	*move = bestMove; return true;
 }
 
@@ -347,6 +350,13 @@ signed short choose_move_value(const Piece board[], Info info, unsigned short cu
 		if(beta <= alpha) break;
 	}
 	return bestValue;
+}
+
+void update_move_value(Move currentMove, signed short currentValue, Move* bestMove, signed short* bestValue, unsigned short team)
+{
+	if((team == TEAM_WHITE && currentValue > *bestValue) ||
+		 (team == TEAM_BLACK && currentValue < *bestValue))
+	{ *bestMove = currentMove; *bestValue = currentValue; }
 }
 
 void update_best_value(signed short currentValue, signed short* bestValue, unsigned short team)

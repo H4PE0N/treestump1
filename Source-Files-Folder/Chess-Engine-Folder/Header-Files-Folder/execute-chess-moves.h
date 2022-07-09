@@ -28,4 +28,6 @@ bool execute_board_move(Piece*, Move);
 
 bool execute_start_stop(Piece*, Point, Point);
 
+Point pawn_passant_point(Move);
+
 #endif
