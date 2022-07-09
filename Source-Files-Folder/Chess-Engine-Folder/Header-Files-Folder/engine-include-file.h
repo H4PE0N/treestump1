@@ -17,6 +17,7 @@
 
 #include "chess-engine-values.h"
 #include "chess-engine-macros.h"
+#include "chess-board-values.h"
 
 #include "handler-field-info.h"
 #include "handler-field-move.h"

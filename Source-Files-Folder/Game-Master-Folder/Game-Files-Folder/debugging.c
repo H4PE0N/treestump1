@@ -106,24 +106,28 @@ int main(int argAmount, char* arguments[])
 
 	unsigned short startTeam = INFO_TEAM_MACRO(info);
 
-	long startClock = clock();
+	// long startClock = clock();
 
-	Move bestMove;
 
-	if(engine_depth_move(&bestMove, board, info, startTeam, 4))
-	{
-		printf("BestMove: [%d -> %d]\n", MOVE_START_MACRO(bestMove), MOVE_STOP_MACRO(bestMove));
-	}
 
-	printf("Time: %.2f\n", (double) (clock() - startClock) / CLOCKS_PER_SEC);
 
-	// unsigned short seconds = 2;
+	// Move bestMove;
 	//
-	// Move engineMove;
-	// if(!optimal_depth_move(&engineMove, board, info, startTeam, seconds))
+	// if(engine_depth_move(&bestMove, board, info, startTeam, 4))
 	// {
-	// 	printf("optimal_depth_move failed!\n");
+	// 	printf("BestMove: [%d -> %d]\n", MOVE_START_MACRO(bestMove), MOVE_STOP_MACRO(bestMove));
 	// }
+
+	//
+	// printf("Time: %.2f\n", (double) (clock() - startClock) / CLOCKS_PER_SEC);
+
+	unsigned short seconds = 10;
+
+	Move engineMove;
+	if(!optimal_depth_move(&engineMove, board, info, startTeam, seconds))
+	{
+		printf("optimal_depth_move failed!\n");
+	}
 
 	// printf("WK Point: %d BK Point: %d\n",
 	// 	board_king_point(board, TEAM_WHITE),

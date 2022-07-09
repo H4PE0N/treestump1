@@ -12,7 +12,7 @@ bool move_check_handler(const Piece board[], Info info, Move move)
 	if(castle_move_ident(info, move, piece))
 		return castle_prevent_check(board, info, move);
 
-	else return move_prevent_check(board, info, move);
+	return move_prevent_check(board, info, move);
 }
 
 bool castle_prevent_check(const Piece board[], Info info, Move castleMove)
@@ -30,7 +30,15 @@ bool castle_prevent_check(const Piece board[], Info info, Move castleMove)
 	return move_prevent_check(board, info, castleMove);
 }
 
-Point castle_middle_move(Move castleMove)
+Move castle_middle_move(Move castleMove)
+{
+	Point kingPoint = MOVE_START_MACRO(castleMove);
+	Point middlePoint = castle_middle_point(castleMove);
+
+	return START_STOP_MOVE(kingPoint, middlePoint);
+}
+
+Point castle_middle_point(Move castleMove)
 {
 	Point kingPoint = MOVE_START_MACRO(castleMove);
 
@@ -40,8 +48,7 @@ Point castle_middle_move(Move castleMove)
 	signed short fileOffset = normal_file_offset(castleMove);
 	signed short fileFactor = move_offset_factor(fileOffset);
 
-	Point middlePoint = rank_file_point(kingRank, kingFile + fileFactor);
-	return start_stop_move(kingPoint, middlePoint);
+	return RANK_FILE_POINT(kingRank, (kingFile + fileFactor));
 }
 
 bool move_prevent_check(const Piece board[], Info info, Move move)
@@ -50,9 +57,7 @@ bool move_prevent_check(const Piece board[], Info info, Move move)
 
 	Piece* boardCopy = copy_chess_board(board);
 
-	Info infoCopy = info;
-
-	bool result = prevent_check_test(boardCopy, infoCopy, move);
+	bool result = prevent_check_test(boardCopy, info, move);
 
 	free(boardCopy); return result;
 }

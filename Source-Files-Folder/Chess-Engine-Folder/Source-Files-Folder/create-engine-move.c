@@ -116,11 +116,9 @@ signed short guess_move_value(const Piece board[], Info info, Move move)
 		moveScore = 10 * stopPieceValue - startPieceValue;
 	}
 
-	Move moveFlag = MASK_MOVE_FLAG(move);
-
-	if(moveFlag == MOVE_FLAG_KNIGHT || moveFlag == MOVE_FLAG_BISHOP || moveFlag == MOVE_FLAG_ROOK || moveFlag == MOVE_FLAG_QUEEN)
+	if(MOVE_PROMOTE_FLAG(move))
 	{
-		moveScore += move_promote_piece(move, startTeam);
+		moveScore += move_promote_piece(move);
 	}
 
 	return team_weight_value(moveScore, startTeam);
@@ -147,13 +145,11 @@ bool chess_move_value(signed short* moveValue, const Piece board[], Info info, u
 	{
 		totalNodes += 1;
 
-		Move moveFlag = MASK_MOVE_FLAG(move);
+		if(MOVE_STORE_FLAG(move, MOVE_FLAG_CASTLE)) totalCastles += 1;
 
-		if(moveFlag == MOVE_FLAG_CASTLE) totalCastles += 1;
+		if(MOVE_STORE_FLAG(move, MOVE_FLAG_PASSANT)) totalPassant += 1;
 
-		if(moveFlag == MOVE_FLAG_PASSANT) totalPassant += 1;
-
-		if(moveFlag == MOVE_FLAG_KNIGHT || moveFlag == MOVE_FLAG_BISHOP || moveFlag == MOVE_FLAG_ROOK || moveFlag == MOVE_FLAG_QUEEN) totalPromote += 1;
+		if(MOVE_PROMOTE_FLAG(move)) totalPromote += 1;
 	}
 
 	bool result = simulate_move_value(moveValue, boardCopy, infoCopy, currentTeam, depth, alpha, beta, move);
@@ -254,7 +250,7 @@ bool choose_timing_move(Move* move, signed short* value, const Piece board[], In
 			bestMove = currentMove; bestValue = currentValue;
 		}
 	}
-	//printf("Nodes=%ld Passant=%ld Castles=%ld Promote=%ld\n", totalNodes, totalPassant, totalCastles, totalPromote);
+	printf("Nodes=%ld Passant=%ld Castles=%ld Promote=%ld\n", totalNodes, totalPassant, totalCastles, totalPromote);
 
 	*move = bestMove; *value = bestValue; return true;
 }
@@ -348,7 +344,7 @@ signed short choose_move_value(const Piece board[], Info info, unsigned short cu
 
 		update_alpha_beta(currentValue, &alpha, &beta, currentTeam);
 
-		if(beta <= alpha) break;
+		//if(beta <= alpha) break;
 	}
 	return bestValue;
 }

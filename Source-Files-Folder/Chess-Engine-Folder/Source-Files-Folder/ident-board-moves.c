@@ -4,33 +4,26 @@
 bool castle_move_ident(Info info, Move move, Piece piece)
 {
 	if(!move_inside_board(move)) return false;
-
 	if(!chess_piece_exists(piece)) return false;
 
-
-	Piece pieceType = (piece & PIECE_TYPE_MASK);
-	unsigned short team = PIECE_TEAM_MACRO(piece);
-
-	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, team));
+	Piece pieceType = MASK_PIECE_TYPE(piece);
 
 	if(pieceType != PIECE_TYPE_KING) return false;
 
-	if(fileOffset == KING_CASTLE_PAT || fileOffset == QUEEN_CASTLE_PAT) return true;
+	signed short movePattern = board_move_pattern(move);
 
-	return false;
+	return (movePattern == KSIDE_FILE_OFFSET || movePattern == QSIDE_FILE_OFFSET);
 }
 
 bool passant_move_ident(Info info, Move move, Piece piece)
 {
 	if(!move_inside_board(move)) return false;
-
 	if(!chess_piece_exists(piece)) return false;
-
 
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
-	Piece pieceType = (piece & PIECE_TYPE_MASK);
+	Piece pieceTeam = MASK_PIECE_TEAM(piece);
+	Piece pieceType = MASK_PIECE_TYPE(piece);
 
 	unsigned short stopFile = POINT_FILE_MACRO(stopPoint);
 	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
@@ -38,13 +31,9 @@ bool passant_move_ident(Info info, Move move, Piece piece)
 	unsigned short passantFile = INFO_PASSANT_MACRO(info);
 
 	if(pieceType != PIECE_TYPE_PAWN) return false;
-
 	if((stopFile + 1) != passantFile) return false;
 
-	// Piece is pawn, and stopFile is passant file
-
 	if(pieceTeam == PIECE_TEAM_WHITE && stopRank == (BLACK_PAWN_RANK + BLACK_MOVE_VALUE) ) return true;
-
 	if(pieceTeam == PIECE_TEAM_BLACK && stopRank == (WHITE_PAWN_RANK + WHITE_MOVE_VALUE) ) return true;
 
 	return false;
@@ -53,21 +42,16 @@ bool passant_move_ident(Info info, Move move, Piece piece)
 bool promote_move_ident(Info info, Move move, Piece piece)
 {
 	if(!move_inside_board(move)) return false;
-
 	if(!chess_piece_exists(piece)) return false;
 
+	Piece pieceTeam = MASK_PIECE_TEAM(piece);
+	Piece pieceType = MASK_PIECE_TYPE(piece);
 
-	Point stopPoint = MOVE_STOP_MACRO(move);
-
-	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
-	Piece pieceType = (piece & PIECE_TYPE_MASK);
-
-	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
+	unsigned short stopRank = MOVE_STOP_RANK(move);
 
 	if(pieceType != PIECE_TYPE_PAWN) return false;
 
 	if(pieceTeam == PIECE_TEAM_WHITE && stopRank == BLACK_START_RANK) return true;
-
 	if(pieceTeam == PIECE_TEAM_BLACK && stopRank == WHITE_START_RANK) return true;
 
 	return false;
@@ -76,16 +60,12 @@ bool promote_move_ident(Info info, Move move, Piece piece)
 bool double_move_ident(Info info, Move move, Piece piece)
 {
 	if(!move_inside_board(move)) return false;
-
 	if(!chess_piece_exists(piece)) return false;
 
-
 	unsigned short team = PIECE_TEAM_MACRO(piece);
-	Piece pieceType = (piece & PIECE_TYPE_MASK);
+	Piece pieceType = MASK_PIECE_TYPE(piece);
 
 	unsigned short rankOffset = move_rank_offset(move, team);
 
-	if(pieceType == PIECE_TYPE_PAWN && rankOffset == 2) return true;
-
-	return false;
+	return (pieceType == PIECE_TYPE_PAWN && rankOffset == +2);
 }

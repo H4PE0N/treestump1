@@ -171,7 +171,7 @@ bool render_check_squares(Screen screen, const Piece board[], Info info, bool in
 
 bool render_move_squares(Screen screen, const Piece board[], Info info, Point point, bool inverted)
 {
-	if(!point_inside_board(point)) return true;
+	if(!POINT_INSIDE_BOARD(point)) return true;
 
 	unsigned short team = PIECE_TEAM_MACRO(board[point]);
 

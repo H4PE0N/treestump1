@@ -21,7 +21,7 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 
 	Piece startPiece = move_start_piece(move, board);
 
-	if(!move_ability_valid(move, startPiece, info)) return false;
+	if(!move_ability_valid(move, info)) return false;
 
 	if(!move_pattern_valid(move, startPiece)) return false;
 
@@ -30,7 +30,7 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 
 bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Point piecePoint)
 {
-	if(!point_inside_board(piecePoint)) return false;
+	if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
 	Move* pattMoves;
 	if(!piece_pattern_moves(&pattMoves, board, piecePoint)) return false;
@@ -38,9 +38,10 @@ bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Point p
 	unsigned short pattAmount = move_array_amount(pattMoves);
 
 	*moveArray = create_move_array(32);
-	unsigned short moveAmount = 0;
+	short moveAmount = 0;
 
 	Piece startPiece = board[piecePoint];
+	Piece pieceType = MASK_PIECE_TYPE(startPiece);
 
 	for(unsigned short index = 0; index < pattAmount; index += 1)
 	{
@@ -52,9 +53,24 @@ bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Point p
 		if(!correct_move_flag(&currentMove, startPiece, info)) continue;
 		if(!move_fully_legal(board, info, currentMove)) continue;
 
-		(*moveArray)[moveAmount++] = currentMove;
+		if(pieceType == PIECE_TYPE_PAWN && MOVE_PROMOTE_FLAG(currentMove))
+		{
+			append_promote_moves(*moveArray, &moveAmount, currentMove);
+		}
+		else (*moveArray)[moveAmount++] = currentMove;
 	}
 	free(pattMoves); return true;
+}
+
+void append_promote_moves(Move* moveArray, short* moveAmount, Move promoteMove)
+{
+	moveArray[(*moveAmount)++] = ALLOC_MOVE_FLAG(promoteMove, MOVE_FLAG_KNIGHT);
+
+	moveArray[(*moveAmount)++] = ALLOC_MOVE_FLAG(promoteMove, MOVE_FLAG_BISHOP);
+
+	moveArray[(*moveAmount)++] = ALLOC_MOVE_FLAG(promoteMove, MOVE_FLAG_ROOK);
+
+	moveArray[(*moveAmount)++] = ALLOC_MOVE_FLAG(promoteMove, MOVE_FLAG_QUEEN);
 }
 
 bool team_legal_moves(Move** moveArray, const Piece board[], Info info, unsigned short team)

@@ -10,6 +10,8 @@ bool move_check_handler(const Piece[], Info, Move);
 
 bool castle_prevent_check(const Piece[], Info, Move);
 
-Point castle_middle_move(Move);
+Move castle_middle_move(Move);
+
+Point castle_middle_point(Move);
 
 #endif

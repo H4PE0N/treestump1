@@ -73,12 +73,12 @@ signed short team_weight_value(signed short value, unsigned short team)
 	if(team == TEAM_BLACK) return -value;
 	if(team == TEAM_WHITE) return +value;
 
-	else return 0;
+	return 0;
 }
 
 signed short piece_matrix_value(Piece piece, Point point)
 {
-	if(!point_inside_board(point) || !chess_piece_exists(piece)) return 0;
+	if(!POINT_INSIDE_BOARD(point) || !chess_piece_exists(piece)) return 0;
 
 	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
   Piece pieceType = (piece & PIECE_TYPE_MASK);
@@ -104,15 +104,15 @@ signed short type_matrix_value(Piece pieceType, unsigned short rank, unsigned sh
 {
 	if(pieceType == PIECE_TYPE_PAWN) return PAWN_MATRIX[rank][file];
 
-	else if(pieceType == PIECE_TYPE_KNIGHT) return KNIGHT_MATRIX[rank][file];
+	if(pieceType == PIECE_TYPE_KNIGHT) return KNIGHT_MATRIX[rank][file];
 
-	else if(pieceType == PIECE_TYPE_BISHOP) return BISHOP_MATRIX[rank][file];
+	if(pieceType == PIECE_TYPE_BISHOP) return BISHOP_MATRIX[rank][file];
 
-	else if(pieceType == PIECE_TYPE_ROOK) return ROOK_MATRIX[rank][file];
+	if(pieceType == PIECE_TYPE_ROOK) return ROOK_MATRIX[rank][file];
 
-	else if(pieceType == PIECE_TYPE_QUEEN) return QUEEN_MATRIX[rank][file];
+	if(pieceType == PIECE_TYPE_QUEEN) return QUEEN_MATRIX[rank][file];
 
-	else if(pieceType == PIECE_TYPE_KING) return KING_MATRIX[rank][file];
+	if(pieceType == PIECE_TYPE_KING) return KING_MATRIX[rank][file];
 
 	return 0;
 }

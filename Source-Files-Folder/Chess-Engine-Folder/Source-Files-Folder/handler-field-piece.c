@@ -11,14 +11,14 @@ Piece* copy_chess_board(const Piece board[])
 
 unsigned short board_point_team(Point point, const Piece board[])
 {
-	if(!point_inside_board(point)) return TEAM_NONE;
+	if(!POINT_INSIDE_BOARD(point)) return TEAM_NONE;
 
 	return PIECE_TEAM_MACRO(board[point]);
 }
 
 Piece point_piece_type(Point point, const Piece board[])
 {
-	if(!point_inside_board(point)) return PIECE_TYPE_NONE;
+	if(!POINT_INSIDE_BOARD(point)) return PIECE_TYPE_NONE;
 
 	return (board[point] & PIECE_TYPE_MASK);
 }
@@ -96,8 +96,7 @@ bool chess_pieces_enemy(Piece firstPiece, Piece secondPiece)
 Piece piece_team_enemy(Piece pieceTeam)
 {
 	if(pieceTeam == PIECE_TEAM_WHITE) return PIECE_TEAM_BLACK;
-
-	else if(pieceTeam == PIECE_TEAM_BLACK) return PIECE_TEAM_WHITE;
+	if(pieceTeam == PIECE_TEAM_BLACK) return PIECE_TEAM_WHITE;
 
 	return PIECE_TEAM_NONE;
 }

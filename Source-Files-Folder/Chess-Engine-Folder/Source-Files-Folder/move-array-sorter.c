@@ -1,12 +1,12 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-void qsort_moves_values(Move* moveArray, short* moveValues, short length, unsigned short team)
+void qsort_moves_values(Move* moveArray, signed short* moveValues, short length, unsigned short team)
 {
 	qsort_moves_indexis(moveArray, moveValues, 0, length - 1, team);
 }
 
-void qsort_moves_indexis(Move* moveArray, short* moveValues, short index1, short index2, unsigned short team)
+void qsort_moves_indexis(Move* moveArray, signed short* moveValues, short index1, short index2, unsigned short team)
 {
 	if(index1 >= index2) return;
 
@@ -17,9 +17,9 @@ void qsort_moves_indexis(Move* moveArray, short* moveValues, short index1, short
 	qsort_moves_indexis(moveArray, moveValues, partIndex + 1, index2, team);
 }
 
-short partly_qsort_moves(Move* moveArray, short* moveValues, short index1, short index2, unsigned short team)
+short partly_qsort_moves(Move* moveArray, signed short* moveValues, short index1, short index2, unsigned short team)
 {
-	short pivotValue = moveValues[index2];
+	signed short pivotValue = moveValues[index2];
 
 	short iIndex = (index1 - 1);
 
@@ -36,18 +36,22 @@ short partly_qsort_moves(Move* moveArray, short* moveValues, short index1, short
 	return (iIndex + 1);
 }
 
-void qswap_moves_values(Move* moveArray, short* moveValues, short index1, short index2)
+void qswap_moves_values(Move* moveArray, signed short* moveValues, short index1, short index2)
+{
+	qswap_array_moves(moveArray, index1, index2);
+	qswap_move_values(moveValues, index1, index2);
+}
+
+void qswap_array_moves(Move* moveArray, short index1, short index2)
+{
+	Move tempMove = moveArray[index1];
+	moveArray[index1] = moveArray[index2];
+	moveArray[index2] = tempMove;
+}
+
+void qswap_move_values(signed short* moveValues, short index1, short index2)
 {
 	short tempValue = moveValues[index1];
-
 	moveValues[index1] = moveValues[index2];
-
 	moveValues[index2] = tempValue;
-
-
-	Move tempMove = moveArray[index1];
-
-	moveArray[index1] = moveArray[index2];
-
-	moveArray[index2] = tempMove;
 }

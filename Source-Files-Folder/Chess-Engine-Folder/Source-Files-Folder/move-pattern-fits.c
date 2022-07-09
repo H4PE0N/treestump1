@@ -11,15 +11,13 @@ bool move_pattern_fits(const Piece board[], Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-	Move moveFlag = MASK_MOVE_FLAG(move);
-
-	if(moveFlag == MOVE_FLAG_CASTLE)
+	if(MOVE_STORE_FLAG(move, MOVE_FLAG_CASTLE))
 		return castle_pattern_fits(board, move);
 
-	else if(moveFlag == MOVE_FLAG_PASSANT)
+	if(MOVE_STORE_FLAG(move, MOVE_FLAG_PASSANT))
 		return passant_pattern_fits(board, move);
 
-	else if(start_piece_type(move, board) == PIECE_TYPE_PAWN)
+	if(start_piece_type(move, board) == PIECE_TYPE_PAWN)
 		return pawn_pattern_fits(board, move);
 
 	return normal_pattern_fits(board, move);
@@ -57,7 +55,7 @@ bool castle_pattern_fits(const Piece board[], Move move)
 
 	if(start_piece_type(move, board) != PIECE_TYPE_KING) return false;
 
-	Point rookPoint = castle_rook_point(move, startTeam);
+	Point rookPoint = castle_rook_point(move);
 	if(rookPoint == POINT_NONE) return false;
 
 	Piece rookPieceType = point_piece_type(rookPoint, board);
@@ -68,25 +66,24 @@ bool castle_pattern_fits(const Piece board[], Move move)
 	return clear_moving_path(board, move);
 }
 
-Point castle_rook_point(Move move, unsigned short team)
+Point castle_rook_point(Move castleMove)
 {
-	if(!move_inside_board(move)) return POINT_NONE;
-	if(!normal_team_exists(team)) return POINT_NONE;
+	if(!move_inside_board(castleMove)) return POINT_NONE;
 
-	unsigned short kingRank = MOVE_START_RANK(move);
-	signed short fileOffset = move_file_offset(move, team);
+	unsigned short kingPoint = MOVE_START_MACRO(castleMove);
+	signed short movePattern = board_move_pattern(castleMove);
 
-	if(kingRank == WHITE_START_RANK && fileOffset == KING_CASTLE_PAT)
-		return rank_file_point(WHITE_START_RANK, BOARD_FILES - 1);
+	if(kingPoint == WHITE_KING_POINT && movePattern == KSIDE_FILE_OFFSET)
+		return WROOK_KSIDE_POINT;
 
-	else if(kingRank == WHITE_START_RANK && fileOffset == QUEEN_CASTLE_PAT)
-		return rank_file_point(WHITE_START_RANK, 0);
+	if(kingPoint == WHITE_KING_POINT && movePattern == QSIDE_FILE_OFFSET)
+		return WROOK_QSIDE_POINT;
 
-	else if(kingRank == BLACK_START_RANK && fileOffset == KING_CASTLE_PAT)
-		return rank_file_point(BLACK_START_RANK, BOARD_FILES - 1);
+	if(kingPoint == BLACK_KING_POINT && movePattern == KSIDE_FILE_OFFSET)
+		return BROOK_KSIDE_POINT;
 
-	else if(kingRank == BLACK_START_RANK && fileOffset == QUEEN_CASTLE_PAT)
-		return rank_file_point(BLACK_START_RANK, 0);
+	if(kingPoint == BLACK_KING_POINT && movePattern == QSIDE_FILE_OFFSET)
+		return BROOK_QSIDE_POINT;
 
 	return POINT_NONE;
 }
@@ -167,7 +164,7 @@ bool moving_path_points(Point** movePoints, Move move)
 		unsigned short currentFile = startFile + (index * fileFactor);
 		unsigned short currentRank = startRank + (index * rankFactor);
 
-		(*movePoints)[index] = rank_file_point(currentRank, currentFile);
+		(*movePoints)[index] = RANK_FILE_POINT(currentRank, currentFile);
 	}
 	return true;
 }

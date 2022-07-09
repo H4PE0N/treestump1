@@ -131,7 +131,7 @@ bool parse_string_point(Point* point, const char string[])
 
 	if(fileIndex == INDEX_NONE || rankIndex == INDEX_NONE) return false;
 
-	*point = rank_file_point(rankIndex, fileIndex);
+	*point = RANK_FILE_POINT(rankIndex, fileIndex);
 
 	return true;
 }
@@ -165,19 +165,19 @@ bool parse_castle_symbol(Info* infoCastle, char symbol)
 {
 	if(symbol == chess_piece_symbol(PIECE_TEAM_WHITE | PIECE_TYPE_KING))
 	{
-		*infoCastle = INFO_WHITE_KING;
+		*infoCastle = INFO_WHITE_KSIDE;
 	}
 	else if(symbol == chess_piece_symbol(PIECE_TEAM_WHITE | PIECE_TYPE_QUEEN))
 	{
-		*infoCastle = INFO_WHITE_QUEEN;
+		*infoCastle = INFO_WHITE_QSIDE;
 	}
 	else if(symbol == chess_piece_symbol(PIECE_TEAM_BLACK | PIECE_TYPE_KING))
 	{
-		*infoCastle = INFO_BLACK_KING;
+		*infoCastle = INFO_BLACK_KSIDE;
 	}
 	else if(symbol == chess_piece_symbol(PIECE_TEAM_BLACK | PIECE_TYPE_QUEEN))
 	{
-		*infoCastle = INFO_BLACK_QUEEN;
+		*infoCastle = INFO_BLACK_QSIDE;
 	}
 	else return false;
 
@@ -242,7 +242,7 @@ bool parse_board_symbol(Piece** board, unsigned short rank, unsigned short* file
 
 	if(!parse_board_piece(&piece, symbol)) return false;
 
-	Point point = rank_file_point(rank, *file);
+	Point point = RANK_FILE_POINT(rank, *file);
 
 	(*board)[point] = piece;
 
@@ -257,7 +257,7 @@ bool parse_board_blanks(Piece** board, unsigned short rank, unsigned short* file
 
 	for(; *file < totalFiles; *file += 1)
 	{
-		(*board)[rank_file_point(rank, *file)] = PIECE_NONE;
+		(*board)[RANK_FILE_POINT(rank, *file)] = PIECE_NONE;
 	}
 	return true;
 }
@@ -289,7 +289,7 @@ char chess_piece_symbol(Piece piece)
 
 	if(pieceTeam == PIECE_TEAM_WHITE) return WHITE_TYPE_SYMBOLS[typeIndex];
 
-	else if(pieceTeam == PIECE_TEAM_BLACK) return BLACK_TYPE_SYMBOLS[typeIndex];
+	if(pieceTeam == PIECE_TEAM_BLACK) return BLACK_TYPE_SYMBOLS[typeIndex];
 
 	return SYMBOL_NONE;
 }

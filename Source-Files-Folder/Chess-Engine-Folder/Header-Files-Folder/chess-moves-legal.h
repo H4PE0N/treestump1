@@ -10,4 +10,6 @@ bool piece_legal_moves(Move**, const Piece[], Info, Point);
 
 bool team_legal_moves(Move**, const Piece[], Info, unsigned short);
 
+void append_promote_moves(Move*, short*, Move);
+
 #endif

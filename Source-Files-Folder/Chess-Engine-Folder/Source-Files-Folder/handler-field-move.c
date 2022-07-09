@@ -29,11 +29,6 @@ Piece move_stop_piece(Move move, const Piece board[])
 	return board[MOVE_STOP_MACRO(move)];
 }
 
-Move start_stop_move(Point start, Point stop)
-{
-	return (START_MOVE_MACRO(start) | STOP_MOVE_MACRO(stop));
-}
-
 unsigned short move_array_amount(const Move moveArray[])
 {
 	unsigned short movesAmount = 0;
@@ -74,10 +69,7 @@ bool move_inside_board(Move move)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	bool startPointInside = point_inside_board(startPoint);
-	bool stopPointInside = point_inside_board(stopPoint);
-
-	return (startPointInside && stopPointInside);
+	return POINTS_INSIDE_BOARD(startPoint, stopPoint);
 }
 
 bool move_points_team(const Piece board[], Move move)
@@ -107,7 +99,6 @@ short move_file_offset(Move move, unsigned short team)
 	signed short fileOffset = (stopFile - startFile);
 
 	if(team == TEAM_WHITE) return fileOffset;// * WHITE_MOVE_VALUE;
-
 	if(team == TEAM_BLACK) return fileOffset;// * BLACK_MOVE_VALUE;
 
 	return SHORT_NONE;
@@ -124,10 +115,19 @@ short move_rank_offset(Move move, unsigned short team)
 	signed short rankOffset = (stopRank - startRank);
 
 	if(team == TEAM_WHITE) return rankOffset * WHITE_MOVE_VALUE;
-
 	if(team == TEAM_BLACK) return rankOffset * BLACK_MOVE_VALUE;
 
 	return SHORT_NONE;
+}
+
+unsigned short abs_move_roffset(Move move, unsigned short team)
+{
+	return ABS_SHORT_NUMBER(move_rank_offset(move, team));
+}
+
+unsigned short abs_move_foffset(Move move, unsigned short team)
+{
+	return ABS_SHORT_NUMBER(move_file_offset(move, team));
 }
 
 short normal_rank_offset(Move move)

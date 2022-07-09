@@ -6,27 +6,19 @@
 // This function is not going to check any validation
 bool execute_chess_move(Piece* board, Info* info, Move move)
 {
-	if(!move_inside_board(move)) return false;
-
-	Move moveFlag = (move & MOVE_FLAG_MASK);
-
-	if(moveFlag == MOVE_FLAG_KNIGHT || moveFlag == MOVE_FLAG_BISHOP || moveFlag == MOVE_FLAG_ROOK || moveFlag == MOVE_FLAG_QUEEN)
-	{
+	if(MOVE_PROMOTE_FLAG(move))
 		return execute_promote_move(board, info, move);
-	}
-	else if(moveFlag == MOVE_FLAG_CASTLE)
-	{
+
+	if(MOVE_STORE_FLAG(move, MOVE_FLAG_CASTLE))
 		return execute_castle_move(board, info, move);
-	}
-	else if(moveFlag == MOVE_FLAG_PASSANT)
-	{
+
+	if(MOVE_STORE_FLAG(move, MOVE_FLAG_PASSANT))
 		return execute_passant_move(board, info, move);
-	}
-	else if(moveFlag == MOVE_FLAG_DOUBLE)
-	{
+
+	if(MOVE_STORE_FLAG(move, MOVE_FLAG_DOUBLE))
 		return execute_double_move(board, info, move);
-	}
-	else return execute_normal_move(board, info, move);
+
+	return execute_normal_move(board, info, move);
 }
 
 // This function is going to execute all normal moves
@@ -38,157 +30,159 @@ bool execute_normal_move(Piece* board, Info* info, Move move)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-
-	unsigned short startFile = POINT_FILE_MACRO(startPoint);
-	unsigned short startRank = POINT_RANK_MACRO(startPoint);
-
-	unsigned short stopFile = POINT_FILE_MACRO(stopPoint);
-	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
-
-
-	Piece startPieceType = (board[startPoint] & PIECE_TYPE_MASK);
-	Piece stopPieceType = (board[stopPoint] & PIECE_TYPE_MASK);
-
 	Piece startPiece = board[startPoint];
+	Piece stopPiece = board[stopPoint];
 
-	unsigned short startTeam = PIECE_TEAM_MACRO(startPiece);
 
-	board[startPoint] = PIECE_NONE;
-	board[stopPoint] = startPiece;
+	execute_board_move(board, move);
 
-	if(startPieceType == PIECE_TYPE_KING)
+
+	if(PIECE_STORE_TYPE(startPiece, PIECE_TYPE_KING))
 	{
-		if(startTeam == TEAM_WHITE)
-		{
-			// Resets the bits of white king and queen
-			*info = (*info & ~INFO_WHITE_KING & ~INFO_WHITE_QUEEN);
-		}
-		else if(startTeam == TEAM_BLACK)
-		{
-			// Resets the bits of black king and queen
-			*info = (*info & ~INFO_BLACK_KING & ~INFO_BLACK_QUEEN);
-		}
+		reset_king_ability(info, startPiece);
 	}
 
-	// If a rook is moving, or a rook is taken: The castle ability must be set to false
-	if(startPieceType == PIECE_TYPE_ROOK || stopPieceType == PIECE_TYPE_ROOK)
+	if(PIECE_STORE_TYPE(stopPiece, PIECE_TYPE_ROOK))
 	{
-		unsigned short rookRank = (startPieceType == PIECE_TYPE_ROOK) ? startRank : stopRank;
-		unsigned short rookFile = (startPieceType == PIECE_TYPE_ROOK) ? startFile : stopFile;
-
-		if(rookRank == WHITE_START_RANK && rookFile == 0)
-		{
-			*info = (*info & ~INFO_WHITE_QUEEN);
-		}
-		else if(rookRank == WHITE_START_RANK && rookFile == (BOARD_FILES - 1))
-		{
-			*info = (*info & ~INFO_WHITE_KING);
-		}
-		if(rookRank == BLACK_START_RANK && rookFile == 0)
-		{
-			*info = (*info & ~INFO_BLACK_QUEEN);
-		}
-		else if(rookRank == BLACK_START_RANK && rookFile == (BOARD_FILES - 1))
-		{
-			*info = (*info & ~INFO_BLACK_KING);
-		}
+		reset_rook_ability(info, stopPiece, stopPoint);
+	}
+	else if(PIECE_STORE_TYPE(startPiece, PIECE_TYPE_ROOK))
+	{
+		reset_rook_ability(info, startPiece, startPoint);
 	}
 
-	*info = ALLOC_INFO_PASSANT(*info, 0);
 
+	*info = CLEAR_INFO_PASSANT(*info);
 
 	unsigned short turns = INFO_TURNS_MACRO(*info);
 	unsigned short team = INFO_TEAM_MACRO(*info);
 
 	if(team == TEAM_BLACK) *info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO((turns + 1)) );
 
+	switch_current_team(info);
 
-	if(team == TEAM_WHITE) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_BLACK);
-	if(team == TEAM_BLACK) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_WHITE);
+
+	return true;
+}
+
+bool switch_current_team(Info* info)
+{
+	Info infoEnemy = info_team_enemy(MASK_INFO_TEAM(*info));
+
+	if(!info_team_exists(infoEnemy)) return false;
+
+	*info = ALLOC_INFO_TEAM(*info, infoEnemy);
+
+	return true;
+}
+
+bool reset_king_ability(Info* info, Piece kingPiece)
+{
+	if(!PIECE_STORE_TYPE(kingPiece, PIECE_TYPE_KING)) return false;
+
+	if(PIECE_TEAM_MACRO(kingPiece) == TEAM_WHITE) *info = CLEAR_WHITE_CASTLE(*info);
+
+	else if(PIECE_TEAM_MACRO(kingPiece) == TEAM_BLACK) *info = CLEAR_BLACK_CASTLE(*info);
+
+	return true;
+}
+
+bool reset_rook_ability(Info* info, Piece rookPiece, Point rookPoint)
+{
+	if(!PIECE_STORE_TYPE(rookPiece, PIECE_TYPE_ROOK)) return false;
+
+	if(rookPoint == WROOK_QSIDE_POINT) *info = CLEAR_WHITE_QSIDE(*info);
+
+	else if(rookPoint == WROOK_KSIDE_POINT) *info = CLEAR_WHITE_KSIDE(*info);
+
+	else if(rookPoint == BROOK_QSIDE_POINT) *info = CLEAR_BLACK_QSIDE(*info);
+
+	else if(rookPoint == BROOK_KSIDE_POINT) *info = CLEAR_BLACK_KSIDE(*info);
 
 	return true;
 }
 
 // This function is going to execute a castle
 // - It has to move both the king and the rook
-bool execute_castle_move(Piece* board, Info* info, Move move)
+bool execute_castle_move(Piece* board, Info* info, Move kingMove)
 {
-	Point kingPoint = MOVE_START_MACRO(move);
+	Point startRook = castle_rook_point(kingMove);
+	Point stopRook = castle_middle_point(kingMove);
 
-	Piece kingPiece = board[kingPoint];
+	if(startRook == POINT_NONE || stopRook == POINT_NONE) return false;
 
-	unsigned short kingTeam = PIECE_TEAM_MACRO(kingPiece);
-
-	Point rookPoint = castle_rook_point(move, kingTeam);
-
-	if(rookPoint == POINT_NONE) return false;
+	Piece kingPiece = move_start_piece(kingMove, board);
 
 
-	Piece rookPiece = board[rookPoint];
+	execute_board_move(board, kingMove);
+	execute_start_stop(board, startRook, stopRook);
 
 
-	signed short fileOffset = move_file_offset(move, kingTeam);
-
-	Point newKingPoint = MOVE_STOP_MACRO(move);
-	Point newRookPoint = (fileOffset == KING_CASTLE_PAT) ? (newKingPoint - 1) : (newKingPoint + 1);
-
-	board[newKingPoint] = kingPiece;
-	board[kingPoint] = PIECE_NONE;
-
-	board[newRookPoint] = rookPiece;
-	board[rookPoint] = PIECE_NONE;
+	reset_king_ability(info, kingPiece);
 
 
-	*info = ALLOC_INFO_PASSANT(*info, 0);
-
-
-	if(kingTeam == TEAM_WHITE)
-	{
-		// Resets the bits of white king and queen
-		*info = (*info & ~INFO_WHITE_KING & ~INFO_WHITE_QUEEN);
-	}
-	else if(kingTeam == TEAM_BLACK)
-	{
-		// Resets the bits of black king and queen
-		*info = (*info & ~INFO_BLACK_KING & ~INFO_BLACK_QUEEN);
-	}
+	*info = CLEAR_INFO_PASSANT(*info);
 
 	unsigned short turns = INFO_TURNS_MACRO(*info);
 	unsigned short team = INFO_TEAM_MACRO(*info);
 
 	if(team == TEAM_BLACK) *info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO((turns + 1)) );
 
-
-	if(team == TEAM_WHITE) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_BLACK);
-	if(team == TEAM_BLACK) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_WHITE);
+	switch_current_team(info);
 
 	return true;
 }
 
 Piece promote_piece_type(Move move)
 {
-	Move moveFlag = MASK_MOVE_FLAG(move);
+	if(MOVE_STORE_FLAG(move, MOVE_FLAG_ROOK)) return PIECE_TYPE_ROOK;
 
-	if(moveFlag == MOVE_FLAG_ROOK) return PIECE_TYPE_ROOK;
+	if(MOVE_STORE_FLAG(move, MOVE_FLAG_BISHOP)) return PIECE_TYPE_BISHOP;
 
-	else if(moveFlag == MOVE_FLAG_BISHOP) return PIECE_TYPE_BISHOP;
+	if(MOVE_STORE_FLAG(move, MOVE_FLAG_KNIGHT)) return PIECE_TYPE_KNIGHT;
 
-	else if(moveFlag == MOVE_FLAG_KNIGHT) return PIECE_TYPE_KNIGHT;
+	if(MOVE_STORE_FLAG(move, MOVE_FLAG_QUEEN)) return PIECE_TYPE_QUEEN;
 
-	else if(moveFlag == MOVE_FLAG_QUEEN) return PIECE_TYPE_QUEEN;
-
-	else return PIECE_TYPE_NONE;
+	return PIECE_TYPE_NONE;
 }
 
-Piece move_promote_piece(Move move, unsigned short team)
+Piece promote_piece_team(Move move)
 {
-	if(!normal_team_exists(team)) return PIECE_NONE;
+	if(MOVE_STOP_MACRO(move) == WHITE_START_RANK) return PIECE_TEAM_BLACK;
 
+	if(MOVE_STOP_MACRO(move) == BLACK_START_RANK) return PIECE_TEAM_WHITE;
+
+	return PIECE_TEAM_NONE;
+}
+
+Piece move_promote_piece(Move move)
+{
+	Piece pieceTeam = promote_piece_team(move);
 	Piece pieceType = promote_piece_type(move);
 
-	if(pieceType == PIECE_TYPE_NONE) return PIECE_NONE;
+	if(pieceType == PIECE_TYPE_NONE || pieceTeam == PIECE_TEAM_NONE) return PIECE_NONE;
 
-	return (TEAM_PIECE_MACRO(team) | pieceType);
+	return (pieceTeam | pieceType);
+}
+
+bool execute_board_move(Piece* board, Move move)
+{
+	Piece startPiece = move_start_piece(move, board);
+
+	board[MOVE_START_MACRO(move)] = PIECE_NONE;
+	board[MOVE_STOP_MACRO(move)] = startPiece;
+
+	return true;
+}
+
+bool execute_start_stop(Piece* board, Point startPoint, Point stopPoint)
+{
+	Piece startPiece = board[startPoint];
+
+	board[stopPoint] = startPiece;
+	board[startPoint] = PIECE_NONE;
+
+	return true;
 }
 
 // This function is going to execute a promotion
@@ -202,11 +196,7 @@ bool execute_promote_move(Piece* board, Info* info, Move move)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-
-	unsigned short startTeam = move_start_team(move, board);
-
-
-	Piece promotePiece = move_promote_piece(move, startTeam);
+	Piece promotePiece = move_promote_piece(move);
 	if(promotePiece == PIECE_NONE) return false;
 
 
@@ -214,18 +204,26 @@ bool execute_promote_move(Piece* board, Info* info, Move move)
 	board[startPoint] = PIECE_NONE;
 
 
-	*info = ALLOC_INFO_PASSANT(*info, 0);
+	*info = CLEAR_INFO_PASSANT(*info);
 
 	unsigned short turns = INFO_TURNS_MACRO(*info);
 	unsigned short team = INFO_TEAM_MACRO(*info);
 
 	if(team == TEAM_BLACK) *info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO((turns + 1)) );
 
-
-	if(team == TEAM_WHITE) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_BLACK);
-	if(team == TEAM_BLACK) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_WHITE);
+	switch_current_team(info);
 
 	return true;
+}
+
+Point pawn_passant_point(Move move)
+{
+	if(!move_inside_board(move)) return POINT_NONE;
+
+	unsigned short pawnRank = MOVE_START_RANK(move);
+	unsigned short pawnFile = MOVE_STOP_FILE(move);
+
+	return RANK_FILE_POINT(pawnRank, pawnFile);
 }
 
 // This function is going to execute en passant take
@@ -238,24 +236,7 @@ bool execute_passant_move(Piece* board, Info* info, Move move)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	Piece startPieceTeam = (board[startPoint] & PIECE_TEAM_MASK);
-
-	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
-
-
-	unsigned short pawnRank = 0;
-
-	if(startPieceTeam == PIECE_TEAM_WHITE) pawnRank = (stopRank + BLACK_MOVE_VALUE);
-
-	else if(startPieceTeam == PIECE_TEAM_BLACK) pawnRank = (stopRank + WHITE_MOVE_VALUE);
-
-	else return false;
-
-
-	unsigned short pawnFile = (INFO_PASSANT_MACRO(*info) - 1);
-
-
-	Point pawnPoint = RANK_POINT_MACRO(pawnRank) | FILE_POINT_MACRO(pawnFile);
+	Point pawnPoint = pawn_passant_point(move);
 
 
 	board[stopPoint] = board[startPoint];
@@ -263,16 +244,14 @@ bool execute_passant_move(Piece* board, Info* info, Move move)
 	board[pawnPoint] = PIECE_NONE;
 
 
-	*info = ALLOC_INFO_PASSANT(*info, 0);
+	*info = CLEAR_INFO_PASSANT(*info);
 
 	unsigned short turns = INFO_TURNS_MACRO(*info);
 	unsigned short team = INFO_TEAM_MACRO(*info);
 
 	if(team == TEAM_BLACK) *info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO((turns + 1)) );
 
-
-	if(team == TEAM_WHITE) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_BLACK);
-	if(team == TEAM_BLACK) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_WHITE);
+	switch_current_team(info);
 
 	return true;
 }
@@ -288,18 +267,15 @@ bool execute_double_move(Piece* board, Info* info, Move move)
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
 
-	unsigned short startFile = POINT_FILE_MACRO(startPoint);
-
-
 	board[stopPoint] = board[startPoint];
 	board[startPoint] = PIECE_NONE;
 
 
-	unsigned short passantFile = (startFile + 1);
-
-	Info infoPassant = PASSANT_INFO_MACRO(passantFile);
+	unsigned short startFile = POINT_FILE_MACRO(startPoint);
+	Info infoPassant = PASSANT_INFO_MACRO((startFile + 1));
 
 	*info = ALLOC_INFO_PASSANT(*info, infoPassant);
+
 
 	unsigned short turns = INFO_TURNS_MACRO(*info);
 	unsigned short team = INFO_TEAM_MACRO(*info);
@@ -307,8 +283,7 @@ bool execute_double_move(Piece* board, Info* info, Move move)
 	if(team == TEAM_BLACK) *info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO((turns + 1)) );
 
 
-	if(team == TEAM_WHITE) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_BLACK);
-	if(team == TEAM_BLACK) *info = ALLOC_INFO_TEAM(*info, INFO_TEAM_WHITE);
+	switch_current_team(info);
 
 	return true;
 }

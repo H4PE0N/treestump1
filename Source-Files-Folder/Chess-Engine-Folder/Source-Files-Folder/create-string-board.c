@@ -81,22 +81,22 @@ bool create_string_passant(char* string, Info info)
 
 bool create_string_castles(char* string, Info info)
 {
-	if(info & INFO_WHITE_KING)
+	if(MASK_WHITE_KSIDE(info))
 	{
 		char symbol = chess_piece_symbol(PIECE_TEAM_WHITE | PIECE_TYPE_KING);
 		strncat(string, &symbol, 1);
 	}
-	if(info & INFO_WHITE_QUEEN)
+	if(MASK_WHITE_QSIDE(info))
 	{
 		char symbol = chess_piece_symbol(PIECE_TEAM_WHITE | PIECE_TYPE_QUEEN);
 		strncat(string, &symbol, 1);
 	}
-	if(info & INFO_BLACK_KING)
+	if(MASK_BLACK_KSIDE(info))
 	{
 		char symbol = chess_piece_symbol(PIECE_TEAM_BLACK | PIECE_TYPE_KING);
 		strncat(string, &symbol, 1);
 	}
-	if(info & INFO_BLACK_QUEEN)
+	if(MASK_BLACK_QSIDE(info))
 	{
 		char symbol = chess_piece_symbol(PIECE_TEAM_BLACK | PIECE_TYPE_QUEEN);
 		strncat(string, &symbol, 1);
@@ -143,7 +143,7 @@ bool create_board_files(char* string, const Piece board[], unsigned short rank)
 {
 	for(unsigned short file = 0; file < BOARD_FILES; file += 1)
 	{
-		Point point = rank_file_point(rank, file);
+		Point point = RANK_FILE_POINT(rank, file);
 
 		if(chess_piece_exists(board[point]))
 		{
@@ -171,7 +171,7 @@ bool create_blank_symbol(char* symbol, unsigned short rank, unsigned short* file
 
 	for(; (*file + blanks) < BOARD_FILES; blanks += 1)
 	{
-		Point point = rank_file_point(rank, (*file + blanks));
+		Point point = RANK_FILE_POINT(rank, (*file + blanks));
 
 		if(chess_piece_exists(board[point])) break;
 	}

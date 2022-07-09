@@ -3,42 +3,32 @@
 
 bool piece_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 {
-  if(!point_inside_board(piecePoint)) return false;
+  if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
-	Piece pieceType = (board[piecePoint] & PIECE_TYPE_MASK);
+  if(PIECE_STORE_TYPE(board[piecePoint], PIECE_TYPE_PAWN))
+    return pawn_pattern_moves(moves, board, piecePoint);
 
-	if(pieceType == PIECE_TYPE_NONE) return false;
+	if(PIECE_STORE_TYPE(board[piecePoint], PIECE_TYPE_KNIGHT))
+    return knight_pattern_moves(moves, board, piecePoint);
 
-	else if(pieceType == PIECE_TYPE_PAWN)
-	{
-		return pawn_pattern_moves(moves, board, piecePoint);
-	}
-	else if(pieceType == PIECE_TYPE_KNIGHT)
-	{
-		return knight_pattern_moves(moves, board, piecePoint);
-	}
-	else if(pieceType == PIECE_TYPE_BISHOP)
-	{
-		return bishop_pattern_moves(moves, board, piecePoint);
-	}
-	else if(pieceType == PIECE_TYPE_ROOK)
-	{
-		return rook_pattern_moves(moves, board, piecePoint);
-	}
-	else if(pieceType == PIECE_TYPE_QUEEN)
-	{
-		return queen_pattern_moves(moves, board, piecePoint);
-	}
-	else if(pieceType == PIECE_TYPE_KING)
-	{
-		return king_pattern_moves(moves, board, piecePoint);
-	}
-	else return false;
+	if(PIECE_STORE_TYPE(board[piecePoint], PIECE_TYPE_BISHOP))
+    return bishop_pattern_moves(moves, board, piecePoint);
+
+	if(PIECE_STORE_TYPE(board[piecePoint], PIECE_TYPE_ROOK))
+    return rook_pattern_moves(moves, board, piecePoint);
+
+	if(PIECE_STORE_TYPE(board[piecePoint], PIECE_TYPE_QUEEN))
+    return queen_pattern_moves(moves, board, piecePoint);
+
+	if(PIECE_STORE_TYPE(board[piecePoint], PIECE_TYPE_KING))
+    return king_pattern_moves(moves, board, piecePoint);
+
+	return false;
 }
 
 bool pawn_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 {
-  if(!point_inside_board(piecePoint)) return false;
+  if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
 	*moves = create_move_array(4);
 	unsigned short moveAmount = 0;
@@ -58,13 +48,11 @@ bool pawn_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
       short realRank = pieceRank + (rank + 1) * ((team == TEAM_WHITE) ? WHITE_MOVE_VALUE : BLACK_MOVE_VALUE);
 			short realFile = (pieceFile - 1) + file;
 
-      if(!NUMBER_IN_BOUNDS(realRank, 0, BOARD_RANKS - 1) || !NUMBER_IN_BOUNDS(realFile, 0, BOARD_FILES - 1)) continue;
+      if(!RANK_FILE_INSIDE(realRank, realFile)) continue;
 
-			Point point = rank_file_point(realRank, realFile);
+			Point point = RANK_FILE_POINT(realRank, realFile);
 
-			if(!point_inside_board(point)) continue;
-
-			(*moves)[moveAmount++] = start_stop_move(piecePoint, point);
+			(*moves)[moveAmount++] = START_STOP_MOVE(piecePoint, point);
 		}
 	}
 	return true;
@@ -72,7 +60,7 @@ bool pawn_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 
 bool knight_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 {
-  if(!point_inside_board(piecePoint)) return false;
+  if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
   *moves = create_move_array(8);
 	unsigned short moveAmount = 0;
@@ -90,11 +78,11 @@ bool knight_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 			short realRank = (pieceRank - 2) + rank;
 			short realFile = (pieceFile - 2) + file;
 
-			if(!NUMBER_IN_BOUNDS(realRank, 0, BOARD_RANKS - 1) || !NUMBER_IN_BOUNDS(realFile, 0, BOARD_FILES - 1)) continue;
+			if(!RANK_FILE_INSIDE(realRank, realFile)) continue;
 
-			Point point = rank_file_point(realRank, realFile);
+			Point point = RANK_FILE_POINT(realRank, realFile);
 
-      (*moves)[moveAmount++] = start_stop_move(piecePoint, point);
+      (*moves)[moveAmount++] = START_STOP_MOVE(piecePoint, point);
 		}
 	}
   return true;
@@ -102,7 +90,7 @@ bool knight_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 
 bool straight_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 {
-  if(!point_inside_board(piecePoint)) return false;
+  if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
   *moves = create_move_array(16);
   unsigned short moveAmount = 0;
@@ -112,27 +100,25 @@ bool straight_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 
   for(unsigned short rank = 0; rank < BOARD_RANKS; rank += 1)
 	{
-    Point point = rank_file_point(rank, pieceFile);
-
+    Point point = RANK_FILE_POINT(rank, pieceFile);
     if(piecePoint == point) continue;
 
-		(*moves)[moveAmount++] = start_stop_move(piecePoint, point);
+		(*moves)[moveAmount++] = START_STOP_MOVE(piecePoint, point);
 	}
 
 	for(unsigned short file = 0; file < BOARD_FILES; file += 1)
 	{
-		Point point = rank_file_point(pieceRank, file);
-
+		Point point = RANK_FILE_POINT(pieceRank, file);
     if(piecePoint == point) continue;
 
-		(*moves)[moveAmount++] = start_stop_move(piecePoint, point);
+		(*moves)[moveAmount++] = START_STOP_MOVE(piecePoint, point);
 	}
   return true;
 }
 
 bool diagonal_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 {
-  if(!point_inside_board(piecePoint)) return false;
+  if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
   *moves = create_move_array(16);
   unsigned short moveAmount = 0;
@@ -145,13 +131,12 @@ bool diagonal_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 		short realRank = (pieceRank + index);
 		short realFile = (pieceFile + index);
 
-    if(!NUMBER_IN_BOUNDS(realRank, 0, BOARD_RANKS - 1) || !NUMBER_IN_BOUNDS(realFile, 0, BOARD_FILES - 1)) continue;
+    if(!RANK_FILE_INSIDE(realRank, realFile)) continue;
 
-		Point point = rank_file_point(realRank, realFile);
-
+		Point point = RANK_FILE_POINT(realRank, realFile);
     if(piecePoint == point) continue;
 
-    (*moves)[moveAmount++] = start_stop_move(piecePoint, point);
+    (*moves)[moveAmount++] = START_STOP_MOVE(piecePoint, point);
 	}
 
 	for(short index = -8; index <= 16; index += 1)
@@ -159,20 +144,19 @@ bool diagonal_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 		short realRank = (pieceRank + index);
 		short realFile = (pieceFile - index);
 
-    if(!NUMBER_IN_BOUNDS(realRank, 0, BOARD_RANKS - 1) || !NUMBER_IN_BOUNDS(realFile, 0, BOARD_FILES - 1)) continue;
+    if(!RANK_FILE_INSIDE(realRank, realFile)) continue;
 
-		Point point = rank_file_point(realRank, realFile);
-
+		Point point = RANK_FILE_POINT(realRank, realFile);
     if(piecePoint == point) continue;
 
-    (*moves)[moveAmount++] = start_stop_move(piecePoint, point);
+    (*moves)[moveAmount++] = START_STOP_MOVE(piecePoint, point);
 	}
   return true;
 }
 
 bool rook_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 {
-  if(!point_inside_board(piecePoint)) return false;
+  if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
   *moves = create_move_array(16);
   unsigned short moveAmount = 0;
@@ -195,7 +179,7 @@ bool rook_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 
 bool bishop_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 {
-  if(!point_inside_board(piecePoint)) return false;
+  if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
   *moves = create_move_array(16);
   unsigned short moveAmount = 0;
@@ -218,7 +202,7 @@ bool bishop_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 
 bool queen_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 {
-  if(!point_inside_board(piecePoint)) return false;
+  if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
   *moves = create_move_array(32);
   unsigned short moveAmount = 0;
@@ -253,7 +237,7 @@ bool queen_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 
 bool king_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 {
-  if(!point_inside_board(piecePoint)) return false;
+  if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
   *moves = create_move_array(10);
   unsigned short moveAmount = 0;
@@ -270,13 +254,12 @@ bool king_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
 			short realRank = (pieceRank - 1) + rank;
 			short realFile = (pieceFile - 2) + file;
 
-      if(!NUMBER_IN_BOUNDS(realRank, 0, BOARD_RANKS - 1) || !NUMBER_IN_BOUNDS(realFile, 0, BOARD_FILES - 1)) continue;
+      if(!RANK_FILE_INSIDE(realRank, realFile)) continue;
 
-      Point point = rank_file_point(realRank, realFile);
+      Point point = RANK_FILE_POINT(realRank, realFile);
+      if(piecePoint == point) continue;
 
-      if((piecePoint == point) || !point_inside_board(point)) continue;
-
-			(*moves)[moveAmount++] = start_stop_move(piecePoint, point);
+			(*moves)[moveAmount++] = START_STOP_MOVE(piecePoint, point);
 		}
 	}
 	return true;

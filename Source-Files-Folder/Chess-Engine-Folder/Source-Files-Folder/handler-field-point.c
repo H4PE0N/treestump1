@@ -13,16 +13,6 @@ Point board_king_point(const Piece board[], unsigned short team)
 	return POINT_NONE;
 }
 
-Point rank_file_point(unsigned short rank, unsigned short file)
-{
-	return (RANK_POINT_MACRO(rank) | FILE_POINT_MACRO(file));
-}
-
-bool point_inside_board(Point point)
-{
-	return NUMBER_IN_BOUNDS(point, 0, BOARD_LENGTH - 1);
-}
-
 bool board_points_team(const Piece board[], Point firstPoint, Point secondPoint)
 {
 	Piece firstPiece = board[firstPoint];
@@ -41,9 +31,7 @@ bool board_points_enemy(const Piece board[], Point firstPoint, Point secondPoint
 
 bool board_point_exists(const Piece board[], Point point)
 {
-	Piece piece = board[point];
-
-	return chess_piece_exists(piece);
+	return chess_piece_exists(board[point]);
 }
 
 short array_point_index(const Point pointArray[], short amount, Point point)

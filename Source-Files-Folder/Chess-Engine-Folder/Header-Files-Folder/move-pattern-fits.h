@@ -20,6 +20,6 @@ bool castle_pattern_fits(const Piece[], Move);
 
 bool pawn_pattern_fits(const Piece[], Move);
 
-Point castle_rook_point(Move, unsigned short);
+Point castle_rook_point(Move);
 
 #endif

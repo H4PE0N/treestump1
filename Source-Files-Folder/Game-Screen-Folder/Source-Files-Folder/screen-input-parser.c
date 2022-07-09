@@ -31,7 +31,7 @@ bool mouse_event_check(Event event, Uint8 buttonSide, Uint32 buttonMove)
 
 bool board_point_position(Rect* position, Screen screen, Point point, bool inverted)
 {
-	if(!point_inside_board(point)) return false;
+	if(!POINT_INSIDE_BOARD(point)) return false;
 
   Point renderPoint = (inverted) ? (0b111111 - point) : point;
 
