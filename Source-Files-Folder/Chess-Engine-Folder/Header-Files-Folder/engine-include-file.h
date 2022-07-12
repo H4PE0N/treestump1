@@ -42,8 +42,13 @@
 
 #include "board-value-defines.h"
 #include "create-board-value.h"
-#include "create-engine-move.h"
+
 #include "move-array-sorter.h"
+#include "create-engine-move.h"
+#include "amount-engine-moves.h"
+#include "guess-order-moves.h"
+#include "optimal-depth-move.h"
+#include "search-depth-nodes.h"
 
 #include "string-board-parser.h"
 #include "create-string-board.h"
