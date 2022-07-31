@@ -17,8 +17,7 @@ bool engine_depth_move(Move* move, const Piece board[], Info info, unsigned shor
 
 bool chess_move_value(signed short* moveValue, const Piece board[], Info info, unsigned short currentTeam, short depth, signed short alpha, signed short beta, Move move)
 {
-	Info infoCopy = info;
-	infoCopy = ALLOC_INFO_TEAM(infoCopy, TEAM_INFO_MACRO(currentTeam));
+	Info infoCopy = ALLOC_TEAM_INFO(info, currentTeam);
 
 	Piece* boardCopy = copy_chess_board(board);
 

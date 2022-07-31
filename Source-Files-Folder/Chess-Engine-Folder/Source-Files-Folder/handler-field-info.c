@@ -44,3 +44,24 @@ bool current_team_move(Info info, unsigned short team)
 
 	return normal_teams_team(infoTeamValue, team);
 }
+
+bool increase_info_turns(Info* info)
+{
+	unsigned short turns = INFO_TURNS_MACRO(*info);
+	unsigned short team = INFO_TEAM_MACRO(*info);
+
+	if(team == TEAM_BLACK) *info = ALLOC_TURNS_INFO(*info, (turns + 1));
+
+	return true;
+}
+
+bool switch_current_team(Info* info)
+{
+	Info infoEnemy = info_team_enemy(MASK_INFO_TEAM(*info));
+
+	if(!info_team_exists(infoEnemy)) return false;
+
+	*info = ALLOC_INFO_TEAM(*info, infoEnemy);
+
+	return true;
+}

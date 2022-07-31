@@ -27,53 +27,37 @@ bool execute_normal_move(Piece* board, Info* info, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
+	moved_reset_castle(info, board, move);
+
+	execute_board_move(board, move);
+
+	*info = CLEAR_INFO_PASSANT(*info);
+
+	increase_info_turns(info);
+
+	switch_current_team(info);
+
+	return true;
+}
+
+bool moved_reset_castle(Info* info, const Piece board[], Move move)
+{
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
 	Piece startPiece = board[startPoint];
 	Piece stopPiece = board[stopPoint];
 
-
-	execute_board_move(board, move);
-
-
 	if(PIECE_STORE_TYPE(startPiece, PIECE_TYPE_KING))
-	{
-		reset_king_ability(info, startPiece);
-	}
+		return reset_king_ability(info, startPiece);
 
 	if(PIECE_STORE_TYPE(stopPiece, PIECE_TYPE_ROOK))
-	{
-		reset_rook_ability(info, stopPiece, stopPoint);
-	}
+		return reset_rook_ability(info, stopPiece, stopPoint);
+
 	else if(PIECE_STORE_TYPE(startPiece, PIECE_TYPE_ROOK))
-	{
-		reset_rook_ability(info, startPiece, startPoint);
-	}
+		return reset_rook_ability(info, startPiece, startPoint);
 
-
-	*info = CLEAR_INFO_PASSANT(*info);
-
-	unsigned short turns = INFO_TURNS_MACRO(*info);
-	unsigned short team = INFO_TEAM_MACRO(*info);
-
-	if(team == TEAM_BLACK) *info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO((turns + 1)) );
-
-	switch_current_team(info);
-
-
-	return true;
-}
-
-bool switch_current_team(Info* info)
-{
-	Info infoEnemy = info_team_enemy(MASK_INFO_TEAM(*info));
-
-	if(!info_team_exists(infoEnemy)) return false;
-
-	*info = ALLOC_INFO_TEAM(*info, infoEnemy);
-
-	return true;
+	return false;
 }
 
 bool reset_king_ability(Info* info, Piece kingPiece)
@@ -120,13 +104,9 @@ bool execute_castle_move(Piece* board, Info* info, Move kingMove)
 
 	reset_king_ability(info, kingPiece);
 
-
 	*info = CLEAR_INFO_PASSANT(*info);
 
-	unsigned short turns = INFO_TURNS_MACRO(*info);
-	unsigned short team = INFO_TEAM_MACRO(*info);
-
-	if(team == TEAM_BLACK) *info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO((turns + 1)) );
+	increase_info_turns(info);
 
 	switch_current_team(info);
 
@@ -206,10 +186,7 @@ bool execute_promote_move(Piece* board, Info* info, Move move)
 
 	*info = CLEAR_INFO_PASSANT(*info);
 
-	unsigned short turns = INFO_TURNS_MACRO(*info);
-	unsigned short team = INFO_TEAM_MACRO(*info);
-
-	if(team == TEAM_BLACK) *info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO((turns + 1)) );
+	increase_info_turns(info);
 
 	switch_current_team(info);
 
@@ -246,10 +223,7 @@ bool execute_passant_move(Piece* board, Info* info, Move move)
 
 	*info = CLEAR_INFO_PASSANT(*info);
 
-	unsigned short turns = INFO_TURNS_MACRO(*info);
-	unsigned short team = INFO_TEAM_MACRO(*info);
-
-	if(team == TEAM_BLACK) *info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO((turns + 1)) );
+	increase_info_turns(info);
 
 	switch_current_team(info);
 
@@ -276,12 +250,7 @@ bool execute_double_move(Piece* board, Info* info, Move move)
 
 	*info = ALLOC_INFO_PASSANT(*info, infoPassant);
 
-
-	unsigned short turns = INFO_TURNS_MACRO(*info);
-	unsigned short team = INFO_TEAM_MACRO(*info);
-
-	if(team == TEAM_BLACK) *info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO((turns + 1)) );
-
+	increase_info_turns(info);
 
 	switch_current_team(info);
 

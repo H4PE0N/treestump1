@@ -10,4 +10,8 @@ Point passant_pawn_point(Info);
 
 bool current_team_move(Info, unsigned short);
 
+bool switch_current_team(Info*);
+
+bool increase_info_turns(Info*);
+
 #endif

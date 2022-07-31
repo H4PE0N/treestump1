@@ -69,7 +69,7 @@ bool parse_string_counter(Info* info, const char stringToken[])
 
 	if(!parse_string_short(&counter, stringToken)) return false;
 
-	*info = ALLOC_INFO_COUNTER(*info, COUNTER_INFO_MACRO(counter));
+	*info = ALLOC_COUNTER_INFO(*info, counter);
 
 	return true;
 }
@@ -80,7 +80,7 @@ bool parse_string_turns(Info* info, const char stringToken[])
 
 	if(!parse_string_short(&turns, stringToken)) return false;
 
-	*info = ALLOC_INFO_TURNS(*info, TURNS_INFO_MACRO(turns));
+	*info = ALLOC_TURNS_INFO(*info, turns);
 
 	return true;
 }
@@ -115,7 +115,7 @@ bool parse_string_passant(Info* info, const char stringToken[])
 
 	unsigned short passant = (POINT_FILE_MACRO(passantPoint) + 1);
 
-	*info = ALLOC_INFO_PASSANT(*info, PASSANT_INFO_MACRO(passant));
+	*info = ALLOC_PASSANT_INFO(*info, passant);
 
 	return true;
 }

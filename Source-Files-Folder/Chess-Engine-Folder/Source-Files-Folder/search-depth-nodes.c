@@ -25,8 +25,7 @@ long search_depth_nodes(const Piece board[], Info info, unsigned short currentTe
 
 long search_move_nodes(const Piece board[], Info info, unsigned short currentTeam, short depth, Move move, long startClock, short seconds)
 {
-	Info infoCopy = info;
-	infoCopy = ALLOC_INFO_TEAM(infoCopy, TEAM_INFO_MACRO(currentTeam));
+	Info infoCopy = ALLOC_TEAM_INFO(info, currentTeam);
 
 	Piece* boardCopy = copy_chess_board(board);
 
