@@ -37,7 +37,7 @@ bool console_single_game(Piece* board, Info* info, bool starting)
 		Info infoTeam = (*info & INFO_TEAM_MASK);
 		if(infoTeam == INFO_TEAM_NONE) return false;
 
-		if(!print_console_board(board, *info)) return false;
+		if(!print_console_board(board)) return false;
 
 		if(infoTeam == userTeam)
 		{

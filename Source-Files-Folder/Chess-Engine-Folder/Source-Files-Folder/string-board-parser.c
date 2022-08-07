@@ -136,6 +136,36 @@ bool parse_string_point(Point* point, const char string[])
 	return true;
 }
 
+bool parse_string_move(Move* move, const char stringMove[])
+{
+  int stringLen = strlen(stringMove);
+  if(stringLen != 4 && stringLen != 5) return false;
+
+  char startString[3];
+  memset(startString, '\0', sizeof(startString));
+
+  char stopString[3];
+  memset(stopString, '\0', sizeof(stopString));
+
+  strncpy(startString, (stringMove + 0), 2);
+  strncpy(stopString, (stringMove + 2), 2);
+
+  Point startPoint, stopPoint;
+  if(!parse_string_point(&startPoint, startString)) return false;
+  if(!parse_string_point(&stopPoint, stopString)) return false;
+
+  Move parseMove = START_STOP_MOVE(startPoint, stopPoint);
+
+  if(stringLen == 5)
+  {
+    parseMove = ALLOC_MOVE_FLAG(parseMove, MOVE_FLAG_QUEEN);
+  }
+
+  *move = parseMove;
+
+  return true;
+}
+
 bool parse_string_castles(Info* info, const char stringToken[])
 {
 	Info castles = INFO_NONE;

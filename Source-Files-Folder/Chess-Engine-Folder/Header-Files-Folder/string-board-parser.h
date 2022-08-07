@@ -20,6 +20,8 @@ bool parse_string_passant(Info*, const char[]);
 
 bool parse_string_point(Point*, const char[]);
 
+bool parse_string_move(Move*, const char[]);
+
 bool parse_string_castles(Info*, const char[]);
 
 bool parse_castle_symbol(Info*, char);
