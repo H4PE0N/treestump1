@@ -18,5 +18,6 @@
 #include "game-screen-actions.h"
 #include "display-screen-board.h"
 #include "screen-input-parser.h"
+#include "screen-input-handler.h"
 
 #endif
