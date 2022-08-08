@@ -1,10 +1,8 @@
 
 #include "../Header-Files-Folder/englog-include-file.h"
 
-bool create_game_string(char** string, const Piece board[], Info info)
+bool create_fen_string(char* fenString, const Piece board[], Info info)
 {
-	*string = create_char_string(128);
-
 	char* stringArray[FEN_STRING_PARTS];
 	alloc_array_strings(stringArray, FEN_STRING_PARTS, 72);
 
@@ -12,7 +10,7 @@ bool create_game_string(char** string, const Piece board[], Info info)
 	{
 		free_array_strings(stringArray, FEN_STRING_PARTS);
 
-		free(*string);
+		free(fenString);
 
 		return false;
 	}
@@ -21,12 +19,12 @@ bool create_game_string(char** string, const Piece board[], Info info)
 	{
 		free_array_strings(stringArray, FEN_STRING_PARTS);
 
-		free(*string);
+		free(fenString);
 
 		return false;
 	}
 
-	merge_string_delim(*string, stringArray, FEN_STRING_PARTS, FEN_STRING_DELIM);
+	merge_string_delim(fenString, stringArray, FEN_STRING_PARTS, FEN_STRING_DELIM);
 
 	free_array_strings(stringArray, FEN_STRING_PARTS);
 

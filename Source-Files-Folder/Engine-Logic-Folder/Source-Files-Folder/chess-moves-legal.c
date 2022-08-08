@@ -8,6 +8,19 @@ bool move_fully_legal(const Piece board[], Info info, Move move)
 	return move_check_handler(board, info, move);
 }
 
+
+// bool move_fully_legal(const Piece board[], Info info, Move move)
+// {
+// 	Piece startPiece = move_start_piece(move, board);
+// 	unsigned short startTeam = PIECE_TEAM_MACRO(startPiece);
+//
+// 	if(!current_team_move(info, startTeam)) return false;
+//
+// 	if(!move_pseudo_legal(board, info, move)) return false;
+//
+// 	return move_check_handler(board, info, move);
+// }
+
 bool move_pseudo_legal(const Piece board[], Info info, Move move)
 {
 	if(!move_ability_valid(move, info)) return false;
@@ -48,7 +61,7 @@ bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Point p
 
 		if(piece_teams_team(stopPiece, startPiece)) continue;
 
-		if(!correct_move_flag(&currentMove, startPiece, info)) continue;
+		if(!correct_move_flag(&currentMove, board, info)) continue;
 		if(!move_fully_legal(board, info, currentMove)) continue;
 
 		if(pieceType == PIECE_TYPE_PAWN && MOVE_PROMOTE_FLAG(currentMove))
@@ -81,7 +94,7 @@ bool piece_legal_points(Point** pointArray, const Piece board[], Info info, Poin
 
 		if(piece_teams_team(stopPiece, startPiece)) continue;
 
-		if(!correct_move_flag(&currentMove, startPiece, info)) continue;
+		if(!correct_move_flag(&currentMove, board, info)) continue;
 		if(!move_fully_legal(board, info, currentMove)) continue;
 
 		(*pointArray)[pointAmount++] = MOVE_STOP_MACRO(currentMove);

@@ -86,25 +86,23 @@ bool chess_piece_movable(const Piece board[], Info info, Point piecePoint)
 {
 	if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
-	Piece piece = board[piecePoint];
-
 	Move* moveArray;
 	if(!piece_pattern_moves(&moveArray, board, piecePoint)) return false;
 
 	unsigned short moveAmount = move_array_amount(moveArray);
 
-	bool result = piece_movable_test(board, info, piece, moveArray, moveAmount);
+	bool result = piece_movable_test(board, info, moveArray, moveAmount);
 
 	free(moveArray); return result;
 }
 
-bool piece_movable_test(const Piece board[], Info info, Piece piece, const Move moveArray[], short moveAmount)
+bool piece_movable_test(const Piece board[], Info info, const Move moveArray[], short moveAmount)
 {
 	for(unsigned short index = 0; index < moveAmount; index += 1)
 	{
 		Move move = moveArray[index];
 
-		if(!correct_move_flag(&move, piece, info)) continue;
+		if(!correct_move_flag(&move, board, info)) continue;
 
 		if(move_fully_legal(board, info, move)) return true;
 	}

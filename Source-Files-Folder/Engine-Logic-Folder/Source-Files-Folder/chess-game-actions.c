@@ -10,16 +10,29 @@ bool move_chess_piece(Piece* board, Info* info, Move move)
 
 	if(!current_team_move(*info, startTeam)) return false;
 
-	if(!correct_move_flag(&move, startPiece, *info)) return false;
+	if(!correct_move_flag(&move, board, *info)) return false;
 
 	if(!move_fully_legal(board, *info, move)) return false;
 
 	return execute_chess_move(board, info, move);
 }
 
-bool correct_move_flag(Move* move, Piece piece, Info info)
+// bool move_chess_piece(Piece* board, Info* info, Move move)
+// {
+// 	if(!move_inside_board(move)) return false;
+//
+// 	if(!correct_move_flag(&move, board, *info)) return false;
+//
+// 	if(!move_fully_legal(board, *info, move)) return false;
+//
+// 	return execute_chess_move(board, info, move);
+// }
+
+bool correct_move_flag(Move* move, const Piece board[], Info info)
 {
 	if(!move_inside_board(*move)) return false;
+
+	Piece piece = move_start_piece(*move, board);
 
 	Move moveFlag = MOVE_FLAG_NONE;
 

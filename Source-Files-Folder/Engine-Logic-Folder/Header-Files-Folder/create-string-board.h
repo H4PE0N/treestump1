@@ -2,7 +2,7 @@
 #ifndef CREATE_STRING_BOARD_H
 #define CREATE_STRING_BOARD_H
 
-bool create_game_string(char**, const Piece[], Info);
+bool create_fen_string(char*, const Piece[], Info);
 
 bool create_string_info(char*[], Info);
 

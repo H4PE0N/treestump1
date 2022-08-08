@@ -40,7 +40,7 @@ bool input_legal_move(Move* move, Screen screen, const Piece board[], Info info,
 
 		if(!current_team_move(info, startTeam)) continue;
 
-		if(!correct_move_flag(&inputMove, startPiece, info)) continue;
+		if(!correct_move_flag(&inputMove, board, info)) continue;
 	}
 	*move = inputMove; return true;
 }

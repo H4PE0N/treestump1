@@ -13,5 +13,6 @@
 #include "guess-order-moves.h"
 #include "optimal-depth-move.h"
 #include "search-depth-nodes.h"
+#include "parse-engine-string.h"
 
 #endif

@@ -10,7 +10,7 @@ bool team_pieces_movable(const Piece[], Info, unsigned short);
 
 bool chess_piece_movable(const Piece[], Info, Point);
 
-bool piece_movable_test(const Piece[], Info, Piece, const Move[], short);
+bool piece_movable_test(const Piece[], Info, const Move[], short);
 
 bool check_draw_ending(const Piece[], Info, unsigned short);
 
