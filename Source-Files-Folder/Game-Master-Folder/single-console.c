@@ -1,6 +1,7 @@
 
 #include "../Chess-Engine-Folder/Header-Files-Folder/engine-include-file.h"
 #include "../Game-Console-Folder/Header-Files-Folder/console-include-file.h"
+#include "../Engine-Logic-Folder/Header-Files-Folder/englog-include-file.h"
 
 bool console_single_game(Piece*, Info*, bool);
 
