@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
 	char* fenString = (argc >= 2) ? argv[1] : (char*) FEN_START_STRING;
 
   Piece* board; Info info;
-	if(!parse_game_string(&board, &info, fenString))
+	if(!parse_create_board(&board, &info, fenString))
 	{
 		printf("Could not parse game string!\n");
     return false;

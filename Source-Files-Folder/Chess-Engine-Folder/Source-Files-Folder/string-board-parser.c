@@ -1,7 +1,16 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool parse_game_string(Piece** board, Info* info, const char fenString[])
+bool parse_create_board(Piece** board, Info* info, const char fenString[])
+{
+	*board = malloc(sizeof(Piece) * BOARD_LENGTH);
+
+	if(parse_fen_string(*board, info, fenString)) return true;
+
+	free(*board); return false;
+}
+
+bool parse_fen_string(Piece* board, Info* info, const char fenString[])
 {
 	unsigned short stringLength = strlen(fenString);
 
@@ -16,14 +25,13 @@ bool parse_game_string(Piece** board, Info* info, const char fenString[])
 	return parseResult;
 }
 
-bool parse_string_array(Piece** board, Info* info, char* stringArray[])
+bool parse_string_array(Piece* board, Info* info, char* stringArray[])
 {
 	*info = INFO_BLANK;
 
 	if(!parse_string_board(board, stringArray[0])) return false;
 
-	if(!parse_string_info(info, stringArray))
-	{ free(*board); return false; }
+	if(!parse_string_info(info, stringArray)) return false;
 
 	return true;
 }
@@ -83,27 +91,6 @@ bool parse_string_turns(Info* info, const char stringToken[])
 	*info = ALLOC_TURNS_INFO(*info, turns);
 
 	return true;
-}
-
-bool parse_string_short(unsigned short* number, const char string[])
-{
-	unsigned short stringLength = strlen(string);
-
-	if(stringLength < 1) return false;
-
-	unsigned short dummyNumber = 0;
-
-	for(unsigned short index = 0; index < stringLength; index += 1)
-	{
-		unsigned short value = pow(10, (stringLength - index - 1));
-
-		signed short potentNumber = (string[index] - '0');
-
-		if(!NUMBER_IN_BOUNDS(potentNumber, 0, 9)) return false;
-
-		dummyNumber += (value * potentNumber);
-	}
-	*number = dummyNumber; return true;
 }
 
 bool parse_string_passant(Info* info, const char stringToken[])
@@ -214,7 +201,7 @@ bool parse_castle_symbol(Info* infoCastle, char symbol)
 	return true;
 }
 
-bool parse_string_board(Piece** board, const char stringToken[])
+bool parse_string_board(Piece* board, const char stringToken[])
 {
 	unsigned short stringLength = strlen(stringToken);
 
@@ -228,8 +215,6 @@ bool parse_string_board(Piece** board, const char stringToken[])
 	checked that there is "amount" rank strings at this exact location.
 	*/
 
-	*board = malloc(sizeof(Piece) * BOARD_LENGTH);
-
 	for(unsigned short rank = 0; rank < BOARD_RANKS; rank += 1)
 	{
 		unsigned short rankLength = strlen(stringArray[rank]);
@@ -238,13 +223,13 @@ bool parse_string_board(Piece** board, const char stringToken[])
 		{
 			free_array_strings(stringArray, BOARD_RANKS);
 
-			free(*board); return false;
+			return false;
 		}
 	}
 	free_array_strings(stringArray, BOARD_RANKS); return true;
 }
 
-bool parse_board_files(Piece** board, unsigned short rank, const char rankString[], short length)
+bool parse_board_files(Piece* board, unsigned short rank, const char rankString[], short length)
 {
 	unsigned short file = 0;
 
@@ -259,7 +244,7 @@ bool parse_board_files(Piece** board, unsigned short rank, const char rankString
 	return true;
 }
 
-bool parse_board_symbol(Piece** board, unsigned short rank, unsigned short* file, char symbol)
+bool parse_board_symbol(Piece* board, unsigned short rank, unsigned short* file, char symbol)
 {
 	short potentBlanks = (symbol - '0');
 
@@ -274,12 +259,12 @@ bool parse_board_symbol(Piece** board, unsigned short rank, unsigned short* file
 
 	Point point = RANK_FILE_POINT(rank, *file);
 
-	(*board)[point] = piece;
+	board[point] = piece;
 
 	*file += 1; return true;
 }
 
-bool parse_board_blanks(Piece** board, unsigned short rank, unsigned short* file, short blanks)
+bool parse_board_blanks(Piece* board, unsigned short rank, unsigned short* file, short blanks)
 {
 	unsigned short totalFiles = (*file + blanks);
 
@@ -287,7 +272,7 @@ bool parse_board_blanks(Piece** board, unsigned short rank, unsigned short* file
 
 	for(; *file < totalFiles; *file += 1)
 	{
-		(*board)[RANK_FILE_POINT(rank, *file)] = PIECE_NONE;
+		board[RANK_FILE_POINT(rank, *file)] = PIECE_NONE;
 	}
 	return true;
 }

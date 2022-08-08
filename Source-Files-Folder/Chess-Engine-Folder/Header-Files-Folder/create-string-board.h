@@ -22,4 +22,8 @@ bool create_board_files(char*, const Piece[], unsigned short);
 
 bool create_blank_symbol(char*, unsigned short, unsigned short*, const Piece[]);
 
+bool create_string_move(char*, Move);
+
+bool create_string_point(char*, Point);
+
 #endif

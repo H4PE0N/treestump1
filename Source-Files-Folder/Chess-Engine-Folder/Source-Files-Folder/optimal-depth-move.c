@@ -16,7 +16,10 @@ bool optimal_depth_move(Move* move, const Piece board[], Info info, unsigned sho
 bool search_depths_move(Move* move, const Piece board[], Info info, unsigned short team, short seconds, const Move moveArray[], short moveAmount)
 {
 	if(moveAmount <= 0) return false;
-	if(moveAmount == 1) { *move = moveArray[0]; return true; }
+
+	*move = moveArray[0];
+
+	if(moveAmount == 1) return true;
 
 	long startClock = clock();
 
@@ -28,7 +31,10 @@ bool search_depths_move(Move* move, const Piece board[], Info info, unsigned sho
 
 		if(timing_limit_ended(startClock, seconds)) break;
 
-		printf("Depth: %d Time: %.2f Move: %d -> %d\n", depth, time_passed_since(startClock), MOVE_START_MACRO(engineMove), MOVE_STOP_MACRO(engineMove));
+		char moveString[16];
+		create_string_move(moveString, engineMove);
+
+		printf("info depth %d time %d move %s value %d\n", depth, (int) (time_passed_since(startClock) * 1000), moveString, engineValue);
 
 		if(current_mate_value(engineValue, team)) break;
 	}

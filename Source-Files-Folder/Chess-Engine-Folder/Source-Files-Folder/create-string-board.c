@@ -179,3 +179,37 @@ bool create_blank_symbol(char* symbol, unsigned short rank, unsigned short* file
 
 	return true;
 }
+
+bool create_string_point(char* string, Point point)
+{
+	if(!POINT_INSIDE_BOARD(point)) return false;
+
+	unsigned short rankIndex = POINT_RANK_MACRO(point);
+	unsigned short fileIndex = POINT_FILE_MACRO(point);
+
+	sprintf(string, "%c%c", FILE_SYMBOLS[fileIndex], RANK_SYMBOLS[rankIndex]);
+
+	return true;
+}
+
+bool create_string_move(char* string, Move move)
+{
+	if(!move_inside_board(move)) return false;
+
+	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
+
+	char startString[16], stopString[16];
+
+	if(!create_string_point(startString, startPoint)) return false;
+	if(!create_string_point(stopString, stopPoint)) return false;
+
+	if(MOVE_PROMOTE_FLAG(move))
+	{
+		char typeSymbol = 'q'; // THIS MUST BE CHANGED TO THE SPECIFIC TYPE!
+		sprintf(string, "%s%s%c", startString, stopString, typeSymbol);
+	}
+	else sprintf(string, "%s%s", startString, stopString);
+
+	return true;
+}

@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 	char* fenString = argv[1];
 
 	Piece* board; Info info;
-	if(!parse_game_string(&board, &info, fenString))
+	if(!parse_create_board(&board, &info, fenString))
 	{
 		printf("Could not parse game string!\n"); return false;
 	}

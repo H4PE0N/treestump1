@@ -52,7 +52,10 @@ bool choose_engine_move(Move* move, const Piece board[], Info info, unsigned sho
 		short currentValue;
 		if(!chess_move_value(&currentValue, board, info, team, (depth - 1), MIN_STATE_VALUE, MAX_STATE_VALUE, currentMove)) continue;
 
-		printf("CurrentMove: [%d -> %d]\tCurrentValue: %d\n", MOVE_START_MACRO(currentMove), MOVE_STOP_MACRO(currentMove), currentValue);
+		char moveString[16];
+		create_string_move(moveString, currentMove);
+
+		printf("info depth %d time %d move %s value %d\n", depth, 0, moveString, currentValue);
 
 		update_move_value(currentMove, currentValue, &bestMove, &bestValue, team);
 	}
