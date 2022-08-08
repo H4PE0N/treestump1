@@ -5,3 +5,7 @@ Todo:
 - Fix up the code! Refactor and clean everything up!
 - Don't write comments inside the functions, but a
   short text explaining what the functions do before
+- rename 'info' to 'state' maybe?
+- create engine struct for [wtime, btime, winc, binc] and so on
+- create screen struct for [inverted, lastMove] and so on
+- remove the 'moves' array

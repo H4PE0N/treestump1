@@ -8,5 +8,5 @@ bool recv_socket_string(int sockDesc, char* string, int length)
 
 bool send_socket_string(int sockDesc, char string[], int length)
 {
-  return send(sockDesc, string, length, 0) > 0;
+  return send(sockDesc, string, length, MSG_NOSIGNAL) > 0;
 }
