@@ -25,6 +25,9 @@ extern const unsigned short FEN_MAX_CASTLES;
 extern const char FEN_PASSANT_NONE[];
 extern const char FEN_CASTLES_NONE[];
 
+extern const char* TEAM_WORDS[];
+extern const char* TYPE_WORDS[];
+
 extern const char FEN_START_STRING[];
 
 #endif

@@ -15,8 +15,6 @@ bool screen_engine_handler(Piece* board, Info* info, Move* moves, Screen screen)
 	unsigned short movesAmount = move_array_amount(moves);
 	moves[movesAmount] = computerMove;
 
-	printf("-------------------------\n");
-
 	return true;
 }
 

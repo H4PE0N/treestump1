@@ -71,7 +71,7 @@ char* create_char_string(short length)
 	return string;
 }
 
-bool parse_token_fenstr(char* fenString, const char string[], const char token[])
+bool parse_token_quotes(char* result, const char string[], const char token[])
 {
   char strCpy[strlen(string) + 1]; strcpy(strCpy, string);
 
@@ -83,7 +83,7 @@ bool parse_token_fenstr(char* fenString, const char string[], const char token[]
   char* strToken;
   if((strToken = strtok(NULL, "\"")) == NULL) return false;
 
-  strcpy(fenString, strToken); return true;
+  strcpy(result, strToken); return true;
 }
 
 bool parse_spaced_token(char* result, const char string[], const char token[])

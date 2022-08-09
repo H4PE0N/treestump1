@@ -39,6 +39,7 @@ bool game_still_running(const Piece board[], Info info)
 	return true;
 }
 
+// Maybe remove 'team' from this function and instead use the info team
 bool check_mate_ending(const Piece board[], Info info, unsigned short team)
 {
 	if(!normal_team_exists(team)) return false;
@@ -53,6 +54,7 @@ bool check_mate_ending(const Piece board[], Info info, unsigned short team)
 	return true;
 }
 
+// Maybe remove 'team' from this function and instead use the info team
 bool check_draw_ending(const Piece board[], Info info, unsigned short team)
 {
 	if(!normal_team_exists(team)) return false;

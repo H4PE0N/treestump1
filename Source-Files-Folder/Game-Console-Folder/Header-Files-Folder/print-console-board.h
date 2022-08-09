@@ -4,4 +4,6 @@
 
 bool print_console_board(const Piece[]);
 
+bool print_console_info(Info);
+
 #endif

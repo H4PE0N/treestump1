@@ -17,7 +17,4 @@ extern const char MOVED_SQUARE_FILE[];
 extern const char CHECK_SQUARE_FILE[];
 extern const char MARK_SQUARE_FILE[];
 
-extern const char* TEAM_WORDS[];
-extern const char* TYPE_WORDS[];
-
 #endif

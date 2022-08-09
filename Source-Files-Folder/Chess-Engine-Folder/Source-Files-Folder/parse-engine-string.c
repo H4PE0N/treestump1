@@ -6,7 +6,7 @@ bool parse_update_string(Piece* board, Info* info, const char string[])
 	char valString[256];
   memset(valString, '\0', sizeof(valString));
 
-  if(parse_token_fenstr(valString, string, "board"))
+  if(parse_token_quotes(valString, string, "board"))
   {
     if(!parse_fen_string(board, info, valString)) return false;
   }

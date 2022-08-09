@@ -13,7 +13,7 @@ bool input_console_move(Move* move, const Piece board[], Info info)
 
   while(!move_inside_board(inputMove))
   {
-    if(!input_stdin_string(stringMove, CONSOLE_MOVE_PROMT));
+    input_stdin_string(stringMove, CONSOLE_MOVE_PROMT);
 
     if(!strcmp(stringMove, CONSOLE_QUIT_STRING)) return false;
 
@@ -24,5 +24,9 @@ bool input_console_move(Move* move, const Piece board[], Info info)
 
 bool input_stdin_string(char* string, const char inputPromt[])
 {
-  printf("%s", inputPromt); return scanf("%[^\n]%*c", string);
+  fflush(stdin);
+  printf("%s", inputPromt);
+  char buffer[1024];
+  fgets(buffer, sizeof(buffer), stdin);
+  return sscanf(buffer, "%[^\n]%*c", string);
 }

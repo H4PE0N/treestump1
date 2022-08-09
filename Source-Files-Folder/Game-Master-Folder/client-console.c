@@ -12,13 +12,41 @@ bool client_console_loop(int, Piece*, Info*);
 
 int main(int argc, char* argv[])
 {
-  if(!init_socket_drivers()) return true;
+  char sockAddr[128];
+  memset(sockAddr, '\0', sizeof(sockAddr));
 
-  char sockAddr[] = "192.168.1.113";
   int sockPort = 5555;
+
+
+  char setupString[256];
+  input_stdin_string(setupString, "setup -> ");
+
+  char valString[128];
+  memset(valString, '\0', sizeof(valString));
+
+
+  if(parse_spaced_token(valString, setupString, "address"))
+  {
+    strcpy(sockAddr, valString);
+  }
+  else strcpy(sockAddr, "192.168.1.113");
+
+  if(parse_spaced_token(valString, setupString, "port"))
+  {
+    sockPort = atoi(valString);
+  }
+
+
+
+
+
+  if(!init_socket_drivers()) return true;
 
   int clientSock;
   if(!create_client_socket(&clientSock, sockAddr, sockPort)) return true;
+
+  char joinString[256] = "join name HampusFridholm type player";
+  send_socket_string(clientSock, joinString, SOCKET_STR_SIZE);
 
 
   Piece* board = malloc(sizeof(Piece) * BOARD_LENGTH);
@@ -37,17 +65,18 @@ int main(int argc, char* argv[])
 
 bool client_console_loop(int clientSock, Piece* board, Info* info)
 {
-  char recvString[256];
+  char recvString[SOCKET_STR_SIZE];
 
-  while(recv_socket_string(clientSock, recvString, sizeof(recvString)))
+  while(recv_socket_string(clientSock, recvString, SOCKET_STR_SIZE))
   {
-    printf("server -> %s\n", recvString);
+    printf("server:(%s)\n", recvString);
 
     if(!parse_concli_action(clientSock, board, info, recvString))
     {
       return false;
     }
     print_console_board(board);
+    print_console_info(*info);
   }
   return true;
 }
@@ -73,10 +102,10 @@ bool parse_concli_move(int clientSock, Piece* board, Info info, const char strin
   char moveString[16];
   if(!create_string_move(moveString, inputMove)) return false;
 
-  char moveSend[256];
+  char moveSend[SOCKET_STR_SIZE];
   sprintf(moveSend, "move %s", moveString);
 
-  if(!send_socket_string(clientSock, moveSend, sizeof(moveSend))) return false;
+  if(!send_socket_string(clientSock, moveSend, SOCKET_STR_SIZE)) return false;
 
   return true;
 }

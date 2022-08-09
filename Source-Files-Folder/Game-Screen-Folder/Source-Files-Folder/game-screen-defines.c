@@ -15,6 +15,3 @@ const char MOVE_SQUARE_FILE[] = "move-square.png";
 const char MOVED_SQUARE_FILE[] = "moved-square.png";
 const char CHECK_SQUARE_FILE[] = "check-square.png";
 const char MARK_SQUARE_FILE[] = "mark-square.png";
-
-const char* TEAM_WORDS[] = {"none", "white", "black"};
-const char* TYPE_WORDS[] = {"none", "pawn", "knight", "bishop", "rook", "queen", "king"};

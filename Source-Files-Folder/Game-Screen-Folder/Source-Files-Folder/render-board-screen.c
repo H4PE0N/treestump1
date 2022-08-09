@@ -68,7 +68,6 @@ bool render_promote_board(Screen screen, unsigned short team)
 bool render_result_board(Screen screen, const Piece board[], Info info, bool inverted)
 {
 	unsigned short team = INFO_TEAM_MACRO(info);
-
 	unsigned short winningTeam = normal_team_enemy(team);
 
 	if(check_mate_ending(board, info, team))
@@ -79,7 +78,7 @@ bool render_result_board(Screen screen, const Piece board[], Info info, bool inv
 	{
 		if(!render_board_squares(screen, inverted)) return false;
 	}
-	// else: The game has not ended
+	else return false; // The game has not ended
 
 	if(!render_check_squares(screen, board, info, inverted)) return false;
 

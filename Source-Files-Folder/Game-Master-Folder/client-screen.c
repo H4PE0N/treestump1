@@ -7,6 +7,8 @@ bool parse_sdlcli_action(int, Screen, Piece*, Info*, const char[]);
 
 bool parse_sdlcli_move(int, Screen, const Piece[], Info, const char[]);
 
+bool parse_sdlcli_quit(int, Screen, const Piece[], Info, const char[]);
+
 bool client_screen_loop(int, Screen, Piece*, Info*);
 
 
@@ -46,14 +48,14 @@ int main(int argc, char* argv[])
 
 bool client_screen_loop(int clientSock, Screen screen, Piece* board, Info* info)
 {
-  char recvString[256];
+  char recvString[SOCKET_STR_SIZE];
 
   Move moves[16];
   memset(moves, MOVE_NONE, sizeof(Move) * 16);
 
-  while(recv_socket_string(clientSock, recvString, sizeof(recvString)))
+  while(recv_socket_string(clientSock, recvString, SOCKET_STR_SIZE))
   {
-    printf("server -> %s\n", recvString);
+    printf("server:(%s)\n", recvString);
 
     if(!parse_sdlcli_action(clientSock, screen, board, info, recvString)) return false;
 
@@ -70,8 +72,47 @@ bool parse_sdlcli_action(int clientSock, Screen screen, Piece* board, Info* info
   else if(!strncmp(string, "move", 4))
     return parse_sdlcli_move(clientSock, screen, board, *info, string);
 
-  else if(!strncmp(string, "quit", 4)) return false;
+  else if(!strncmp(string, "quit", 4))
+    return parse_sdlcli_quit(clientSock, screen, board, *info, string);
 
+  return false;
+}
+
+bool parse_sdlcli_quit(int clientSock, Screen screen, const Piece board[], Info info, const char string[])
+{
+  char valString[256];
+  memset(valString, '\0', sizeof(valString));
+
+  if(parse_spaced_token(valString, string, "state"))
+  {
+    SDL_RenderClear(screen.render);
+
+    if(!strcmp(valString, "draw"))
+    {
+      if(!render_board_squares(screen, false)) return false;
+    }
+    else if(!strcmp(valString, TEAM_WORDS[TEAM_WHITE]))
+    {
+      if(!render_team_squares(screen, TEAM_WHITE, false)) return false;
+    }
+    else if(!strcmp(valString, TEAM_WORDS[TEAM_BLACK]))
+    {
+      if(!render_team_squares(screen, TEAM_BLACK, false)) return false;
+    }
+    if(!render_check_squares(screen, board, info, false)) return false;
+
+  	if(!render_board_pieces(screen, board, false)) return false;
+
+    SDL_RenderPresent(screen.render);
+
+
+    Event event;
+  	while(!parse_quit_input(event))
+  	{ SDL_PollEvent(&event); SDL_Delay(100); }
+
+
+    return true;
+  }
   return false;
 }
 
@@ -87,10 +128,10 @@ bool parse_sdlcli_move(int clientSock, Screen screen, const Piece board[], Info 
   char moveString[16];
   if(!create_string_move(moveString, inputMove)) return false;
 
-  char moveSend[256];
+  char moveSend[SOCKET_STR_SIZE];
   sprintf(moveSend, "move %s", moveString);
 
-  if(!send_socket_string(clientSock, moveSend, sizeof(moveSend))) return false;
+  if(!send_socket_string(clientSock, moveSend, SOCKET_STR_SIZE)) return false;
 
   return true;
 }

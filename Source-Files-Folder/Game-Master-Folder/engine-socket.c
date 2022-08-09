@@ -21,6 +21,9 @@ int main(int argc, char* argv[])
   int clientSock;
   if(!create_client_socket(&clientSock, sockAddr, sockPort)) return true;
 
+  char joinString[256] = "join name treestump type engine";
+  send_socket_string(clientSock, joinString, SOCKET_STR_SIZE);
+
 
   Piece* board = malloc(sizeof(Piece) * BOARD_LENGTH);
   memset(board, PIECE_NONE, sizeof(Piece) * BOARD_LENGTH);
@@ -38,9 +41,9 @@ int main(int argc, char* argv[])
 
 bool engine_console_loop(int clientSock, Piece* board, Info* info)
 {
-  char recvString[256];
+  char recvString[SOCKET_STR_SIZE];
 
-  while(recv_socket_string(clientSock, recvString, sizeof(recvString)))
+  while(recv_socket_string(clientSock, recvString, SOCKET_STR_SIZE))
   {
     printf("server -> %s\n", recvString);
 
@@ -119,10 +122,10 @@ bool parse_soceng_move(int clientSock, const Piece board[], Info info, const cha
   char moveString[16];
   if(!create_string_move(moveString, engineMove)) return false;
 
-  char moveSend[256];
+  char moveSend[SOCKET_STR_SIZE];
   sprintf(moveSend, "move %s", moveString);
 
-  if(!send_socket_string(clientSock, moveSend, sizeof(moveSend))) return false;
+  if(!send_socket_string(clientSock, moveSend, SOCKET_STR_SIZE)) return false;
 
 
 

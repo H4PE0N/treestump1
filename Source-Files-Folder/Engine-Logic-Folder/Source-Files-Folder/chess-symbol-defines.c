@@ -24,4 +24,7 @@ const unsigned short FEN_MAX_CASTLES = 4;
 const char FEN_PASSANT_NONE[] = "-";
 const char FEN_CASTLES_NONE[] = "-";
 
+const char* TEAM_WORDS[] = {"none", "white", "black"};
+const char* TYPE_WORDS[] = {"none", "pawn", "knight", "bishop", "rook", "queen", "king"};
+
 const char FEN_START_STRING[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 1 0";

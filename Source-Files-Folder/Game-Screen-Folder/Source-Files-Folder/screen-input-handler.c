@@ -30,7 +30,7 @@ bool input_legal_move(Move* move, Screen screen, const Piece board[], Info info,
 
 	while(!move_fully_legal(board, info, inputMove))
 	{
-    printf("input single move...\n");
+    // printf("input single move...\n");
 		if(!input_single_move(&inputMove, screen, board, info, moveArray, inverted)) return false;
 
 		if(!move_inside_board(inputMove)) continue;

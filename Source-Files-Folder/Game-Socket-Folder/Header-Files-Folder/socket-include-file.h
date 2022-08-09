@@ -22,6 +22,8 @@
 typedef struct sockaddr_in sockaddr_in;
 typedef struct sockaddr sockaddr;
 
+#define SOCKET_STR_SIZE 1024
+
 #include "game-socket-handler.h"
 #include "game-socket-actions.h"
 

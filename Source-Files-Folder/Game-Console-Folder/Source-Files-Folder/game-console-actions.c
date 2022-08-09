@@ -30,7 +30,5 @@ bool console_engine_handler(Piece* board, Info* info)
 
 	if(!move_chess_piece(board, info, engineMove)) return false;
 
-  printf("-------------------------\n");
-
   return true;
 }
