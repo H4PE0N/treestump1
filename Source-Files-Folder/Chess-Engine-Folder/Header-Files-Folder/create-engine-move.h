@@ -2,26 +2,26 @@
 #ifndef CREATE_ENGINE_MOVE_H
 #define CREATE_ENGINE_MOVE_H
 
-bool chess_move_value(signed short*, const Piece[], Info, unsigned short, short, signed short, signed short, Move);
+bool chess_move_value(signed short* moveValue, const Piece board[], Info info, unsigned short currentTeam, short depth, signed short alpha, signed short beta, Move move);
 
-bool simulate_move_value(signed short*, Piece*, Info, unsigned short, short, signed short, signed short, Move);
+bool simulate_move_value(signed short* moveValue, Piece* boardCopy, Info infoCopy, unsigned short currentTeam, short depth, signed short alpha, signed short beta, Move move);
 
-bool engine_depth_move(Move*, const Piece[], Info, unsigned short, short);
+bool engine_depth_move(Move* move, const Piece board[], Info info, unsigned short team, signed short depth);
 
-bool choose_engine_move(Move*, const Piece[], Info, unsigned short, short, const Move[], short);
+bool choose_engine_move(Move* move, const Piece board[], Info info, unsigned short team, short depth, const Move moveArray[], short moveAmount);
 
-void update_move_value(Move, signed short, Move*, signed short*, unsigned short);
+void update_move_value(Move currentMove, signed short currentValue, Move* bestMove, signed short* bestValue, unsigned short team);
 
-bool update_mate_value(Move, signed short, Move*, signed short*, unsigned short);
+bool update_mate_value(Move currentMove, signed short currentValue, Move* bestMove, signed short* bestValue, unsigned short team);
 
-signed short board_depth_value(const Piece[], Info, unsigned short, short, signed short, signed short);
+signed short board_depth_value(const Piece board[], Info info, unsigned short currentTeam, short depth, signed short alpha, signed short beta);
 
-signed short choose_move_value(const Piece[], Info, unsigned short, short, signed short, signed short, const Move[], short);
+signed short choose_move_value(const Piece board[], Info info, unsigned short currentTeam, short depth, signed short alpha, signed short beta, const Move moveArray[], short moveAmount);
 
-void update_best_value(signed short, signed short*, unsigned short);
+void update_best_value(signed short currentValue, signed short* bestValue, unsigned short team);
 
-void update_alpha_beta(signed short, signed short*, signed short*, unsigned short);
+void update_alpha_beta(signed short currentValue, signed short* alpha, signed short* beta, unsigned short team);
 
-bool current_mate_value(signed short, unsigned short);
+bool current_mate_value(signed short currentValue, unsigned short team);
 
 #endif

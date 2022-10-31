@@ -2,14 +2,14 @@
 #ifndef OPTIMAL_DEPTH_MOVE_H
 #define OPTIMAL_DEPTH_MOVE_H
 
-bool optimal_depth_move(Move*, const Piece[], Info, unsigned short, short);
+bool optimal_depth_move(Move* move, const Piece board[], Info info, unsigned short team, short seconds);
 
-bool search_depths_move(Move*, const Piece[], Info, unsigned short, short, const Move[], short);
+bool search_depths_move(Move* move, const Piece board[], Info info, unsigned short team, short seconds, const Move moveArray[], short moveAmount);
 
-bool choose_timing_move(Move*, signed short*, const Piece[], Info, unsigned short, short, long, short, const Move[], short);
+bool choose_timing_move(Move* move, signed short* value, const Piece board[], Info info, unsigned short team, short depth, long startClock, short seconds, const Move moveArray[], short moveAmount);
 
-bool timing_limit_ended(long, short);
+bool timing_limit_ended(long startClock, short seconds);
 
-double time_passed_since(long);
+double time_passed_since(long startClock);
 
 #endif

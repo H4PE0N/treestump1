@@ -2,28 +2,28 @@
 #ifndef CREATE_STRING_BOARD_H
 #define CREATE_STRING_BOARD_H
 
-bool create_fen_string(char*, const Piece[], Info);
+bool create_fen_string(char* fenString, const Piece board[], Info info);
 
-bool create_string_info(char*[], Info);
+bool create_string_info(char* stringArray[], Info info);
 
-bool create_string_counter(char*, Info);
+bool create_string_counter(char* string, Info info);
 
-bool create_string_turns(char*, Info);
+bool create_string_turns(char* string, Info info);
 
-bool create_string_passant(char*, Info);
+bool create_string_passant(char* string, Info info);
 
-bool create_string_castles(char*, Info);
+bool create_string_castles(char* string, Info info);
 
-bool create_string_current(char*, Info);
+bool create_string_current(char* string, Info info);
 
-bool create_string_board(char*, const Piece[]);
+bool create_string_board(char* string, const Piece board[]);
 
-bool create_board_files(char*, const Piece[], unsigned short);
+bool create_board_files(char* string, const Piece board[], unsigned short rank);
 
-bool create_blank_symbol(char*, unsigned short, unsigned short*, const Piece[]);
+bool create_blank_symbol(char* symbol, unsigned short rank, unsigned short* file, const Piece board[]);
 
-bool create_string_move(char*, Move);
+bool create_string_move(char* string, Move move);
 
-bool create_string_point(char*, Point);
+bool create_string_point(char* string, Point point);
 
 #endif

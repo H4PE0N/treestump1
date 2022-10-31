@@ -2,22 +2,22 @@
 #ifndef STRING_TYPE_HANDLER_H
 #define STRING_TYPE_HANDLER_H
 
-bool split_string_delim(char*[], const char[], short, const char[], short);
+bool split_string_delim(char* stringArray[], const char string[], short length, const char delim[], short amount);
 
-void alloc_array_strings(char*[], short, short);
+void alloc_array_strings(char* stringArray[], short amount, short length);
 
-void free_array_strings(char*[], short);
+void free_array_strings(char* stringArray[], short amount);
 
-short string_symbol_index(const char[], short, char);
+short string_symbol_index(const char string[], short length, char symbol);
 
-bool merge_string_delim(char*, char*[], short, const char[]);
+bool merge_string_delim(char* string, char* stringArray[], short amount, const char delim[]);
 
-char* create_char_string(short);
+char* create_char_string(short length);
 
-bool parse_string_short(unsigned short*, const char[]);
+bool parse_string_short(unsigned short* number, const char string[]);
 
-bool parse_spaced_token(char*, const char[], const char[]);
+bool parse_spaced_token(char* result, const char string[], const char token[]);
 
-bool parse_token_quotes(char*, const char[], const char[]);
+bool parse_token_quotes(char* result, const char string[], const char token[]);
 
 #endif

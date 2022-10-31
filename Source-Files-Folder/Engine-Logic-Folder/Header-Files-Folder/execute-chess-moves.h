@@ -2,32 +2,34 @@
 #ifndef EXECUTE_CHESS_MOVES_H
 #define EXECUTE_CHESS_MOVES_H
 
-bool execute_chess_move(Piece*, Info*, Move);
+bool execute_chess_move(Piece* board, Info* info, Move move);
 
-bool execute_passant_move(Piece*, Info*, Move);
+bool execute_passant_move(Piece* board, Info* info, Move move);
 
-bool execute_castle_move(Piece*, Info*, Move);
+bool execute_castle_move(Piece* board, Info* info, Move kingMove);
 
-bool execute_double_move(Piece*, Info*, Move);
+bool execute_double_move(Piece* board, Info* info, Move move);
 
-bool execute_promote_move(Piece*, Info*, Move);
+bool execute_promote_move(Piece* board, Info* info, Move move);
 
-bool execute_normal_move(Piece*, Info*, Move);
+bool execute_normal_move(Piece* board, Info* info, Move move);
 
-Piece move_promote_piece(Move);
+Piece move_promote_piece(Move move);
 
-Piece promote_piece_type(Move);
+Piece promote_piece_team(Move move);
 
-bool reset_king_ability(Info*, Piece);
+Piece promote_piece_type(Move move);
 
-bool reset_rook_ability(Info*, Piece, Point);
+bool reset_king_ability(Info* info, Piece kingPiece);
 
-bool execute_board_move(Piece*, Move);
+bool reset_rook_ability(Info* info, Piece rookPiece, Point rookPoint);
 
-bool execute_start_stop(Piece*, Point, Point);
+bool execute_board_move(Piece* board, Move move);
 
-Point pawn_passant_point(Move);
+bool execute_start_stop(Piece* board, Point startPoint, Point stopPoint);
 
-bool moved_reset_castle(Info*, const Piece[], Move);
+Point pawn_passant_point(Move move);
+
+bool moved_reset_castle(Info* info, const Piece board[], Move move);
 
 #endif

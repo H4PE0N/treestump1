@@ -2,24 +2,24 @@
 #ifndef MOVE_PATTERN_FITS_H
 #define MOVE_PATTERN_FITS_H
 
-bool move_pattern_fits(const Piece[], Move);
+bool move_pattern_fits(const Piece board[], Move move);
 
-bool normal_pattern_fits(const Piece[], Move);
+bool normal_pattern_fits(const Piece board[], Move move);
 
-bool clear_moving_path(const Piece[], Move);
+bool clear_moving_path(const Piece board[], Move move);
 
-bool testing_clear_path(const Piece[], const Point[], short, Move);
+bool testing_clear_path(const Piece board[], const Point movePoints[], short amount, Move move);
 
-bool moving_path_points(Point**, Move);
+bool moving_path_points(Point** movePoints, Move move);
 
-bool moving_path_values(signed short*, signed short*, short*, Move);
+bool moving_path_values(signed short* rankFactor, signed short* fileFactor, short* moveSteps, Move move);
 
-bool passant_pattern_fits(const Piece[], Move);
+bool passant_pattern_fits(const Piece board[], Move move);
 
-bool castle_pattern_fits(const Piece[], Move);
+bool castle_pattern_fits(const Piece board[], Move castleMove);
 
-bool pawn_pattern_fits(const Piece[], Move);
+bool pawn_pattern_fits(const Piece board[], Move move);
 
-Point castle_rook_point(Move);
+Point castle_rook_point(Move castleMove);
 
 #endif
