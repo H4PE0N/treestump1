@@ -7,15 +7,19 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif
+
 #if defined(_WIN32) || defined(_WIN64)
-  #include <winsock2.h>
-  #include <WS2tcpip.h>
+#include <winsock2.h>
+#include <WS2tcpip.h>
 
 #else
-  #include <sys/types.h>
-  #include <sys/socket.h>
-  #include <arpa/inet.h>
-  #include <netinet/in.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
 
 #endif
 
