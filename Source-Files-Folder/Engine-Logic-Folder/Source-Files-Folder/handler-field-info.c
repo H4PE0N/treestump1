@@ -13,7 +13,7 @@ bool info_team_exists(Info infoTeam)
 {
 	unsigned short team = INFO_TEAM_MACRO(infoTeam);
 
-	return (team == TEAM_WHITE || team == TEAM_BLACK);
+	return ((team == TEAM_WHITE) || (team == TEAM_BLACK));
 }
 
 Point passant_pawn_point(Info info)

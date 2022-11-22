@@ -24,11 +24,10 @@ short partly_qsort_moves(Move* moveArray, signed short* moveValues, short index1
 
 	for(short jIndex = index1; jIndex <= index2 - 1; jIndex += 1)
 	{
-		if((team == TEAM_WHITE && moveValues[jIndex] > pivotValue) ||
-			(team == TEAM_BLACK && moveValues[jIndex] < pivotValue))
-		{
-			qswap_moves_values(moveArray, moveValues, ++iIndex, jIndex);
-		}
+		if(!((team == TEAM_WHITE) && (moveValues[jIndex] > pivotValue)) &&
+			!((team == TEAM_BLACK) && (moveValues[jIndex] < pivotValue))) continue;
+
+		qswap_moves_values(moveArray, moveValues, ++iIndex, jIndex);
 	}
 	qswap_moves_values(moveArray, moveValues, iIndex + 1, index2);
 

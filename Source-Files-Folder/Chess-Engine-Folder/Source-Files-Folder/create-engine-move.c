@@ -3,7 +3,7 @@
 
 bool engine_depth_move(Move* move, const Piece board[], Info info, unsigned short team, signed short depth)
 {
-	if(depth <= 0 || !normal_team_exists(team)) return false;
+	if((depth <= 0) || !normal_team_exists(team)) return false;
 
 	Move* moveArray;
 	if(!team_legal_moves(&moveArray, board, info, team)) return false;
@@ -101,8 +101,10 @@ signed short choose_move_value(const Piece board[], Info info, unsigned short cu
 
 bool current_mate_value(signed short currentValue, unsigned short team)
 {
-	if(team == TEAM_WHITE && currentValue > team_weight_value(MATE_VALUE, team)) return true;
-	if(team == TEAM_BLACK && currentValue < team_weight_value(MATE_VALUE, team)) return true;
+	signed short mateValue = team_weight_value(MATE_VALUE, team);
+
+	if((team == TEAM_WHITE) && (currentValue > mateValue)) return true;
+	if((team == TEAM_BLACK) && (currentValue < mateValue)) return true;
 
 	return false;
 }
@@ -116,9 +118,10 @@ bool update_mate_value(Move currentMove, signed short currentValue, Move* bestMo
 
 void update_move_value(Move currentMove, signed short currentValue, Move* bestMove, signed short* bestValue, unsigned short team)
 {
-	if((team == TEAM_WHITE && currentValue > *bestValue) ||
-		 (team == TEAM_BLACK && currentValue < *bestValue))
-	{ *bestMove = currentMove; *bestValue = currentValue; }
+	if(!((team == TEAM_WHITE) && (currentValue > *bestValue)) &&
+		!((team == TEAM_BLACK) && (currentValue < *bestValue))) return;
+
+	*bestMove = currentMove; *bestValue = currentValue;
 }
 
 void update_best_value(signed short currentValue, signed short* bestValue, unsigned short team)

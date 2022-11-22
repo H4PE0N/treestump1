@@ -31,5 +31,10 @@ int main(int argc, char* argv[])
 		printf("\n");
 	}
 
+	for(int index = 1; index <= 4; index += 1)
+	{
+		printf("depth: %d nodes: %ld\n", index, search_depth_nodes(board, info, TEAM_WHITE, index, clock(), 60));
+	}
+
 	printf("free(board);\n"); free(board); return false;
 }

@@ -29,13 +29,11 @@ bool execute_normal_move(Piece* board, Info* info, Move move)
 
 	moved_reset_castle(info, board, move);
 
-	execute_board_move(board, move);
+	if(!execute_board_move(board, move)) return false;
 
 	*info = CLEAR_INFO_PASSANT(*info);
 
-	increase_info_turns(info);
-
-	switch_current_team(info);
+	increase_info_turns(info); switch_current_team(info);
 
 	return true;
 }
@@ -45,17 +43,14 @@ bool moved_reset_castle(Info* info, const Piece board[], Move move)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	Piece startPiece = board[startPoint];
-	Piece stopPiece = board[stopPoint];
+	if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_KING))
+		return reset_king_ability(info, board[startPoint]);
 
-	if(PIECE_STORE_TYPE(startPiece, PIECE_TYPE_KING))
-		return reset_king_ability(info, startPiece);
+	if(PIECE_STORE_TYPE(board[stopPoint], PIECE_TYPE_ROOK))
+		return reset_rook_ability(info, board[stopPoint], stopPoint);
 
-	if(PIECE_STORE_TYPE(stopPiece, PIECE_TYPE_ROOK))
-		return reset_rook_ability(info, stopPiece, stopPoint);
-
-	else if(PIECE_STORE_TYPE(startPiece, PIECE_TYPE_ROOK))
-		return reset_rook_ability(info, startPiece, startPoint);
+	if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_ROOK))
+		return reset_rook_ability(info, board[startPoint], startPoint);
 
 	return false;
 }
@@ -93,22 +88,20 @@ bool execute_castle_move(Piece* board, Info* info, Move kingMove)
 	Point startRook = castle_rook_point(kingMove);
 	Point stopRook = castle_middle_point(kingMove);
 
-	if(startRook == POINT_NONE || stopRook == POINT_NONE) return false;
+	if((startRook == POINT_NONE) || (stopRook == POINT_NONE)) return false;
 
 	Piece kingPiece = move_start_piece(kingMove, board);
 
 
-	execute_board_move(board, kingMove);
-	execute_start_stop(board, startRook, stopRook);
+	if(!execute_board_move(board, kingMove)) return false;
+	if(!execute_start_stop(board, startRook, stopRook)) return false;
 
 
-	reset_king_ability(info, kingPiece);
+	if(!reset_king_ability(info, kingPiece)) return false;
 
 	*info = CLEAR_INFO_PASSANT(*info);
 
-	increase_info_turns(info);
-
-	switch_current_team(info);
+	increase_info_turns(info); switch_current_team(info);
 
 	return true;
 }
@@ -140,26 +133,22 @@ Piece move_promote_piece(Move move)
 	Piece pieceTeam = promote_piece_team(move);
 	Piece pieceType = promote_piece_type(move);
 
-	if(pieceType == PIECE_TYPE_NONE || pieceTeam == PIECE_TEAM_NONE) return PIECE_NONE;
+	if((pieceType == PIECE_TYPE_NONE) || (pieceTeam == PIECE_TEAM_NONE)) return PIECE_NONE;
 
 	return (pieceTeam | pieceType);
 }
 
 bool execute_board_move(Piece* board, Move move)
 {
-	Piece startPiece = move_start_piece(move, board);
-
+	board[MOVE_STOP_MACRO(move)] = move_start_piece(move, board);
 	board[MOVE_START_MACRO(move)] = PIECE_NONE;
-	board[MOVE_STOP_MACRO(move)] = startPiece;
 
 	return true;
 }
 
 bool execute_start_stop(Piece* board, Point startPoint, Point stopPoint)
 {
-	Piece startPiece = board[startPoint];
-
-	board[stopPoint] = startPiece;
+	board[stopPoint] = board[startPoint];
 	board[startPoint] = PIECE_NONE;
 
 	return true;
@@ -172,7 +161,6 @@ bool execute_promote_move(Piece* board, Info* info, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
@@ -180,15 +168,13 @@ bool execute_promote_move(Piece* board, Info* info, Move move)
 	if(promotePiece == PIECE_NONE) return false;
 
 
-	board[startPoint] = PIECE_NONE;
 	board[stopPoint] = promotePiece;
+	board[startPoint] = PIECE_NONE;
 
 
 	*info = CLEAR_INFO_PASSANT(*info);
 
-	increase_info_turns(info);
-
-	switch_current_team(info);
+	increase_info_turns(info); switch_current_team(info);
 
 	return true;
 }
@@ -209,7 +195,6 @@ bool execute_passant_move(Piece* board, Info* info, Move move)
 {
 	if(!move_inside_board(move)) return false;
 
-
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
@@ -223,9 +208,7 @@ bool execute_passant_move(Piece* board, Info* info, Move move)
 
 	*info = CLEAR_INFO_PASSANT(*info);
 
-	increase_info_turns(info);
-
-	switch_current_team(info);
+	increase_info_turns(info); switch_current_team(info);
 
 	return true;
 }
@@ -235,7 +218,6 @@ bool execute_passant_move(Piece* board, Info* info, Move move)
 bool execute_double_move(Piece* board, Info* info, Move move)
 {
 	if(!move_inside_board(move)) return false;
-
 
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
@@ -250,9 +232,7 @@ bool execute_double_move(Piece* board, Info* info, Move move)
 
 	*info = ALLOC_INFO_PASSANT(*info, infoPassant);
 
-	increase_info_turns(info);
-
-	switch_current_team(info);
+	increase_info_turns(info); switch_current_team(info);
 
 	return true;
 }

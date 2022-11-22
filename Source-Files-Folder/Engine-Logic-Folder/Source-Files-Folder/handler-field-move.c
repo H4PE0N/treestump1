@@ -1,6 +1,7 @@
 
 #include "../Header-Files-Folder/englog-include-file.h"
 
+// Maybe remove move_inside_board and turn into macro
 Piece start_piece_type(Move move, const Piece board[])
 {
 	if(!move_inside_board(move)) return PIECE_TYPE_NONE;
@@ -8,6 +9,7 @@ Piece start_piece_type(Move move, const Piece board[])
 	return point_piece_type(MOVE_START_MACRO(move), board);
 }
 
+// Maybe remove move_inside_board and turn into macro
 Piece stop_piece_type(Move move, const Piece board[])
 {
 	if(!move_inside_board(move)) return PIECE_TYPE_NONE;
@@ -15,6 +17,7 @@ Piece stop_piece_type(Move move, const Piece board[])
 	return point_piece_type(MOVE_STOP_MACRO(move), board);
 }
 
+// Maybe remove move_inside_board and turn into macro
 Piece move_start_piece(Move move, const Piece board[])
 {
 	if(!move_inside_board(move)) return PIECE_NONE;
@@ -22,6 +25,7 @@ Piece move_start_piece(Move move, const Piece board[])
 	return board[MOVE_START_MACRO(move)];
 }
 
+// Maybe remove move_inside_board and turn into macro
 Piece move_stop_piece(Move move, const Piece board[])
 {
 	if(!move_inside_board(move)) return PIECE_NONE;
@@ -33,10 +37,9 @@ unsigned short move_array_amount(const Move moveArray[])
 {
 	unsigned short movesAmount = 0;
 
-	while(moveArray[movesAmount] != MOVE_NONE && moveArray[movesAmount] >= 0)
-	{
-		movesAmount += 1;
-	}
+	// move_inside_board (and change the move_inside_board function)
+	while(moveArray[movesAmount] != MOVE_NONE && moveArray[movesAmount] >= 0) movesAmount += 1;
+
 	return movesAmount;
 }
 
@@ -46,9 +49,7 @@ void append_moves_array(Move* moveArray, const Move addingArray[])
 	int addingAmount = move_array_amount(addingArray);
 
 	for(unsigned short index = 0; index < addingAmount; index += 1)
-	{
 		moveArray[moveAmount + index] = addingArray[index];
-	}
 }
 
 Move* create_move_array(short arrayLength)
@@ -56,15 +57,14 @@ Move* create_move_array(short arrayLength)
 	Move* moveArray = malloc(sizeof(Move) * (arrayLength + 1));
 
 	for(unsigned short index = 0; index < (arrayLength + 1); index += 1)
-	{
 		moveArray[index] = MOVE_NONE;
-	}
+
 	return moveArray;
 }
 
 bool move_inside_board(Move move)
 {
-	if(move == MOVE_NONE || move < 0) return false;
+	if((move == MOVE_NONE) || (move < 0)) return false;
 
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
@@ -90,32 +90,26 @@ bool move_points_enemy(const Piece board[], Move move)
 
 short move_file_offset(Move move, unsigned short team)
 {
-	Point startPoint = MOVE_START_MACRO(move);
-	Point stopPoint = MOVE_STOP_MACRO(move);
-
-	unsigned short startFile = POINT_FILE_MACRO(startPoint);
-	unsigned short stopFile = POINT_FILE_MACRO(stopPoint);
+	unsigned short startFile = MOVE_START_FILE(move);
+	unsigned short stopFile = MOVE_STOP_FILE(move);
 
 	signed short fileOffset = (stopFile - startFile);
 
-	if(team == TEAM_WHITE) return fileOffset;// * WHITE_MOVE_VALUE;
-	if(team == TEAM_BLACK) return fileOffset;// * BLACK_MOVE_VALUE;
+	if(team == TEAM_WHITE) return fileOffset;
+	if(team == TEAM_BLACK) return fileOffset;
 
 	return SHORT_NONE;
 }
 
 short move_rank_offset(Move move, unsigned short team)
 {
-	Point startPoint = MOVE_START_MACRO(move);
-	Point stopPoint = MOVE_STOP_MACRO(move);
-
-	unsigned short startRank = POINT_RANK_MACRO(startPoint);
-	unsigned short stopRank = POINT_RANK_MACRO(stopPoint);
+	unsigned short startRank = MOVE_START_RANK(move);
+	unsigned short stopRank = MOVE_STOP_RANK(move);
 
 	signed short rankOffset = (stopRank - startRank);
 
-	if(team == TEAM_WHITE) return rankOffset * WHITE_MOVE_VALUE;
-	if(team == TEAM_BLACK) return rankOffset * BLACK_MOVE_VALUE;
+	if(team == TEAM_WHITE) return (rankOffset * WHITE_MOVE_VALUE);
+	if(team == TEAM_BLACK) return (rankOffset * BLACK_MOVE_VALUE);
 
 	return SHORT_NONE;
 }
@@ -140,10 +134,10 @@ short normal_rank_offset(Move move)
 
 short normal_file_offset(Move move)
 {
-		Point startPoint = MOVE_START_MACRO(move);
-		Point stopPoint = MOVE_STOP_MACRO(move);
+	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
 
-		return (POINT_FILE_MACRO(stopPoint) - POINT_FILE_MACRO(startPoint));
+	return (POINT_FILE_MACRO(stopPoint) - POINT_FILE_MACRO(startPoint));
 }
 
 signed short board_move_pattern(Move move)
@@ -156,7 +150,7 @@ signed short board_move_pattern(Move move)
 
 bool create_move_string(char* moveString, const Piece board[], Info info, Move move)
 {
-	if(move == MOVE_NONE || move < 0)
+	if(!move_inside_board(move))
 	{
 		*moveString = '\0';
 
@@ -219,17 +213,17 @@ bool create_move_string(char* moveString, const Piece board[], Info info, Move m
 
 bool create_point_string(char* pointString, Point point)
 {
-	unsigned short file = POINT_FILE_MACRO(point);
-	unsigned short rank = POINT_RANK_MACRO(point);
+	char fileSymbol = FILE_SYMBOLS[POINT_FILE_MACRO(point)];
+	char rankSymbol = RANK_SYMBOLS[POINT_RANK_MACRO(point)];
 
-	sprintf(pointString, "%c%c", FILE_SYMBOLS[file], RANK_SYMBOLS[rank]);
+	sprintf(pointString, "%c%c", fileSymbol, rankSymbol);
 
 	return true;
 }
 
 signed short move_offset_factor(signed short moveOffset)
 {
-	return (moveOffset == 0 ? 0 : (moveOffset > 0 ? 1 : -1) );
+	return ((moveOffset == 0) ? 0 : ((moveOffset > 0) ? 1 : -1));
 }
 
 bool start_stop_team(Move move, const Piece board[])

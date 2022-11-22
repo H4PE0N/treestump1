@@ -20,7 +20,7 @@ Piece point_piece_type(Point point, const Piece board[])
 {
 	if(!POINT_INSIDE_BOARD(point)) return PIECE_TYPE_NONE;
 
-	return (board[point] & PIECE_TYPE_MASK);
+	return MASK_PIECE_TYPE(board[point]);
 }
 
 unsigned short move_start_team(Move move, const Piece board[])
@@ -34,23 +34,19 @@ unsigned short move_start_enemy(Move move, const Piece board[])
 {
 	if(!move_inside_board(move)) return TEAM_NONE;
 
-	unsigned short team = move_start_team(move, board);
-
-	return normal_team_enemy(team);
+	return normal_team_enemy(move_start_team(move, board));
 }
 
 bool piece_team_exists(Piece pieceTeam)
 {
 	unsigned short team = PIECE_TEAM_MACRO(pieceTeam);
 
-	return (team == TEAM_WHITE || team == TEAM_BLACK);
+	return ((team == TEAM_WHITE) || (team == TEAM_BLACK));
 }
 
 bool piece_type_exists(Piece pieceType)
 {
-	unsigned short type = PIECE_TYPE_MACRO(pieceType);
-
-	return NUMBER_IN_BOUNDS(type, 1, 6);
+	return NUMBER_IN_BOUNDS(PIECE_TYPE_MACRO(pieceType), 1, 6);
 }
 
 bool chess_piece_exists(Piece piece)
@@ -63,18 +59,18 @@ bool chess_piece_exists(Piece piece)
 
 bool piece_teams_team(Piece pieceTeam1, Piece pieceTeam2)
 {
-	bool bothBlack = (pieceTeam1 == PIECE_TEAM_BLACK && pieceTeam2 == PIECE_TEAM_BLACK);
-	bool bothWhite = (pieceTeam1 == PIECE_TEAM_WHITE && pieceTeam2 == PIECE_TEAM_WHITE);
+	if((pieceTeam1 == PIECE_TEAM_BLACK) && (pieceTeam2 == PIECE_TEAM_BLACK)) return true;
+	if((pieceTeam1 == PIECE_TEAM_WHITE) && (pieceTeam2 == PIECE_TEAM_WHITE)) return true;
 
-	return (bothBlack || bothWhite);
+	return false;
 }
 
 bool piece_teams_enemy(Piece pieceTeam1, Piece pieceTeam2)
 {
-	bool enemyWhite = (pieceTeam1 == PIECE_TEAM_BLACK && pieceTeam2 == PIECE_TEAM_WHITE);
-	bool enemyBlack = (pieceTeam1 == PIECE_TEAM_WHITE && pieceTeam2 == PIECE_TEAM_BLACK);
+	if((pieceTeam1 == PIECE_TEAM_BLACK) && (pieceTeam2 == PIECE_TEAM_WHITE)) return true;
+	if((pieceTeam1 == PIECE_TEAM_WHITE) && (pieceTeam2 == PIECE_TEAM_BLACK)) return true;
 
-	return (enemyWhite || enemyBlack);
+	return false;
 }
 
 bool chess_pieces_team(Piece piece1, Piece piece2)

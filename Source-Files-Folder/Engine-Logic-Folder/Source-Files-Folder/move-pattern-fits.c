@@ -64,7 +64,7 @@ bool castle_pattern_fits(const Piece board[], Move castleMove)
 	Piece rookPieceType = point_piece_type(rookPoint, board);
 	unsigned short rookTeam = board_point_team(rookPoint, board);
 
-	if(rookPieceType != PIECE_TYPE_ROOK || rookTeam != startTeam) return false;
+	if(!((rookPieceType == PIECE_TYPE_ROOK) && (rookTeam == startTeam))) return false;
 
 	Move kingRookMove = ALLOC_MOVE_STOP(castleMove, rookPoint);
 
@@ -78,16 +78,16 @@ Point castle_rook_point(Move castleMove)
 	unsigned short kingPoint = MOVE_START_MACRO(castleMove);
 	signed short movePattern = board_move_pattern(castleMove);
 
-	if(kingPoint == WHITE_KING_POINT && movePattern == KSIDE_FILE_OFFSET)
+	if((kingPoint == WHITE_KING_POINT) && (movePattern == KSIDE_FILE_OFFSET))
 		return WROOK_KSIDE_POINT;
 
-	if(kingPoint == WHITE_KING_POINT && movePattern == QSIDE_FILE_OFFSET)
+	if((kingPoint == WHITE_KING_POINT) && (movePattern == QSIDE_FILE_OFFSET))
 		return WROOK_QSIDE_POINT;
 
-	if(kingPoint == BLACK_KING_POINT && movePattern == KSIDE_FILE_OFFSET)
+	if((kingPoint == BLACK_KING_POINT) && (movePattern == KSIDE_FILE_OFFSET))
 		return BROOK_KSIDE_POINT;
 
-	if(kingPoint == BLACK_KING_POINT && movePattern == QSIDE_FILE_OFFSET)
+	if((kingPoint == BLACK_KING_POINT) && (movePattern == QSIDE_FILE_OFFSET))
 		return BROOK_QSIDE_POINT;
 
 	return POINT_NONE;
@@ -108,11 +108,11 @@ bool pawn_pattern_fits(const Piece board[], Move move)
 	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, startTeam));
 	signed short rankOffset = move_rank_offset(move, startTeam);
 
-	if(fileOffset == 0 && (rankOffset == 1 || rankOffset == 2))
+	if((fileOffset == 0) && ((rankOffset == 1) || (rankOffset == 2)))
 	{
 		if(chess_piece_exists(board[stopPoint])) return false;
 	}
-	else if(fileOffset == 1 && rankOffset == 1)
+	else if((fileOffset == 1) && (rankOffset == 1))
 	{
 		if(!normal_teams_enemy(startTeam, stopTeam)) return false;
 	}
@@ -144,7 +144,7 @@ bool testing_clear_path(const Piece board[], const Point movePoints[], short amo
 	{
 		Point currentPoint = movePoints[index];
 
-		if(currentPoint == startPoint || currentPoint == stopPoint) continue;
+		if((currentPoint == startPoint) || (currentPoint == stopPoint)) continue;
 
 		if(board_point_exists(board, currentPoint)) return false;
 	}
@@ -184,7 +184,7 @@ bool moving_path_values(signed short* rankFactor, signed short* fileFactor, shor
 	unsigned short absRankOffset = ABS_SHORT_NUMBER(rankOffset);
 	unsigned short absFileOffset = ABS_SHORT_NUMBER(fileOffset);
 
-	bool moveStraight = (absRankOffset == 0 || absFileOffset == 0);
+	bool moveStraight = ((absRankOffset == 0) || (absFileOffset == 0));
 	bool moveDiagonal = (absRankOffset == absFileOffset);
 
 	if(!moveStraight && !moveDiagonal) return false;
