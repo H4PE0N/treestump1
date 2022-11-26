@@ -40,19 +40,18 @@ bool current_team_move(Info info, unsigned short team)
 {
 	if(!normal_team_exists(team)) return false;
 
-	unsigned short infoTeamValue = INFO_TEAM_MACRO(info);
-
-	return normal_teams_team(infoTeamValue, team);
+	return normal_teams_team(INFO_TEAM_MACRO(info), team);
 }
 
 bool increase_info_turns(Info* info)
 {
 	unsigned short turns = INFO_TURNS_MACRO(*info);
-	unsigned short team = INFO_TEAM_MACRO(*info);
 
-	if(team == TEAM_BLACK) *info = ALLOC_TURNS_INFO(*info, (turns + 1));
+	if(INFO_STORE_TEAM(*info, INFO_TEAM_WHITE)) return true;
 
-	return true;
+	if(!INFO_STORE_TEAM(*info, INFO_TEAM_BLACK)) return false;
+
+	*info = ALLOC_TURNS_INFO(*info, (turns + 1)); return true;
 }
 
 bool switch_current_team(Info* info)
@@ -61,7 +60,5 @@ bool switch_current_team(Info* info)
 
 	if(!info_team_exists(infoEnemy)) return false;
 
-	*info = ALLOC_INFO_TEAM(*info, infoEnemy);
-
-	return true;
+	*info = ALLOC_INFO_TEAM(*info, infoEnemy); return true;
 }

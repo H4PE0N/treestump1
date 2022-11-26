@@ -16,4 +16,8 @@ bool team_legal_moves(Move** moveArray, const Piece board[], Info info, unsigned
 
 void append_promote_moves(Move* moveArray, short* moveAmount, Move promoteMove);
 
+void append_piece_moves(Move* moveArray, short* moveAmount, const Move pieceMoves[]);
+
+bool pattern_move_legal(Move* patternMove, const Piece board[], Info info);
+
 #endif

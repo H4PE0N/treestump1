@@ -148,65 +148,239 @@ signed short board_move_pattern(Move move)
 	return (stopPoint - startPoint);
 }
 
-bool create_move_string(char* moveString, const Piece board[], Info info, Move move)
+char piece_move_symbol(Piece piece)
 {
-	if(!move_inside_board(move))
-	{
-		*moveString = '\0';
+	if(!chess_piece_exists(piece)) return SYMBOL_NONE;
 
-		return true;
+	return MOVE_TYPE_SYMBOLS[PIECE_TYPE_MACRO(piece)];
+}
+
+bool castle_move_string(char* moveString, Move move)
+{
+	signed short movePattern = board_move_pattern(move);
+
+	if(movePattern == KSIDE_FILE_OFFSET) strcpy(moveString, KSIDE_MOVE_STRING);
+
+	else if(movePattern == QSIDE_FILE_OFFSET) strcpy(moveString, QSIDE_MOVE_STRING);
+
+	else return false;
+
+	return true;
+}
+
+bool chess_move_capture(Move move, const Piece board[], Info info)
+{
+	unsigned short stopFile = MOVE_STOP_FILE(move);
+
+	if(move_points_enemy(board, move)) return true;
+
+	else if(INFO_PASSANT_MACRO(info) == (stopFile + 1)) return true;
+
+	return false;
+}
+
+bool equal_piece_rank(const Piece board[], Point point)
+{
+	unsigned short pieceFile = POINT_FILE_MACRO(point);
+	unsigned short pieceRank = POINT_RANK_MACRO(point);
+
+	for(unsigned short file = 0; file < BOARD_FILES; file += 1)
+	{
+		if(pieceFile == file) continue;
+
+		Point currPoint = RANK_FILE_POINT(pieceRank, file);
+		if(board[currPoint] == board[point]) return true;
 	}
+	return false;
+}
+
+bool equal_piece_file(const Piece board[], Point point)
+{
+	unsigned short pieceFile = POINT_FILE_MACRO(point);
+	unsigned short pieceRank = POINT_RANK_MACRO(point);
+
+	for(unsigned short rank = 0; rank < BOARD_RANKS; rank += 1)
+	{
+		if(pieceRank == rank) continue;
+
+		Point currPoint = RANK_FILE_POINT(rank, pieceFile);
+		if(board[currPoint] == board[point]) return true;
+	}
+	return false;
+}
+
+bool piece_place_string(char* placeString, const Piece board[], Point point)
+{
+	unsigned short pieceFile = POINT_FILE_MACRO(point);
+	unsigned short pieceRank = POINT_RANK_MACRO(point);
+
+	if(!equal_piece_file(board, point)) strncpy(placeString, &FILE_SYMBOLS[pieceFile], 1);
+
+	else if(!equal_piece_rank(board, point)) strncpy(placeString, &RANK_SYMBOLS[pieceRank], 1);
+
+	else
+	{
+		char pointString[8];
+		if(!create_point_string(pointString, point)) return false;
+
+		strcpy(placeString, pointString);
+	}
+	return true;
+}
+
+bool pattern_moves_equal(Move move1, Move move2)
+{
+	if(MOVE_START_MACRO(move1) != MOVE_START_MACRO(move2)) return false;
+	if(MOVE_STOP_MACRO(move1) != MOVE_STOP_MACRO(move2)) return false;
+
+	return true;
+}
+
+bool start_pieces_equal(const Piece board[], Move move1, Move move2)
+{
+	Piece piece1 = move_start_piece(move1, board);
+	Piece piece2 = move_start_piece(move2, board);
+
+	return (piece1 == piece2);
+}
+
+bool equal_piece_attack(const Piece board[], Info info, Move move)
+{
+	Move* equalMoves;
+	if(!equal_pattern_moves(&equalMoves, board, move)) return false;
+	
+	unsigned short moveAmount = move_array_amount(equalMoves);
+
+	for(short index = 0; index < moveAmount; index += 1)
+	{
+		Move currentMove = equalMoves[index];
+
+		if(!start_pieces_equal(board, currentMove, move)) continue;
+
+		if(pattern_moves_equal(currentMove, move)) continue;
+
+		if(!pattern_move_legal(&currentMove, board, info)) continue;
+
+		free(equalMoves); return true;
+	}
+	free(equalMoves); return false;
+}
+
+Move invert_chess_move(Move move)
+{
+	Point startPoint = MOVE_START_MACRO(move);
+	Point stopPoint = MOVE_STOP_MACRO(move);
+
+	return START_STOP_MOVE(stopPoint, startPoint);
+}
+
+bool equal_pattern_moves(Move** moves, const Piece board[], Move move)
+{
+	if(!target_pattern_moves(moves, board, move)) return false;
+	
+	unsigned short moveAmount = move_array_amount(*moves);
+
+	for(short index = 0; index < moveAmount; index += 1)
+		(*moves)[index] = invert_chess_move((*moves)[index]);
+	
+	return true;
+}
+
+bool target_pattern_moves(Move** moves, const Piece board[], Move move)
+{
+	if(!move_inside_board(move)) return false;
 
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	unsigned short type = PIECE_TYPE_MACRO(board[startPoint]);
+	if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_PAWN))
+		return pawn_pattern_moves(moves, board, stopPoint);
 
-	Piece pieceTeam = (board[startPoint] & PIECE_TEAM_MASK);
+	if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_KNIGHT))
+		return knight_pattern_moves(moves, board, stopPoint);
 
-	unsigned short stopFile = POINT_FILE_MACRO(stopPoint);
+	if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_BISHOP))
+		return bishop_pattern_moves(moves, board, stopPoint);
 
+	if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_ROOK))
+		return rook_pattern_moves(moves, board, stopPoint);
 
-	char pieceSymbol = '\0';
-	char stopPointString[10];
-	char checkSymbol = '\0';
-	char mateSymbol = '\0';
-	char captureSymbol = '\0';
+	if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_QUEEN))
+		return queen_pattern_moves(moves, board, stopPoint);
 
+	if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_KING))
+		return king_pattern_moves(moves, board, stopPoint);
 
-	if(pieceTeam == PIECE_TEAM_WHITE) pieceSymbol = WHITE_MOVE_SYMBOLS[type];
-	else if(pieceTeam == PIECE_TEAM_BLACK) pieceSymbol = BLACK_MOVE_SYMBOLS[type];
+	return false;
+}
 
-	if(!create_point_string(stopPointString, stopPoint))
+bool create_move_string(char* moveString, const Piece board[], Info info, Move move)
+{
+	if(!move_inside_board(move)) return false;
+
+	memset(moveString, '\0', sizeof(char) * 16);
+
+	if(MOVE_STORE_FLAG(move, MOVE_FLAG_CASTLE))
+		return castle_move_string(moveString, move);
+
+	Point startPoint = MOVE_START_MACRO(move);
+
+	if(!PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_PAWN))
 	{
-		printf("if(!create_point_string(stopPointString, stopPoint))\n");
+		char pieceSymbol = piece_move_symbol(board[startPoint]);
+
+		if(pieceSymbol == SYMBOL_NONE) return false;
+
+		strncat(moveString, &pieceSymbol, 1);
 	}
 
-	if(move_deliver_mate(board, info, move))
+	char placeString[8];
+	if(equal_piece_attack(board, info, move))
 	{
-		mateSymbol = '#';
-	}
-	else if(move_deliver_check(board, info, move))
-	{
-		checkSymbol = '+';
-	}
+		if(!piece_place_string(placeString, board, startPoint)) return false;
 
-	if(board_points_enemy(board, startPoint, stopPoint) || (INFO_PASSANT_MACRO(info) == (stopFile + 1) ))
-	{
-		captureSymbol = 'x';
+		strcat(moveString, placeString);
 	}
 
+	if(chess_move_capture(move, board, info))
+	{
+		if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_PAWN))
+		{
+			if(!strlen(placeString))
+			{
+				if(!piece_place_string(placeString, board, startPoint)) return false;
+
+				strcat(moveString, placeString);
+			}
+		}
+		strcat(moveString, "x");
+	}
+
+	Point stopPoint = MOVE_STOP_MACRO(move);
+	
+
+	char stopString[8];
+	if(!create_point_string(stopString, stopPoint)) return false;
+
+	strcat(moveString, stopString);
 
 
-	sprintf(moveString, "%s%s%s%s%s",
-		(char[]) {pieceSymbol, '\0'},
-		(char[]) {captureSymbol, '\0'},
-		stopPointString,
-		(char[]) {checkSymbol, '\0'},
-		(char[]) {mateSymbol, '\0'}
-	);
+	if(MOVE_PROMOTE_FLAG(move))
+	{
+		Piece pieceType = promote_piece_type(move);
 
-	//sprintf(moveString, "%c%c%s%c", pieceSymbol, speciallChar1, stopPointString, speciallChar2);
+		if(pieceType == PIECE_TYPE_NONE) return false;
+
+		unsigned short typeIndex = PIECE_TYPE_MACRO(pieceType);
+
+		strcat(moveString, "=");
+		strncat(moveString, &MOVE_TYPE_SYMBOLS[typeIndex], 1);
+	}
+
+
+	if(move_deliver_mate(board, info, move)) strcat(moveString, "#");
+	
+	else if(move_deliver_check(board, info, move)) strcat(moveString, "+");
 
 	return true;
 }

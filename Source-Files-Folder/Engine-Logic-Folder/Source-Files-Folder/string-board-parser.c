@@ -299,12 +299,12 @@ bool parse_board_piece(Piece* piece, char symbol)
 
 char chess_piece_symbol(Piece piece)
 {
-	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
+	unsigned short team = PIECE_TEAM_MACRO(piece);
 	unsigned short typeIndex = PIECE_TYPE_MACRO(piece);
 
-	if(pieceTeam == PIECE_TEAM_WHITE) return WHITE_TYPE_SYMBOLS[typeIndex];
+	if(team == TEAM_WHITE) return WHITE_TYPE_SYMBOLS[typeIndex];
 
-	if(pieceTeam == PIECE_TEAM_BLACK) return BLACK_TYPE_SYMBOLS[typeIndex];
+	if(team == TEAM_BLACK) return BLACK_TYPE_SYMBOLS[typeIndex];
 
 	return SYMBOL_NONE;
 }
