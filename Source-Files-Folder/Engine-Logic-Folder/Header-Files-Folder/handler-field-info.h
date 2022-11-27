@@ -10,4 +10,6 @@ bool switch_current_team(Info* info);
 
 bool increase_info_turns(Info* info);
 
+short team_passant_rank(short team);
+
 #endif

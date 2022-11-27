@@ -3,6 +3,8 @@
 
 bool move_fully_legal(const Piece board[], Info info, Move move)
 {
+	if(!MOVE_INSIDE_BOARD(move)) return false;
+
 	unsigned short startTeam = MOVE_START_TEAM(board, move);
 	if(!current_team_move(info, startTeam)) return false;
 
@@ -40,7 +42,7 @@ bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Point p
 
 	*moveArray = create_move_array(32); short moveAmount = 0;
 
-	Piece pieceType = MASK_PIECE_TYPE(board[piecePoint]);
+	Piece pieceType = POINT_PIECE_TYPE(board, piecePoint);
 
 	for(unsigned short index = 0; index < pattAmount; index += 1)
 	{
@@ -106,7 +108,7 @@ bool team_legal_moves(Move** moveArray, const Piece board[], Info info, unsigned
 
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
-		unsigned short currentTeam = PIECE_TEAM_MACRO(board[point]);
+		unsigned short currentTeam = BOARD_POINT_TEAM(board, point);
 		if(!NORMAL_TEAMS_TEAM(currentTeam, team)) continue;
 
 		Move* pieceMoves;

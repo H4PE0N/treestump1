@@ -147,9 +147,11 @@ bool piece_place_string(char* placeString, const Piece board[], Point point)
 	unsigned short pieceFile = POINT_FILE_MACRO(point);
 	unsigned short pieceRank = POINT_RANK_MACRO(point);
 
-	if(!equal_piece_file(board, point)) strncpy(placeString, &FILE_SYMBOLS[pieceFile], 1);
+	if(!equal_piece_file(board, point))
+		strncpy(placeString, &FILE_SYMBOLS[pieceFile], 1);
 
-	else if(!equal_piece_rank(board, point)) strncpy(placeString, &RANK_SYMBOLS[pieceRank], 1);
+	else if(!equal_piece_rank(board, point))
+		strncpy(placeString, &RANK_SYMBOLS[pieceRank], 1);
 
 	else
 	{
@@ -180,7 +182,7 @@ bool equal_piece_attack(const Piece board[], Info info, Move move)
 {
 	Move* equalMoves;
 	if(!equal_pattern_moves(&equalMoves, board, move)) return false;
-	
+
 	unsigned short moveAmount = move_array_amount(equalMoves);
 
 	for(short index = 0; index < moveAmount; index += 1)
@@ -201,12 +203,12 @@ bool equal_piece_attack(const Piece board[], Info info, Move move)
 bool equal_pattern_moves(Move** moves, const Piece board[], Move move)
 {
 	if(!target_pattern_moves(moves, board, move)) return false;
-	
+
 	unsigned short moveAmount = move_array_amount(*moves);
 
 	for(short index = 0; index < moveAmount; index += 1)
 		(*moves)[index] = INVERT_CHESS_MOVE((*moves)[index]);
-	
+
 	return true;
 }
 
@@ -281,7 +283,7 @@ bool create_move_string(char* moveString, const Piece board[], Info info, Move m
 	}
 
 	Point stopPoint = MOVE_STOP_MACRO(move);
-	
+
 
 	char stopString[8];
 	if(!create_point_string(stopString, stopPoint)) return false;
@@ -303,7 +305,7 @@ bool create_move_string(char* moveString, const Piece board[], Info info, Move m
 
 
 	if(move_deliver_mate(board, info, move)) strcat(moveString, "#");
-	
+
 	else if(move_deliver_check(board, info, move)) strcat(moveString, "+");
 
 	return true;

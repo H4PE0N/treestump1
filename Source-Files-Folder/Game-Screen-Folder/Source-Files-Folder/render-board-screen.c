@@ -68,7 +68,7 @@ bool render_promote_board(Screen screen, unsigned short team)
 bool render_result_board(Screen screen, const Piece board[], Info info, bool inverted)
 {
 	unsigned short team = INFO_TEAM_MACRO(info);
-	unsigned short winningTeam = normal_team_enemy(team);
+	unsigned short winningTeam = NORMAL_TEAM_ENEMY(team);
 
 	if(check_mate_ending(board, info, team))
 	{
@@ -123,7 +123,7 @@ bool render_board_pieces(Screen screen, const Piece board[], bool inverted)
 {
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
-		if(!chess_piece_exists(board[point])) continue;
+		if(!BOARD_POINT_EXISTS(board, point)) continue;
 
 		if(!render_board_piece(screen, board[point], point, inverted)) return false;
 	}
@@ -132,7 +132,7 @@ bool render_board_pieces(Screen screen, const Piece board[], bool inverted)
 
 bool render_board_piece(Screen screen, Piece piece, Point point, bool inverted)
 {
-	if(!chess_piece_exists(piece)) return false;
+	if(!CHESS_PIECE_EXISTS(piece)) return false;
 
 	Surface* pieceImage;
 
@@ -145,7 +145,7 @@ bool render_board_piece(Screen screen, Piece piece, Point point, bool inverted)
 
 bool render_check_square(Screen screen, const Piece board[], Info info, Point kingPoint, bool inverted)
 {
-	if(!king_inside_check(board, info, kingPoint)) return true;
+	if(!king_inside_check(board, kingPoint)) return true;
 
 	Surface* checkSquare;
 
@@ -172,7 +172,7 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Point po
 {
 	if(!POINT_INSIDE_BOARD(point)) return true;
 
-	unsigned short team = PIECE_TEAM_MACRO(board[point]);
+	unsigned short team = BOARD_POINT_TEAM(board, point);
 
 	if(!current_team_move(info, team)) return false;
 

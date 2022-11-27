@@ -40,7 +40,7 @@ int main(int argAmount, char* arguments[])
 bool screen_single_game(Piece* board, Info* info, Move* moves, Screen screen, bool* inverted, bool starting)
 {
 	Info userTeam = (starting) ? INFO_TEAM_WHITE : INFO_TEAM_BLACK;
-	Info engineTeam = info_team_enemy(userTeam);
+	Info engineTeam = INFO_TEAM_ENEMY(userTeam);
 	if(engineTeam == INFO_TEAM_NONE) return false;
 
 	while(game_still_running(board, *info))

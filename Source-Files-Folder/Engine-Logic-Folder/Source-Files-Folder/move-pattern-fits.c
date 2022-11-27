@@ -39,12 +39,12 @@ bool passant_pattern_fits(const Piece board[], Move move)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point passantPoint = pawn_passant_point(move);
 
-	if(MASK_PIECE_TYPE(board[startPoint]) != PIECE_TYPE_PAWN) return false;
-	if(MASK_PIECE_TYPE(board[passantPoint]) != PIECE_TYPE_PAWN) return false;
+	if(POINT_PIECE_TYPE(board, startPoint) != PIECE_TYPE_PAWN) return false;
+	if(POINT_PIECE_TYPE(board, passantPoint) != PIECE_TYPE_PAWN) return false;
 
 	if(!BOARD_POINTS_ENEMY(board, startPoint, passantPoint)) return false;
 
-	return !CHESS_PIECE_EXISTS(board[MOVE_STOP_MACRO(move)]);
+	return !STOP_PIECE_EXISTS(board, move);
 }
 
 // - King is moving
@@ -110,7 +110,7 @@ bool pawn_pattern_fits(const Piece board[], Move move)
 
 	if((fileOffset == 0) && ((rankOffset == 1) || (rankOffset == 2)))
 	{
-		if(CHESS_PIECE_EXISTS(board[stopPoint])) return false;
+		if(BOARD_POINT_EXISTS(board, stopPoint)) return false;
 	}
 	else if((fileOffset == 1) && (rankOffset == 1))
 	{
@@ -159,8 +159,8 @@ bool moving_path_points(Point** movePoints, Move move)
 
 	if(!moving_path_values(&rankFactor, &fileFactor, &moveSteps, move)) return false;
 
-	unsigned short startFile = POINT_FILE_MACRO(MOVE_START_MACRO(move));
-	unsigned short startRank = POINT_RANK_MACRO(MOVE_START_MACRO(move));
+	unsigned short startFile = MOVE_START_FILE(move);
+	unsigned short startRank = MOVE_START_RANK(move);
 
 	*movePoints = create_point_array(32);
 
@@ -176,7 +176,7 @@ bool moving_path_points(Point** movePoints, Move move)
 
 bool moving_path_values(signed short* rankFactor, signed short* fileFactor, short* moveSteps, Move move)
 {
-	// if(!move_inside_board(move)) return false;
+	// if(!MOVE_INSIDE_BOARD(move)) return false;
 
 	signed short rankOffset = normal_rank_offset(move);
 	signed short fileOffset = normal_file_offset(move);
@@ -191,6 +191,7 @@ bool moving_path_values(signed short* rankFactor, signed short* fileFactor, shor
 
 	*fileFactor = MOVE_OFFSET_FACTOR(fileOffset);
 	*rankFactor = MOVE_OFFSET_FACTOR(rankOffset);
+
 	*moveSteps = (absRankOffset > absFileOffset) ? absRankOffset : absFileOffset;
 
 	return true;

@@ -7,8 +7,8 @@ bool input_screen_move(Move* move, Screen screen, const Piece board[], Info info
 
 	if(!input_legal_move(&inputMove, screen, board, info, moveArray, inverted)) return false;
 
-	unsigned short startTeam = PIECE_TEAM_MACRO(board[MOVE_START_MACRO(inputMove)]);
-	Piece startPieceType = (board[MOVE_START_MACRO(inputMove)] & PIECE_TYPE_MASK);
+	unsigned short startTeam = MOVE_START_TEAM(board, inputMove);
+	Piece startPieceType = START_PIECE_TYPE(board, inputMove);
 
 	if(startPieceType == PIECE_TYPE_PAWN && promote_pattern_valid(inputMove, startTeam))
 	{
@@ -33,7 +33,7 @@ bool input_legal_move(Move* move, Screen screen, const Piece board[], Info info,
     // printf("input single move...\n");
 		if(!input_single_move(&inputMove, screen, board, info, moveArray, inverted)) return false;
 
-		if(!move_inside_board(inputMove)) continue;
+		if(!MOVE_INSIDE_BOARD(inputMove)) continue;
 
 		Piece startPiece = board[MOVE_START_MACRO(inputMove)];
 		unsigned short startTeam = PIECE_TEAM_MACRO(startPiece);

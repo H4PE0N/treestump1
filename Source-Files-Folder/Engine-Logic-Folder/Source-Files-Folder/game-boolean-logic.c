@@ -5,11 +5,11 @@ bool king_inside_check(const Piece board[], Point kingPoint)
 {
 	if(!POINT_INSIDE_BOARD(kingPoint)) return false;
 
-	unsigned short kingTeam = PIECE_TEAM_MACRO(board[kingPoint]);
+	unsigned short kingTeam = BOARD_POINT_TEAM(board, kingPoint);
 
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
-		unsigned short currentTeam = PIECE_TEAM_MACRO(board[point]);
+		unsigned short currentTeam = BOARD_POINT_TEAM(board, point);
 		if(!NORMAL_TEAMS_ENEMY(currentTeam, kingTeam)) continue;
 
 		if(piece_does_check(board, kingPoint, point)) return true;
@@ -75,7 +75,7 @@ bool team_pieces_movable(const Piece board[], Info info, unsigned short team)
 
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
-		unsigned short currentTeam = PIECE_TEAM_MACRO(board[point]);
+		unsigned short currentTeam = BOARD_POINT_TEAM(board, point);
 
 		if(!NORMAL_TEAMS_TEAM(currentTeam, team)) continue;
 

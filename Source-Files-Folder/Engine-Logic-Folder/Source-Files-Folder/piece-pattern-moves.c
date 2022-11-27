@@ -36,7 +36,7 @@ bool pawn_pattern_moves(Move** moves, const Piece board[], Point piecePoint)
   unsigned short pieceRank = POINT_RANK_MACRO(piecePoint);
   unsigned short pieceFile = POINT_FILE_MACRO(piecePoint);
 
-  unsigned short team = PIECE_TEAM_MACRO(board[piecePoint]);
+  unsigned short team = BOARD_POINT_TEAM(board, piecePoint);
 
 	for(unsigned short rank = 0; rank < 2; rank += 1)
 	{

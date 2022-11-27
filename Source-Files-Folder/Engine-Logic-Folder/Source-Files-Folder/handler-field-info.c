@@ -12,13 +12,18 @@ Point passant_pawn_point(Info info)
 
 	unsigned short enemyTeam = NORMAL_TEAM_ENEMY(currentTeam);
 
-
-	unsigned short pawnRank = 0;
-
-	if(enemyTeam == TEAM_WHITE) pawnRank = (WHITE_PAWN_RANK + WHITE_MOVE_VALUE);
-	else if(enemyTeam == TEAM_BLACK) pawnRank = (BLACK_PAWN_RANK + BLACK_MOVE_VALUE);
+	short pawnRank = team_passant_rank(enemyTeam);
+	if(pawnRank == SHORT_NONE) return POINT_NONE;
 
 	return RANK_FILE_POINT(pawnRank, (passantFile - 1));
+}
+
+short team_passant_rank(short team)
+{
+	if(team == TEAM_WHITE) return (WHITE_PAWN_RANK + WHITE_MOVE_VALUE);
+	if(team == TEAM_BLACK) return (BLACK_PAWN_RANK + BLACK_MOVE_VALUE);
+
+	return SHORT_NONE;
 }
 
 bool current_team_move(Info info, unsigned short team)

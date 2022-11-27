@@ -117,7 +117,7 @@ bool create_board_files(char* string, const Piece board[], unsigned short rank)
 	{
 		Point point = RANK_FILE_POINT(rank, file);
 
-		if(CHESS_PIECE_EXISTS(board[point]))
+		if(BOARD_POINT_EXISTS(board, point))
 		{
 			if(!append_piece_symbol(string, board, point)) return false;
 		}
@@ -151,7 +151,7 @@ bool create_blank_symbol(char* symbol, unsigned short rank, unsigned short* file
 	{
 		Point point = RANK_FILE_POINT(rank, (*file + blanks));
 
-		if(CHESS_PIECE_EXISTS(board[point])) break;
+		if(BOARD_POINT_EXISTS(board, point)) break;
 	}
 	*file += (blanks - 1); *symbol = (blanks + '0');
 
