@@ -3,7 +3,7 @@
 
 bool engine_depth_move(Move* move, const Piece board[], Info info, unsigned short team, signed short depth)
 {
-	if((depth <= 0) || !normal_team_exists(team)) return false;
+	if((depth <= 0) || !NORMAL_TEAM_EXISTS(team)) return false;
 
 	Move* moveArray;
 	if(!team_legal_moves(&moveArray, board, info, team)) return false;
@@ -30,7 +30,7 @@ bool simulate_move_value(signed short* moveValue, Piece* boardCopy, Info infoCop
 {
 	if(!move_chess_piece(boardCopy, &infoCopy, move)) return false;
 
-	unsigned short nextTeam = normal_team_enemy(currentTeam);
+	unsigned short nextTeam = NORMAL_TEAM_ENEMY(currentTeam);
 
 	*moveValue = board_depth_value(boardCopy, infoCopy, nextTeam, depth, alpha, beta);
 

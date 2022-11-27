@@ -1,21 +1,6 @@
 
 #include "../Header-Files-Folder/englog-include-file.h"
 
-Info info_team_enemy(Info infoTeam)
-{
-	if(infoTeam == INFO_TEAM_WHITE) return INFO_TEAM_BLACK;
-	if(infoTeam == INFO_TEAM_BLACK) return INFO_TEAM_WHITE;
-
-	return INFO_TEAM_NONE;
-}
-
-bool info_team_exists(Info infoTeam)
-{
-	unsigned short team = INFO_TEAM_MACRO(infoTeam);
-
-	return ((team == TEAM_WHITE) || (team == TEAM_BLACK));
-}
-
 Point passant_pawn_point(Info info)
 {
 	unsigned short passantFile = INFO_PASSANT_MACRO(info);
@@ -25,7 +10,7 @@ Point passant_pawn_point(Info info)
 	unsigned short currentTeam = INFO_TEAM_MACRO(info);
 	if(currentTeam == TEAM_NONE) return POINT_NONE;
 
-	unsigned short enemyTeam = normal_team_enemy(currentTeam);
+	unsigned short enemyTeam = NORMAL_TEAM_ENEMY(currentTeam);
 
 
 	unsigned short pawnRank = 0;
@@ -38,9 +23,9 @@ Point passant_pawn_point(Info info)
 
 bool current_team_move(Info info, unsigned short team)
 {
-	if(!normal_team_exists(team)) return false;
+	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
-	return normal_teams_team(INFO_TEAM_MACRO(info), team);
+	return NORMAL_TEAMS_TEAM(INFO_TEAM_MACRO(info), team);
 }
 
 bool increase_info_turns(Info* info)
@@ -56,9 +41,9 @@ bool increase_info_turns(Info* info)
 
 bool switch_current_team(Info* info)
 {
-	Info infoEnemy = info_team_enemy(MASK_INFO_TEAM(*info));
+	Info infoEnemy = INFO_TEAM_ENEMY(MASK_INFO_TEAM(*info));
 
-	if(!info_team_exists(infoEnemy)) return false;
+	if(!INFO_TEAM_EXISTS(infoEnemy)) return false;
 
 	*info = ALLOC_INFO_TEAM(*info, infoEnemy); return true;
 }

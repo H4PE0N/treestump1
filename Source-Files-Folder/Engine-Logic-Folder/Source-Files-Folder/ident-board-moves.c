@@ -3,18 +3,18 @@
 
 bool castle_move_ident(Info info, Move move, Piece piece)
 {
-	if(!move_inside_board(move) || !chess_piece_exists(piece)) return false;
+	if(!MOVE_INSIDE_BOARD(move) || !CHESS_PIECE_EXISTS(piece)) return false;
 
 	if(MASK_PIECE_TYPE(piece) != PIECE_TYPE_KING) return false;
 
-	signed short movePattern = board_move_pattern(move);
+	signed short movePattern = BOARD_MOVE_PATTERN(move);
 
 	return ((movePattern == KSIDE_FILE_OFFSET) || (movePattern == QSIDE_FILE_OFFSET));
 }
 
 bool passant_move_ident(Info info, Move move, Piece piece)
 {
-	if(!move_inside_board(move) || !chess_piece_exists(piece)) return false;
+	if(!MOVE_INSIDE_BOARD(move) || !CHESS_PIECE_EXISTS(piece)) return false;
 
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
@@ -32,7 +32,7 @@ bool passant_move_ident(Info info, Move move, Piece piece)
 
 bool promote_move_ident(Info info, Move move, Piece piece)
 {
-	if(!move_inside_board(move) || !chess_piece_exists(piece)) return false;
+	if(!MOVE_INSIDE_BOARD(move) || !CHESS_PIECE_EXISTS(piece)) return false;
 
 	unsigned short team = PIECE_TEAM_MACRO(piece);
 	unsigned short stopRank = MOVE_STOP_RANK(move);
@@ -47,7 +47,7 @@ bool promote_move_ident(Info info, Move move, Piece piece)
 
 bool double_move_ident(Info info, Move move, Piece piece)
 {
-	if(!move_inside_board(move) || !chess_piece_exists(piece)) return false;
+	if(!MOVE_INSIDE_BOARD(move) || !CHESS_PIECE_EXISTS(piece)) return false;
 
 	unsigned short team = PIECE_TEAM_MACRO(piece);
 	Piece pieceType = MASK_PIECE_TYPE(piece);

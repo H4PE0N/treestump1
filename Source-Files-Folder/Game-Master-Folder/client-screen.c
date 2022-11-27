@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 {
   if(!init_socket_drivers()) return true;
 
-  char sockAddr[] = "192.168.1.113";
+  char sockAddr[] = "192.168.1.194";
   int sockPort = 5555;
 
   int clientSock;

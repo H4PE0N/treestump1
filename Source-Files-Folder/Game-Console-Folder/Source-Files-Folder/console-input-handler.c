@@ -11,7 +11,7 @@ bool input_console_move(Move* move, const Piece board[], Info info)
   char stringMove[256];
   memset(stringMove, '\0', sizeof(stringMove));
 
-  while(!move_inside_board(inputMove))
+  while(!MOVE_INSIDE_BOARD(inputMove))
   {
     input_stdin_string(stringMove, CONSOLE_MOVE_PROMT);
 

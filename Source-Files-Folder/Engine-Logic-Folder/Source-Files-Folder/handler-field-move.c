@@ -1,43 +1,10 @@
 
 #include "../Header-Files-Folder/englog-include-file.h"
 
-// Maybe remove move_inside_board and turn into macro
-Piece start_piece_type(Move move, const Piece board[])
-{
-	if(!move_inside_board(move)) return PIECE_TYPE_NONE;
-
-	return point_piece_type(MOVE_START_MACRO(move), board);
-}
-
-// Maybe remove move_inside_board and turn into macro
-Piece stop_piece_type(Move move, const Piece board[])
-{
-	if(!move_inside_board(move)) return PIECE_TYPE_NONE;
-
-	return point_piece_type(MOVE_STOP_MACRO(move), board);
-}
-
-// Maybe remove move_inside_board and turn into macro
-Piece move_start_piece(Move move, const Piece board[])
-{
-	if(!move_inside_board(move)) return PIECE_NONE;
-
-	return board[MOVE_START_MACRO(move)];
-}
-
-// Maybe remove move_inside_board and turn into macro
-Piece move_stop_piece(Move move, const Piece board[])
-{
-	if(!move_inside_board(move)) return PIECE_NONE;
-
-	return board[MOVE_STOP_MACRO(move)];
-}
-
 unsigned short move_array_amount(const Move moveArray[])
 {
 	unsigned short movesAmount = 0;
 
-	// move_inside_board (and change the move_inside_board function)
 	while(moveArray[movesAmount] != MOVE_NONE && moveArray[movesAmount] >= 0) movesAmount += 1;
 
 	return movesAmount;
@@ -60,32 +27,6 @@ Move* create_move_array(short arrayLength)
 		moveArray[index] = MOVE_NONE;
 
 	return moveArray;
-}
-
-bool move_inside_board(Move move)
-{
-	if((move == MOVE_NONE) || (move < 0)) return false;
-
-	Point startPoint = MOVE_START_MACRO(move);
-	Point stopPoint = MOVE_STOP_MACRO(move);
-
-	return POINTS_INSIDE_BOARD(startPoint, stopPoint);
-}
-
-bool move_points_team(const Piece board[], Move move)
-{
-	Point startPoint = MOVE_START_MACRO(move);
-	Point stopPoint = MOVE_STOP_MACRO(move);
-
-	return board_points_team(board, startPoint, stopPoint);
-}
-
-bool move_points_enemy(const Piece board[], Move move)
-{
-	Point startPoint = MOVE_START_MACRO(move);
-	Point stopPoint = MOVE_STOP_MACRO(move);
-
-	return board_points_enemy(board, startPoint, stopPoint);
 }
 
 short move_file_offset(Move move, unsigned short team)
@@ -140,24 +81,16 @@ short normal_file_offset(Move move)
 	return (POINT_FILE_MACRO(stopPoint) - POINT_FILE_MACRO(startPoint));
 }
 
-signed short board_move_pattern(Move move)
-{
-	Point startPoint = MOVE_START_MACRO(move);
-	Point stopPoint = MOVE_STOP_MACRO(move);
-
-	return (stopPoint - startPoint);
-}
-
 char piece_move_symbol(Piece piece)
 {
-	if(!chess_piece_exists(piece)) return SYMBOL_NONE;
+	if(!CHESS_PIECE_EXISTS(piece)) return SYMBOL_NONE;
 
 	return MOVE_TYPE_SYMBOLS[PIECE_TYPE_MACRO(piece)];
 }
 
 bool castle_move_string(char* moveString, Move move)
 {
-	signed short movePattern = board_move_pattern(move);
+	signed short movePattern = BOARD_MOVE_PATTERN(move);
 
 	if(movePattern == KSIDE_FILE_OFFSET) strcpy(moveString, KSIDE_MOVE_STRING);
 
@@ -172,7 +105,7 @@ bool chess_move_capture(Move move, const Piece board[], Info info)
 {
 	unsigned short stopFile = MOVE_STOP_FILE(move);
 
-	if(move_points_enemy(board, move)) return true;
+	if(MOVE_POINTS_ENEMY(board, move)) return true;
 
 	else if(INFO_PASSANT_MACRO(info) == (stopFile + 1)) return true;
 
@@ -238,10 +171,9 @@ bool pattern_moves_equal(Move move1, Move move2)
 
 bool start_pieces_equal(const Piece board[], Move move1, Move move2)
 {
-	Piece piece1 = move_start_piece(move1, board);
-	Piece piece2 = move_start_piece(move2, board);
+	if(!MOVE_INSIDE_BOARD(move1) || !MOVE_INSIDE_BOARD(move2)) return false;
 
-	return (piece1 == piece2);
+	return (MOVE_START_PIECE(board, move1) == MOVE_START_PIECE(board, move2));
 }
 
 bool equal_piece_attack(const Piece board[], Info info, Move move)
@@ -266,14 +198,6 @@ bool equal_piece_attack(const Piece board[], Info info, Move move)
 	free(equalMoves); return false;
 }
 
-Move invert_chess_move(Move move)
-{
-	Point startPoint = MOVE_START_MACRO(move);
-	Point stopPoint = MOVE_STOP_MACRO(move);
-
-	return START_STOP_MOVE(stopPoint, startPoint);
-}
-
 bool equal_pattern_moves(Move** moves, const Piece board[], Move move)
 {
 	if(!target_pattern_moves(moves, board, move)) return false;
@@ -281,14 +205,14 @@ bool equal_pattern_moves(Move** moves, const Piece board[], Move move)
 	unsigned short moveAmount = move_array_amount(*moves);
 
 	for(short index = 0; index < moveAmount; index += 1)
-		(*moves)[index] = invert_chess_move((*moves)[index]);
+		(*moves)[index] = INVERT_CHESS_MOVE((*moves)[index]);
 	
 	return true;
 }
 
 bool target_pattern_moves(Move** moves, const Piece board[], Move move)
 {
-	if(!move_inside_board(move)) return false;
+	if(!MOVE_INSIDE_BOARD(move)) return false;
 
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
@@ -316,7 +240,7 @@ bool target_pattern_moves(Move** moves, const Piece board[], Move move)
 
 bool create_move_string(char* moveString, const Piece board[], Info info, Move move)
 {
-	if(!move_inside_board(move)) return false;
+	if(!MOVE_INSIDE_BOARD(move)) return false;
 
 	memset(moveString, '\0', sizeof(char) * 16);
 
@@ -393,17 +317,4 @@ bool create_point_string(char* pointString, Point point)
 	sprintf(pointString, "%c%c", fileSymbol, rankSymbol);
 
 	return true;
-}
-
-signed short move_offset_factor(signed short moveOffset)
-{
-	return ((moveOffset == 0) ? 0 : ((moveOffset > 0) ? 1 : -1));
-}
-
-bool start_stop_team(Move move, const Piece board[])
-{
-	Point startPoint = MOVE_START_MACRO(move);
-	Point stopPoint = MOVE_STOP_MACRO(move);
-
-	return board_points_team(board, startPoint, stopPoint);
 }

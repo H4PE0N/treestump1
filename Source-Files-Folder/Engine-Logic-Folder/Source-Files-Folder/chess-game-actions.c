@@ -3,7 +3,7 @@
 
 bool move_chess_piece(Piece* board, Info* info, Move move)
 {
-	if(!move_inside_board(move)) return false;
+	if(!MOVE_INSIDE_BOARD(move)) return false;
 
 	if(!correct_move_flag(&move, board, *info)) return false;
 
@@ -14,9 +14,9 @@ bool move_chess_piece(Piece* board, Info* info, Move move)
 
 bool correct_move_flag(Move* move, const Piece board[], Info info)
 {
-	if(!move_inside_board(*move)) return false;
+	if(!MOVE_INSIDE_BOARD(*move)) return false;
 
-	Piece piece = move_start_piece(*move, board);
+	Piece piece = MOVE_START_PIECE(board, *move);
 
 	Move moveFlag = MOVE_FLAG_NONE;
 

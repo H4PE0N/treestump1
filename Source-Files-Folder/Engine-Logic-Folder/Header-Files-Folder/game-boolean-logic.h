@@ -2,9 +2,9 @@
 #ifndef CHESS_GAME_LOGIC_H
 #define CHESS_GAME_LOGIC_H
 
-bool piece_does_check(const Piece board[], Info info, Point kingPoint, Point point);
+bool piece_does_check(const Piece board[], Point kingPoint, Point point);
 
-bool king_inside_check(const Piece board[], Info info, Point kingPoint);
+bool king_inside_check(const Piece board[], Point kingPoint);
 
 bool team_pieces_movable(const Piece board[], Info info, unsigned short team);
 

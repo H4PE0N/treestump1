@@ -32,7 +32,7 @@ bool print_console_board(const Piece board[])
 bool print_console_info(Info info)
 {
 	unsigned short team = INFO_TEAM_MACRO(info);
-	if(!normal_team_exists(team)) return false;
+	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
 	printf("current team:(%s)\n", TEAM_WORDS[team]);
 

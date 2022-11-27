@@ -1,7 +1,7 @@
 
 #include "../Header-Files-Folder/englog-include-file.h"
 
-bool king_inside_check(const Piece board[], Info info, Point kingPoint)
+bool king_inside_check(const Piece board[], Point kingPoint)
 {
 	if(!POINT_INSIDE_BOARD(kingPoint)) return false;
 
@@ -10,18 +10,18 @@ bool king_inside_check(const Piece board[], Info info, Point kingPoint)
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
 		unsigned short currentTeam = PIECE_TEAM_MACRO(board[point]);
-		if(!normal_teams_enemy(currentTeam, kingTeam)) continue;
+		if(!NORMAL_TEAMS_ENEMY(currentTeam, kingTeam)) continue;
 
-		if(piece_does_check(board, info, kingPoint, point)) return true;
+		if(piece_does_check(board, kingPoint, point)) return true;
 	}
 	return false;
 }
 
-bool piece_does_check(const Piece board[], Info info, Point kingPoint, Point point)
+bool piece_does_check(const Piece board[], Point kingPoint, Point point)
 {
 	if(!POINTS_INSIDE_BOARD(point, kingPoint)) return false;
 
-	if(!board_points_enemy(board, kingPoint, point)) return false;
+	if(!BOARD_POINTS_ENEMY(board, kingPoint, point)) return false;
 
 	Move move = START_STOP_MOVE(point, kingPoint);
 
@@ -42,12 +42,12 @@ bool game_still_running(const Piece board[], Info info)
 // Maybe remove 'team' from this function and instead use the info team
 bool check_mate_ending(const Piece board[], Info info, unsigned short team)
 {
-	if(!normal_team_exists(team)) return false;
+	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
 	Point kingPoint = board_king_point(board, team);
 	if(kingPoint == POINT_NONE) return false;
 
-	if(!king_inside_check(board, info, kingPoint)) return false;
+	if(!king_inside_check(board, kingPoint)) return false;
 
 	if(team_pieces_movable(board, info, team)) return false;
 
@@ -57,12 +57,12 @@ bool check_mate_ending(const Piece board[], Info info, unsigned short team)
 // Maybe remove 'team' from this function and instead use the info team
 bool check_draw_ending(const Piece board[], Info info, unsigned short team)
 {
-	if(!normal_team_exists(team)) return false;
+	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
 	Point kingPoint = board_king_point(board, team);
 	if(kingPoint == POINT_NONE) return false;
 
-	if(king_inside_check(board, info, kingPoint)) return false;
+	if(king_inside_check(board, kingPoint)) return false;
 
 	if(team_pieces_movable(board, info, team)) return false;
 
@@ -71,13 +71,13 @@ bool check_draw_ending(const Piece board[], Info info, unsigned short team)
 
 bool team_pieces_movable(const Piece board[], Info info, unsigned short team)
 {
-	if(!normal_team_exists(team)) return false;
+	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
 		unsigned short currentTeam = PIECE_TEAM_MACRO(board[point]);
 
-		if(!normal_teams_team(currentTeam, team)) continue;
+		if(!NORMAL_TEAMS_TEAM(currentTeam, team)) continue;
 
 		if(chess_piece_movable(board, info, point)) return true;
 	}
@@ -113,7 +113,7 @@ bool piece_movable_test(const Piece board[], Info info, const Move moveArray[], 
 
 bool move_deliver_check(const Piece board[], Info info, Move move)
 {
-	if(!move_inside_board(move)) return false;
+	if(!MOVE_INSIDE_BOARD(move)) return false;
 
 	Piece* boardCopy = copy_chess_board(board);
 
@@ -124,19 +124,19 @@ bool move_deliver_check(const Piece board[], Info info, Move move)
 
 bool deliver_check_test(Piece* boardCopy, Info infoCopy, Move move)
 {
-	unsigned short enemyTeam = move_start_enemy(move, boardCopy);
+	unsigned short enemyTeam = MOVE_START_ENEMY(boardCopy, move);
 
 	if(!execute_chess_move(boardCopy, &infoCopy, move)) return false;
 
 	Point kingPoint = board_king_point(boardCopy, enemyTeam);
 	if(kingPoint == POINT_NONE) return false;
 
-	return king_inside_check(boardCopy, infoCopy, kingPoint);
+	return king_inside_check(boardCopy, kingPoint);
 }
 
 bool move_deliver_mate(const Piece board[], Info info, Move move)
 {
-	if(!move_inside_board(move)) return false;
+	if(!MOVE_INSIDE_BOARD(move)) return false;
 
 	Piece* boardCopy = copy_chess_board(board);
 
@@ -147,12 +147,9 @@ bool move_deliver_mate(const Piece board[], Info info, Move move)
 
 bool deliver_mate_test(Piece* boardCopy, Info infoCopy, Move move)
 {
-	unsigned short enemyTeam = move_start_enemy(move, boardCopy);
+	unsigned short enemyTeam = MOVE_START_ENEMY(boardCopy, move);
 
 	if(!execute_chess_move(boardCopy, &infoCopy, move)) return false;
-
-	Point kingPoint = board_king_point(boardCopy, enemyTeam);
-	if(kingPoint == POINT_NONE) return false;
 
 	return check_mate_ending(boardCopy, infoCopy, enemyTeam);
 }

@@ -25,7 +25,7 @@ bool execute_chess_move(Piece* board, Info* info, Move move)
 // - It just moves the piece to a specific point
 bool execute_normal_move(Piece* board, Info* info, Move move)
 {
-	if(!move_inside_board(move)) return false;
+	if(!MOVE_INSIDE_BOARD(move)) return false;
 
 	moved_reset_castle(info, board, move);
 
@@ -90,7 +90,7 @@ bool execute_castle_move(Piece* board, Info* info, Move kingMove)
 
 	if((startRook == POINT_NONE) || (stopRook == POINT_NONE)) return false;
 
-	Piece kingPiece = move_start_piece(kingMove, board);
+	Piece kingPiece = MOVE_START_PIECE(board, kingMove);
 
 
 	if(!execute_board_move(board, kingMove)) return false;
@@ -140,7 +140,7 @@ Piece move_promote_piece(Move move)
 
 bool execute_board_move(Piece* board, Move move)
 {
-	board[MOVE_STOP_MACRO(move)] = move_start_piece(move, board);
+	board[MOVE_STOP_MACRO(move)] = MOVE_START_PIECE(board, move);
 	board[MOVE_START_MACRO(move)] = PIECE_NONE;
 
 	return true;
@@ -159,7 +159,7 @@ bool execute_start_stop(Piece* board, Point startPoint, Point stopPoint)
 // and swap the piece at the STOP point in the move
 bool execute_promote_move(Piece* board, Info* info, Move move)
 {
-	if(!move_inside_board(move)) return false;
+	if(!MOVE_INSIDE_BOARD(move)) return false;
 
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
@@ -181,7 +181,7 @@ bool execute_promote_move(Piece* board, Info* info, Move move)
 
 Point pawn_passant_point(Move move)
 {
-	if(!move_inside_board(move)) return POINT_NONE;
+	if(!MOVE_INSIDE_BOARD(move)) return POINT_NONE;
 
 	unsigned short pawnRank = MOVE_START_RANK(move);
 	unsigned short pawnFile = MOVE_STOP_FILE(move);
@@ -193,7 +193,7 @@ Point pawn_passant_point(Move move)
 // - It has to update the passant point to POINT_NONE
 bool execute_passant_move(Piece* board, Info* info, Move move)
 {
-	if(!move_inside_board(move)) return false;
+	if(!MOVE_INSIDE_BOARD(move)) return false;
 
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
@@ -217,7 +217,7 @@ bool execute_passant_move(Piece* board, Info* info, Move move)
 // - It has to update the passant point
 bool execute_double_move(Piece* board, Info* info, Move move)
 {
-	if(!move_inside_board(move)) return false;
+	if(!MOVE_INSIDE_BOARD(move)) return false;
 
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);

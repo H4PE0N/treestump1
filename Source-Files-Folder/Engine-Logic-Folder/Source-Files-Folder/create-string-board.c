@@ -117,7 +117,7 @@ bool create_board_files(char* string, const Piece board[], unsigned short rank)
 	{
 		Point point = RANK_FILE_POINT(rank, file);
 
-		if(chess_piece_exists(board[point]))
+		if(CHESS_PIECE_EXISTS(board[point]))
 		{
 			if(!append_piece_symbol(string, board, point)) return false;
 		}
@@ -151,7 +151,7 @@ bool create_blank_symbol(char* symbol, unsigned short rank, unsigned short* file
 	{
 		Point point = RANK_FILE_POINT(rank, (*file + blanks));
 
-		if(chess_piece_exists(board[point])) break;
+		if(CHESS_PIECE_EXISTS(board[point])) break;
 	}
 	*file += (blanks - 1); *symbol = (blanks + '0');
 
@@ -172,7 +172,7 @@ bool create_string_point(char* string, Point point)
 
 bool create_string_move(char* string, Move move)
 {
-	if(!move_inside_board(move)) return false;
+	if(!MOVE_INSIDE_BOARD(move)) return false;
 
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);

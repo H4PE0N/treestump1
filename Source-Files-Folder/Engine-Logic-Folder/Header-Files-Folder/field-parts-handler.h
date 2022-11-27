@@ -2,12 +2,12 @@
 #ifndef FIELD_PARTS_HANDLER_H
 #define FIELD_PARTS_HANDLER_H
 
-unsigned short normal_team_enemy(unsigned short team);
+#define NORMAL_TEAM_EXISTS(TEAM) ((TEAM == TEAM_WHITE) || (TEAM == TEAM_BLACK))
 
-bool normal_team_exists(unsigned short team);
+#define NORMAL_TEAM_ENEMY(TEAM) ((TEAM == TEAM_WHITE) ? TEAM_BLACK : ((TEAM == TEAM_BLACK) ? TEAM_WHITE : TEAM_NONE))
 
-bool normal_teams_team(unsigned short team1, unsigned short team2);
+#define NORMAL_TEAMS_TEAM(TEAM1, TEAM2) (((TEAM1 == TEAM_WHITE) && (TEAM2 == TEAM_WHITE)) || ((TEAM1 == TEAM_BLACK) && (TEAM2 == TEAM_BLACK)))
 
-bool normal_teams_enemy(unsigned short team1, unsigned short team2);
+#define NORMAL_TEAMS_ENEMY(TEAM1, TEAM2) (((TEAM1 == TEAM_BLACK) && (TEAM2 == TEAM_WHITE)) || ((TEAM1 == TEAM_WHITE) && (TEAM2 == TEAM_BLACK)))
 
 #endif

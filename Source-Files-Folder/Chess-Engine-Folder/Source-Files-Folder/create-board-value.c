@@ -24,7 +24,7 @@ signed short board_pieces_value(const Piece board[])
 	{
 		Piece piece = board[point];
 
-		if(!chess_piece_exists(piece)) continue;
+		if(!CHESS_PIECE_EXISTS(piece)) continue;
 
 		piecesValue += chess_piece_value(piece) * PIECE_FACTOR;
 
@@ -58,7 +58,7 @@ signed short check_draw_value(const Piece board[], Info info)
 
 signed short chess_piece_value(Piece piece)
 {
-	if(!chess_piece_exists(piece)) return 0;
+	if(!CHESS_PIECE_EXISTS(piece)) return 0;
 
 	unsigned short team = PIECE_TEAM_MACRO(piece);
 	unsigned short type = PIECE_TYPE_MACRO(piece);
@@ -78,7 +78,7 @@ signed short team_weight_value(signed short value, unsigned short team)
 
 signed short piece_matrix_value(Piece piece, Point point)
 {
-	if(!POINT_INSIDE_BOARD(point) || !chess_piece_exists(piece)) return 0;
+	if(!POINT_INSIDE_BOARD(point) || !CHESS_PIECE_EXISTS(piece)) return 0;
 
 	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
   Piece pieceType = (piece & PIECE_TYPE_MASK);

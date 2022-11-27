@@ -3,7 +3,7 @@
 
 bool move_fully_legal(const Piece board[], Info info, Move move)
 {
-	unsigned short startTeam = move_start_team(move, board);
+	unsigned short startTeam = MOVE_START_TEAM(board, move);
 	if(!current_team_move(info, startTeam)) return false;
 
 	if(!move_pseudo_legal(board, info, move)) return false;
@@ -20,9 +20,9 @@ bool move_pseudo_legal(const Piece board[], Info info, Move move)
 
 bool board_move_legal(const Piece board[], Move move)
 {
-	if(!move_inside_board(move)) return false;
+	if(!MOVE_INSIDE_BOARD(move)) return false;
 
-	Piece startPiece = move_start_piece(move, board);
+	Piece startPiece = MOVE_START_PIECE(board, move);
 
 	if(!move_pattern_valid(move, startPiece)) return false;
 
@@ -80,7 +80,7 @@ bool piece_legal_points(Point** pointArray, const Piece board[], Info info, Poin
 
 bool pattern_move_legal(Move* patternMove, const Piece board[], Info info)
 {
-	if(move_points_team(board, *patternMove)) return false;
+	if(MOVE_POINTS_TEAM(board, *patternMove)) return false;
 
 	if(!correct_move_flag(patternMove, board, info)) return false;
 
@@ -100,14 +100,14 @@ void append_promote_moves(Move* moveArray, short* moveAmount, Move promoteMove)
 
 bool team_legal_moves(Move** moveArray, const Piece board[], Info info, unsigned short team)
 {
-	if(!normal_team_exists(team)) return false;
+	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
 	*moveArray = create_move_array(256); short moveAmount = 0;
 
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
 		unsigned short currentTeam = PIECE_TEAM_MACRO(board[point]);
-		if(!normal_teams_team(currentTeam, team)) continue;
+		if(!NORMAL_TEAMS_TEAM(currentTeam, team)) continue;
 
 		Move* pieceMoves;
 		if(!piece_legal_moves(&pieceMoves, board, info, point)) continue;

@@ -6,8 +6,6 @@ bool board_points_team(const Piece board[], Point point1, Point point2);
 
 bool board_points_enemy(const Piece board[], Point point1, Point point2);
 
-bool board_point_exists(const Piece board[], Point point);
-
 short array_point_index(const Point pointArray[], short amount, Point point);
 
 bool delete_array_point(Point* pointArray, short amount, short delIndex);

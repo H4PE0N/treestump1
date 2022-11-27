@@ -61,10 +61,10 @@ bool king_pattern_valid(Move move, unsigned short team)
 
 bool castle_pattern_valid(Move move, unsigned short team)
 {
-	if(!normal_team_exists(team)) return false;
+	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
 	Point kingPoint = MOVE_START_MACRO(move);
-	signed short movePattern = board_move_pattern(move);
+	signed short movePattern = BOARD_MOVE_PATTERN(move);
 
 	if((team == TEAM_WHITE) && (kingPoint != WHITE_KING_POINT)) return false;
 	if((team == TEAM_BLACK) && (kingPoint != BLACK_KING_POINT)) return false;
@@ -74,7 +74,7 @@ bool castle_pattern_valid(Move move, unsigned short team)
 
 bool double_pattern_valid(Move move, unsigned short team)
 {
-	if(!normal_team_exists(team)) return false;
+	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
 	signed short fileOffset = move_file_offset(move, team);
 	signed short rankOffset = move_rank_offset(move, team);
@@ -91,7 +91,7 @@ bool double_pattern_valid(Move move, unsigned short team)
 
 bool passant_pattern_valid(Move move, unsigned short team)
 {
-	if(!normal_team_exists(team)) return false;
+	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
 	unsigned short stopRank = MOVE_STOP_RANK(move);
 
@@ -106,7 +106,7 @@ bool passant_pattern_valid(Move move, unsigned short team)
 
 bool promote_pattern_valid(Move move, unsigned short team)
 {
-	if(!normal_team_exists(team)) return false;
+	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
 	unsigned short stopRank = MOVE_STOP_RANK(move);
 

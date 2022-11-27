@@ -2,7 +2,7 @@
 #ifndef ENGINE_INCLUDE_FILE_H
 #define ENGINE_INCLUDE_FILE_H
 
-#include "C:\Users\22hamfri\Documents\Private-Folder\Coding-Folder-2022\treestump\Source-Files-Folder/Engine-Logic-Folder/Header-Files-Folder/englog-include-file.h"
+#include "../../Engine-Logic-Folder/Header-Files-Folder/englog-include-file.h"
 
 #include "board-value-defines.h"
 #include "create-board-value.h"

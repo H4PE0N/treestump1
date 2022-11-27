@@ -32,7 +32,7 @@ long search_move_nodes(const Piece board[], Info info, unsigned short currentTea
 	if(!move_chess_piece(boardCopy, &infoCopy, move))
 	{ free(boardCopy); return 1; }
 
-	unsigned short nextTeam = normal_team_enemy(currentTeam);
+	unsigned short nextTeam = NORMAL_TEAM_ENEMY(currentTeam);
 
 	long moveNodes = search_depth_nodes(boardCopy, infoCopy, nextTeam, depth, startClock, seconds);
 

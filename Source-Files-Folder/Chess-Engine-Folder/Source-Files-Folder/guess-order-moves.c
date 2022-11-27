@@ -17,7 +17,7 @@ bool guess_order_moves(Move* moveArray, short moveAmount, const Piece board[], I
 	signed short* moveValues = NULL;
 	if(!guess_moves_values(&moveValues, moveArray, moveAmount, board, info)) return false;
 
-	unsigned short team = move_start_team(moveArray[0], board);
+	unsigned short team = MOVE_START_TEAM(board, moveArray[0]);
 
 	qsort_moves_values(moveArray, moveValues, moveAmount, team);
 
@@ -45,10 +45,10 @@ signed short guess_move_value(const Piece board[], Info info, Move move)
 {
 	signed short moveScore = 0;
 
-	Piece startPieceType = start_piece_type(move, board);
-	Piece stopPieceType = stop_piece_type(move, board);
+	Piece startPieceType = START_PIECE_TYPE(board, move);
+	Piece stopPieceType = STOP_PIECE_TYPE(board, move);
 
-	unsigned short startTeam = move_start_team(move, board);
+	unsigned short startTeam = MOVE_START_TEAM(board, move);
 
 	if(stopPieceType != PIECE_TYPE_NONE)
 	{

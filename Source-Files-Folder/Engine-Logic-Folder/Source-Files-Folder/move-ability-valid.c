@@ -14,10 +14,10 @@ bool move_ability_valid(Move move, Info info)
 
 bool castle_ability_valid(Move move, Info info)
 {
-	if(!move_inside_board(move)) return false;
+	if(!MOVE_INSIDE_BOARD(move)) return false;
 
 	unsigned short kingPoint = MOVE_START_MACRO(move);
-	signed short movePattern = board_move_pattern(move);
+	signed short movePattern = BOARD_MOVE_PATTERN(move);
 
 	if((kingPoint == WHITE_KING_POINT) && (movePattern == KSIDE_FILE_OFFSET))
 		return (MASK_WHITE_KSIDE(info) == INFO_WHITE_KSIDE);
@@ -36,7 +36,7 @@ bool castle_ability_valid(Move move, Info info)
 
 bool passant_ability_valid(Move move, Info info)
 {
-	if(!move_inside_board(move)) return false;
+	if(!MOVE_INSIDE_BOARD(move)) return false;
 
 	return ((MOVE_STOP_FILE(move) + 1) == INFO_PASSANT_MACRO(info));
 }
