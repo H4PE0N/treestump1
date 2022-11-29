@@ -1,13 +1,11 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool ordered_legal_moves(Move** moveArray, const Piece board[], Info info, unsigned short team)
+bool ordered_legal_moves(Move** moveArray, short* moveAmount, const Piece board[], Info info, unsigned short team)
 {
-	if(!team_legal_moves(moveArray, board, info, team)) return false;
+	if(!team_legal_moves(moveArray, moveAmount, board, info, team)) return false;
 
-	unsigned short moveAmount = move_array_amount(*moveArray);
-
-	return guess_order_moves(*moveArray, moveAmount, board, info);
+	return guess_order_moves(*moveArray, *moveAmount, board, info);
 }
 
 bool guess_order_moves(Move* moveArray, short moveAmount, const Piece board[], Info info)

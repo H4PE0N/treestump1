@@ -31,18 +31,14 @@ bool board_move_legal(const Piece board[], Move move)
 	return move_pattern_fits(board, move);
 }
 
-bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Point piecePoint)
+bool piece_legal_moves(Move** moveArray, short* moveAmount, const Piece board[], Info info, Point piecePoint)
 {
 	if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
-	Move* pattMoves;
-	if(!piece_pattern_moves(&pattMoves, board, piecePoint)) return false;
+	Move* pattMoves; short pattAmount;
+	if(!piece_pattern_moves(&pattMoves, &pattAmount, board, piecePoint)) return false;
 
-	unsigned short pattAmount = move_array_amount(pattMoves);
-
-	*moveArray = create_move_array(32); short moveAmount = 0;
-
-	Piece pieceType = POINT_PIECE_TYPE(board, piecePoint);
+	*moveArray = create_move_array(32); *moveAmount = 0;
 
 	for(unsigned short index = 0; index < pattAmount; index += 1)
 	{
@@ -50,10 +46,10 @@ bool piece_legal_moves(Move** moveArray, const Piece board[], Info info, Point p
 
 		if(!pattern_move_legal(&currentMove, board, info)) continue;
 
-		if((pieceType == PIECE_TYPE_PAWN) && MOVE_PROMOTE_FLAG(currentMove))
-			append_promote_moves(*moveArray, &moveAmount, currentMove);
+		if(MOVE_PROMOTE_FLAG(currentMove))
+			append_promote_moves(*moveArray, moveAmount, currentMove);
 
-		else (*moveArray)[moveAmount++] = currentMove;
+		else (*moveArray)[(*moveAmount)++] = currentMove;
 	}
 	free(pattMoves); return true;
 }
@@ -62,10 +58,8 @@ bool piece_legal_points(Point** pointArray, const Piece board[], Info info, Poin
 {
 	if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
-	Move* pattMoves;
-	if(!piece_pattern_moves(&pattMoves, board, piecePoint)) return false;
-
-	unsigned short pattAmount = move_array_amount(pattMoves);
+	Move* pattMoves; short pattAmount;
+	if(!piece_pattern_moves(&pattMoves, &pattAmount, board, piecePoint)) return false;
 
 	*pointArray = create_point_array(32); short pointAmount = 0;
 
@@ -100,31 +94,23 @@ void append_promote_moves(Move* moveArray, short* moveAmount, Move promoteMove)
 	moveArray[(*moveAmount)++] = ALLOC_MOVE_FLAG(promoteMove, MOVE_FLAG_QUEEN);
 }
 
-bool team_legal_moves(Move** moveArray, const Piece board[], Info info, unsigned short team)
+bool team_legal_moves(Move** moveArray, short* moveAmount, const Piece board[], Info info, unsigned short team)
 {
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
-	*moveArray = create_move_array(256); short moveAmount = 0;
+	*moveArray = create_move_array(256); *moveAmount = 0;
 
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
 		unsigned short currentTeam = BOARD_POINT_TEAM(board, point);
 		if(!NORMAL_TEAMS_TEAM(currentTeam, team)) continue;
 
-		Move* pieceMoves;
-		if(!piece_legal_moves(&pieceMoves, board, info, point)) continue;
+		Move* pieceMoves; short addingAmount;
+		if(!piece_legal_moves(&pieceMoves, &addingAmount, board, info, point)) continue;
 
-		append_piece_moves(*moveArray, &moveAmount, pieceMoves);
+		append_move_array(*moveArray, moveAmount, pieceMoves, addingAmount);
 
 		free(pieceMoves);
 	}
 	return true;
-}
-
-void append_piece_moves(Move* moveArray, short* moveAmount, const Move pieceMoves[])
-{
-	unsigned short addingAmount = move_array_amount(pieceMoves);
-
-	for(short index = 0; index < addingAmount; index += 1)
-		moveArray[(*moveAmount)++] = pieceMoves[index];
 }

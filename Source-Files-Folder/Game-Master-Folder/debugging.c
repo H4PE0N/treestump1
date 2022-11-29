@@ -14,8 +14,7 @@
 
 int main(int argc, char* argv[])
 {
-	if(argc < 2) return false;
-	char* fenString = argv[1];
+	char fenString[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 1 0";
 
 	Piece* board; Info info;
 	if(!parse_create_board(&board, &info, fenString))
@@ -31,10 +30,14 @@ int main(int argc, char* argv[])
 		printf("\n");
 	}
 
-	for(int index = 1; index <= 4; index += 1)
-	{
-		printf("depth: %d nodes: %ld\n", index, search_depth_nodes(board, info, TEAM_WHITE, index, clock(), 60));
-	}
+
+	long startTime = clock();
+
+	int depth = 5;
+	int nodes = search_depth_nodes(board, info, TEAM_WHITE, depth, startTime, 60);
+	double time = time_passed_since(startTime);
+
+	printf("depth: %d nodes: %d time: %.2f\n", depth, nodes, time);
 
 	printf("free(board);\n"); free(board); return false;
 }

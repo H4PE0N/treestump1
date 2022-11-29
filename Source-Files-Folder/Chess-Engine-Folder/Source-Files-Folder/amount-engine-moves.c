@@ -3,41 +3,26 @@
 
 bool amount_engine_moves(Move** moveArray, const Piece board[], Info info, unsigned short team, short depth, short amount)
 {
-	Move* engineMoves;
-	if(!sorted_engine_moves(&engineMoves, board, info, team, depth)) return false;
+	Move* engineMoves; short engineAmount;
+	if(!sorted_engine_moves(&engineMoves, &engineAmount, board, info, team, depth)) return false;
 
-	unsigned short engineAmount = move_array_amount(engineMoves);
+	*moveArray = create_move_array(amount);
 
-	paste_engine_moves(moveArray, amount, engineMoves, engineAmount);
+	paste_capped_moves(*moveArray, amount, engineMoves, engineAmount);
 
 	free(engineMoves); return true;
 }
 
-void paste_engine_moves(Move** moveArray, short amount, const Move engineMoves[], short engineAmount)
-{
-	*moveArray = create_move_array(amount);
-
-	for(unsigned short index = 0; index < amount; index += 1)
-	{
-		if((index + 1) > engineAmount) break;
-
-		(*moveArray)[index] = engineMoves[index];
-	}
-}
-
-bool sorted_engine_moves(Move** moveArray, const Piece board[], Info info, unsigned short team, short depth)
+bool sorted_engine_moves(Move** moveArray, short* moveAmount, const Piece board[], Info info, unsigned short team, short depth)
 {
 	if(depth <= 0) return false;
 
-	if(!team_legal_moves(moveArray, board, info, team)) return false;
-
-	unsigned short moveAmount = move_array_amount(*moveArray);
-	if(moveAmount <= 0) return false;
+	if(!team_legal_moves(moveArray, moveAmount, board, info, team)) return false;
 
 	short* moveValues = NULL;
-	if(!move_array_values(&moveValues, board, info, team, depth, *moveArray, moveAmount)) return false;
+	if(!move_array_values(&moveValues, board, info, team, depth, *moveArray, *moveAmount)) return false;
 
-	qsort_moves_values(*moveArray, moveValues, moveAmount, team);
+	qsort_moves_values(*moveArray, moveValues, *moveAmount, team);
 
 	free(moveValues); return true;
 }

@@ -10,21 +10,36 @@ unsigned short move_array_amount(const Move moveArray[])
 	return movesAmount;
 }
 
-void append_moves_array(Move* moveArray, const Move addingArray[])
+void paste_capped_moves(Move* moves1, short amount1, const Move moves2[], short amount2)
 {
-	int moveAmount = move_array_amount(moveArray);
-	int addingAmount = move_array_amount(addingArray);
-
-	for(unsigned short index = 0; index < addingAmount; index += 1)
-		moveArray[moveAmount + index] = addingArray[index];
+	short pasteAmount = MIN_NUMBER_VALUE(amount1, amount2);
+	paste_move_array(moves1, moves2, pasteAmount);
 }
 
-Move* create_move_array(short arrayLength)
+void paste_move_array(Move* moves1, const Move moves2[], short moveAmount)
 {
-	Move* moveArray = malloc(sizeof(Move) * (arrayLength + 1));
+	for(short index = 0; index < moveAmount; index += 1)
+		moves1[index] = moves2[index];
+}
 
-	for(unsigned short index = 0; index < (arrayLength + 1); index += 1)
-		moveArray[index] = MOVE_NONE;
+Move* copy_move_array(const Move moveArray[], short moveAmount)
+{
+	Move* movesCopy = malloc(sizeof(Move) * moveAmount);
+	memcpy(movesCopy, moveArray, sizeof(Move) * moveAmount);
+
+	return movesCopy;
+}
+
+void append_move_array(Move* moves1, short* amount1, const Move moves2[], short amount2)
+{
+	for(short index = 0; index < amount2; index += 1)
+		moves1[(*amount1)++] = moves2[index];
+}
+
+Move* create_move_array(short amount)
+{
+	Move* moveArray = malloc(sizeof(Move) * (amount + 1));
+	memset(moveArray, MOVE_NONE, sizeof(Move) * (amount + 1));
 
 	return moveArray;
 }
@@ -53,16 +68,6 @@ short move_rank_offset(Move move, unsigned short team)
 	if(team == TEAM_BLACK) return (rankOffset * BLACK_MOVE_VALUE);
 
 	return SHORT_NONE;
-}
-
-unsigned short abs_move_roffset(Move move, unsigned short team)
-{
-	return ABS_SHORT_NUMBER(move_rank_offset(move, team));
-}
-
-unsigned short abs_move_foffset(Move move, unsigned short team)
-{
-	return ABS_SHORT_NUMBER(move_file_offset(move, team));
 }
 
 short normal_rank_offset(Move move)
@@ -180,10 +185,8 @@ bool start_pieces_equal(const Piece board[], Move move1, Move move2)
 
 bool equal_piece_attack(const Piece board[], Info info, Move move)
 {
-	Move* equalMoves;
-	if(!equal_pattern_moves(&equalMoves, board, move)) return false;
-
-	unsigned short moveAmount = move_array_amount(equalMoves);
+	Move* equalMoves; short moveAmount;
+	if(!equal_pattern_moves(&equalMoves, &moveAmount, board, move)) return false;
 
 	for(short index = 0; index < moveAmount; index += 1)
 	{
@@ -200,19 +203,17 @@ bool equal_piece_attack(const Piece board[], Info info, Move move)
 	free(equalMoves); return false;
 }
 
-bool equal_pattern_moves(Move** moves, const Piece board[], Move move)
+bool equal_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Move move)
 {
-	if(!target_pattern_moves(moves, board, move)) return false;
+	if(!target_pattern_moves(moves, moveAmount, board, move)) return false;
 
-	unsigned short moveAmount = move_array_amount(*moves);
-
-	for(short index = 0; index < moveAmount; index += 1)
+	for(short index = 0; index < *moveAmount; index += 1)
 		(*moves)[index] = INVERT_CHESS_MOVE((*moves)[index]);
 
 	return true;
 }
 
-bool target_pattern_moves(Move** moves, const Piece board[], Move move)
+bool target_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Move move)
 {
 	if(!MOVE_INSIDE_BOARD(move)) return false;
 
@@ -220,22 +221,22 @@ bool target_pattern_moves(Move** moves, const Piece board[], Move move)
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
 	if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_PAWN))
-		return pawn_pattern_moves(moves, board, stopPoint);
+		return pawn_pattern_moves(moves, moveAmount, board, stopPoint);
 
 	if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_KNIGHT))
-		return knight_pattern_moves(moves, board, stopPoint);
+		return knight_pattern_moves(moves, moveAmount, board, stopPoint);
 
 	if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_BISHOP))
-		return bishop_pattern_moves(moves, board, stopPoint);
+		return bishop_pattern_moves(moves, moveAmount, board, stopPoint);
 
 	if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_ROOK))
-		return rook_pattern_moves(moves, board, stopPoint);
+		return rook_pattern_moves(moves, moveAmount, board, stopPoint);
 
 	if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_QUEEN))
-		return queen_pattern_moves(moves, board, stopPoint);
+		return queen_pattern_moves(moves, moveAmount, board, stopPoint);
 
 	if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_KING))
-		return king_pattern_moves(moves, board, stopPoint);
+		return king_pattern_moves(moves, moveAmount, board, stopPoint);
 
 	return false;
 }

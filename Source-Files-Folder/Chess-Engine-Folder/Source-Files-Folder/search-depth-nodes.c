@@ -7,10 +7,8 @@ long search_depth_nodes(const Piece board[], Info info, unsigned short currentTe
 
 	if(timing_limit_ended(startClock, seconds)) return 1;
 
-	Move* moveArray;
-	if(!team_legal_moves(&moveArray, board, info, currentTeam)) return 1;
-
-	unsigned short moveAmount = move_array_amount(moveArray);
+	Move* moveArray; short moveAmount;
+	if(!team_legal_moves(&moveArray, &moveAmount, board, info, currentTeam)) return 1;
 
 	long localNodes = 0;
 
@@ -29,7 +27,7 @@ long search_move_nodes(const Piece board[], Info info, unsigned short currentTea
 
 	Piece* boardCopy = copy_chess_board(board);
 
-	if(!move_chess_piece(boardCopy, &infoCopy, move))
+	if(!execute_chess_move(boardCopy, &infoCopy, move))
 	{ free(boardCopy); return 1; }
 
 	unsigned short nextTeam = NORMAL_TEAM_ENEMY(currentTeam);

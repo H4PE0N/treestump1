@@ -88,10 +88,8 @@ bool chess_piece_movable(const Piece board[], Info info, Point piecePoint)
 {
 	if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
-	Move* moveArray;
-	if(!piece_pattern_moves(&moveArray, board, piecePoint)) return false;
-
-	unsigned short moveAmount = move_array_amount(moveArray);
+	Move* moveArray; short moveAmount;
+	if(!piece_pattern_moves(&moveArray, &moveAmount, board, piecePoint)) return false;
 
 	bool result = piece_movable_test(board, info, moveArray, moveAmount);
 

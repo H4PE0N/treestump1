@@ -3,10 +3,8 @@
 
 bool optimal_depth_move(Move* move, const Piece board[], Info info, unsigned short team, short seconds)
 {
-	Move* moveArray;
-	if(!team_legal_moves(&moveArray, board, info, team)) return false;
-
-	unsigned short moveAmount = move_array_amount(moveArray);
+	Move* moveArray; short moveAmount;
+	if(!team_legal_moves(&moveArray, &moveAmount, board, info, team)) return false;
 
 	bool result = search_depths_move(move, board, info, team, seconds, moveArray, moveAmount);
 

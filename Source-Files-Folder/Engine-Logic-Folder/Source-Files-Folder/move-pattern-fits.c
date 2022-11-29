@@ -105,7 +105,7 @@ bool pawn_pattern_fits(const Piece board[], Move move)
 	unsigned short startTeam = BOARD_POINT_TEAM(board, startPoint);
 	unsigned short stopTeam = BOARD_POINT_TEAM(board, stopPoint);
 
-	unsigned short fileOffset = ABS_SHORT_NUMBER(move_file_offset(move, startTeam));
+	unsigned short fileOffset = abs(move_file_offset(move, startTeam));
 	signed short rankOffset = move_rank_offset(move, startTeam);
 
 	if((fileOffset == 0) && ((rankOffset == 1) || (rankOffset == 2)))
@@ -125,74 +125,46 @@ bool clear_moving_path(const Piece board[], Move move)
 
 	if(START_PIECE_TYPE(board, move) == PIECE_TYPE_KNIGHT) return true;
 
-	Point* movePoints;
-	if(!moving_path_points(&movePoints, move)) return false;
+	short rankFactor, fileFactor, moveSteps;
+	if(!moving_path_values(&rankFactor, &fileFactor, &moveSteps, move)) return false;
 
-	unsigned short amount = point_array_amount(movePoints);
-
-	bool result = testing_clear_path(board, movePoints, amount, move);
-
-	free(movePoints); return result;
-}
-
-bool testing_clear_path(const Piece board[], const Point movePoints[], short amount, Move move)
-{
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	for(short index = 0; index < amount; index += 1)
+	short startRank = POINT_RANK_MACRO(startPoint);
+	short startFile = POINT_FILE_MACRO(startPoint);
+
+	for(short index = 0; index <= moveSteps; index += 1)
 	{
-		Point currentPoint = movePoints[index];
+		short currentFile = (startFile + index * fileFactor);
+		short currentRank = (startRank + index * rankFactor);
 
-		if((currentPoint == startPoint) || (currentPoint == stopPoint)) continue;
+		Point point = RANK_FILE_POINT(currentRank, currentFile);
 
-		if(BOARD_POINT_EXISTS(board, currentPoint)) return false;
-	}
-	return true;
-}
+		if((point == startPoint) || (point == stopPoint)) continue;
 
-bool moving_path_points(Point** movePoints, Move move)
-{
-	if(!MOVE_INSIDE_BOARD(move)) return false;
-
-	short rankFactor, fileFactor, moveSteps;
-
-	if(!moving_path_values(&rankFactor, &fileFactor, &moveSteps, move)) return false;
-
-	unsigned short startFile = MOVE_START_FILE(move);
-	unsigned short startRank = MOVE_START_RANK(move);
-
-	*movePoints = create_point_array(32);
-
-	for(unsigned short index = 0; index <= moveSteps; index += 1)
-	{
-		unsigned short currentFile = startFile + (index * fileFactor);
-		unsigned short currentRank = startRank + (index * rankFactor);
-
-		(*movePoints)[index] = RANK_FILE_POINT(currentRank, currentFile);
+		if(BOARD_POINT_EXISTS(board, point)) return false;
 	}
 	return true;
 }
 
 bool moving_path_values(signed short* rankFactor, signed short* fileFactor, short* moveSteps, Move move)
 {
-	// if(!MOVE_INSIDE_BOARD(move)) return false;
+	short rankOffset = normal_rank_offset(move);
+	short fileOffset = normal_file_offset(move);
 
-	signed short rankOffset = normal_rank_offset(move);
-	signed short fileOffset = normal_file_offset(move);
-
-	unsigned short absRankOffset = ABS_SHORT_NUMBER(rankOffset);
-	unsigned short absFileOffset = ABS_SHORT_NUMBER(fileOffset);
+	short absRankOffset = abs(rankOffset);
+	short absFileOffset = abs(fileOffset);
 
 	bool moveStraight = ((absRankOffset == 0) || (absFileOffset == 0));
 	bool moveDiagonal = (absRankOffset == absFileOffset);
 
-	if(!moveStraight && !moveDiagonal) return false;
+	if(!(moveStraight || moveDiagonal)) return false;
 
 	*fileFactor = MOVE_OFFSET_FACTOR(fileOffset);
 	*rankFactor = MOVE_OFFSET_FACTOR(rankOffset);
 
-	*moveSteps = (absRankOffset > absFileOffset) ? absRankOffset : absFileOffset;
+	*moveSteps = MAX_NUMBER_VALUE(absRankOffset, absFileOffset);
 
 	return true;
 }

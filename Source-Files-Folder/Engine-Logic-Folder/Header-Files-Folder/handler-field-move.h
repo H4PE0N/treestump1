@@ -6,10 +6,6 @@ short move_rank_offset(Move move, unsigned short team);
 
 short move_file_offset(Move move, unsigned short team);
 
-unsigned short abs_move_roffset(Move move, unsigned short team);
-
-unsigned short abs_move_foffset(Move move, unsigned short team);
-
 short normal_rank_offset(Move move);
 
 short normal_file_offset(Move move);
@@ -21,8 +17,6 @@ bool create_move_string(char* moveString, const Piece board[], Info info, Move m
 bool create_point_string(char* pointString, Point point);
 
 unsigned short move_array_amount(const Move moveArray[]);
-
-void append_moves_array(Move* moveArray, const Move addingArray[]);
 
 char piece_move_symbol(Piece piece);
 
@@ -40,10 +34,18 @@ bool equal_piece_attack(const Piece board[], Info info, Move move);
 
 bool pattern_moves_equal(Move move1, Move move2);
 
-bool equal_pattern_moves(Move** moves, const Piece board[], Move move);
+bool equal_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Move move);
 
-bool target_pattern_moves(Move** moves, const Piece board[], Move move);
+bool target_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Move move);
 
 bool start_pieces_equal(const Piece board[], Move move1, Move move2);
+
+void append_move_array(Move* moves1, short* amount1, const Move moves2[], short amount2);
+
+void paste_capped_moves(Move* moves1, short amount1, const Move moves2[], short amount2);
+
+void paste_move_array(Move* moves1, const Move moves2[], short moveAmount);
+
+Move* copy_move_array(const Move moveArray[], short moveAmount);
 
 #endif

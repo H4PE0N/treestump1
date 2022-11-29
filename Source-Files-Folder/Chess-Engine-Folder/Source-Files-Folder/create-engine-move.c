@@ -5,10 +5,8 @@ bool engine_depth_move(Move* move, const Piece board[], Info info, unsigned shor
 {
 	if((depth <= 0) || !NORMAL_TEAM_EXISTS(team)) return false;
 
-	Move* moveArray;
-	if(!team_legal_moves(&moveArray, board, info, team)) return false;
-
-	unsigned short moveAmount = move_array_amount(moveArray);
+	Move* moveArray; short moveAmount;
+	if(!team_legal_moves(&moveArray, &moveAmount, board, info, team)) return false;
 
 	bool result = choose_engine_move(move, board, info, team, depth, moveArray, moveAmount);
 
@@ -28,7 +26,7 @@ bool chess_move_value(signed short* moveValue, const Piece board[], Info info, u
 
 bool simulate_move_value(signed short* moveValue, Piece* boardCopy, Info infoCopy, unsigned short currentTeam, short depth, signed short alpha, signed short beta, Move move)
 {
-	if(!move_chess_piece(boardCopy, &infoCopy, move)) return false;
+	if(!execute_chess_move(boardCopy, &infoCopy, move)) return false;
 
 	unsigned short nextTeam = NORMAL_TEAM_ENEMY(currentTeam);
 
@@ -66,11 +64,9 @@ signed short board_depth_value(const Piece board[], Info info, unsigned short cu
 {
 	if(depth <= 0) return board_state_value(board, info);
 
-	Move* moveArray;
-	if(!ordered_legal_moves(&moveArray, board, info, currentTeam))
+	Move* moveArray; short moveAmount;
+	if(!ordered_legal_moves(&moveArray, &moveAmount, board, info, currentTeam))
 		return board_state_value(board, info);
-
-	unsigned short moveAmount = move_array_amount(moveArray);
 
 	signed short bestValue = choose_move_value(board, info, currentTeam, depth, alpha, beta, moveArray, moveAmount);
 

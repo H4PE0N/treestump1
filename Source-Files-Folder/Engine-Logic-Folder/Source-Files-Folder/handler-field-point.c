@@ -15,34 +15,27 @@ Point board_king_point(const Piece board[], unsigned short team)
 
 short array_point_index(const Point pointArray[], short amount, Point point)
 {
-	short pointIndex = -1;
-
 	for(unsigned short index = 0; index < amount; index += 1)
-	{
-		if(pointArray[index] == point) { pointIndex = index; break; }
-	}
-	return pointIndex;
+		if(pointArray[index] == point) return index;
+
+	return INDEX_NONE;
 }
 
 bool delete_array_point(Point* pointArray, short amount, short delIndex)
 {
-	if(!(delIndex >= 0 && delIndex < amount)) return false;
+	if(!((delIndex >= 0) && (delIndex < amount))) return false;
 
 	for(int index = delIndex; index < (amount - 1); index += 1)
-	{
 		pointArray[index] = pointArray[index + 1];
-	}
+
 	pointArray[amount - 1] = POINT_NONE; return true;
 }
 
 Point* create_point_array(short amount)
 {
 	Point* pointArray = malloc(sizeof(Point) * (amount + 1));
+	memset(pointArray, POINT_NONE, sizeof(Point) * (amount + 1));
 
-	for(short index = 0; index < (amount + 1); index += 1)
-	{
-		pointArray[index] = POINT_NONE;
-	}
 	return pointArray;
 }
 

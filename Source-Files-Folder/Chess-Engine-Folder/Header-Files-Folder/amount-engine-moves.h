@@ -6,7 +6,7 @@ bool amount_engine_moves(Move** moveArray, const Piece board[], Info info, unsig
 
 void paste_engine_moves(Move** moveArray, short amount, const Move engineMoves[], short engineAmount);
 
-bool sorted_engine_moves(Move** moveArray, const Piece board[], Info info, unsigned short team, short depth);
+bool sorted_engine_moves(Move** moveArray, short* moveAmount, const Piece board[], Info info, unsigned short team, short depth);
 
 bool move_array_values(short** moveValues, const Piece board[], Info info, unsigned short team, short depth, const Move moveArray[], short moveAmount);
 

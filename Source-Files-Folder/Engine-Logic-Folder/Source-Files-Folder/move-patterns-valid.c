@@ -3,7 +3,7 @@
 
 bool pawn_pattern_valid(Move move, unsigned short team)
 {
-	unsigned short fileOffset = abs_move_foffset(move, team);
+	unsigned short fileOffset = abs(move_file_offset(move, team));
 	signed short rankOffset = move_rank_offset(move, team);
 
 	if((fileOffset == 1) && (rankOffset == 1)) return true;
@@ -14,8 +14,8 @@ bool pawn_pattern_valid(Move move, unsigned short team)
 
 bool knight_pattern_valid(Move move, unsigned short team)
 {
-	unsigned short fileOffset = abs_move_foffset(move, team);
-	unsigned short rankOffset = abs_move_roffset(move, team);
+	unsigned short fileOffset = abs(move_file_offset(move, team));
+	unsigned short rankOffset = abs(move_rank_offset(move, team));
 
 	if((fileOffset == 1) && (rankOffset == 2)) return true;
 	if((fileOffset == 2) && (rankOffset == 1)) return true;
@@ -25,16 +25,16 @@ bool knight_pattern_valid(Move move, unsigned short team)
 
 bool bishop_pattern_valid(Move move, unsigned short team)
 {
-	unsigned short fileOffset = abs_move_foffset(move, team);
-	unsigned short rankOffset = abs_move_roffset(move, team);
+	unsigned short fileOffset = abs(move_file_offset(move, team));
+	unsigned short rankOffset = abs(move_rank_offset(move, team));
 
 	return ((fileOffset == rankOffset) && (fileOffset != 0));
 }
 
 bool rook_pattern_valid(Move move, unsigned short team)
 {
-	unsigned short fileOffset = abs_move_foffset(move, team);
-	unsigned short rankOffset = abs_move_roffset(move, team);
+	unsigned short fileOffset = abs(move_file_offset(move, team));
+	unsigned short rankOffset = abs(move_rank_offset(move, team));
 
 	return ((fileOffset == 0) != (rankOffset == 0));
 	// != (not equals) is boolean XOR
@@ -42,8 +42,8 @@ bool rook_pattern_valid(Move move, unsigned short team)
 
 bool queen_pattern_valid(Move move, unsigned short team)
 {
-	unsigned short fileOffset = abs_move_foffset(move, team);
-	unsigned short rankOffset = abs_move_roffset(move, team);
+	unsigned short fileOffset = abs(move_file_offset(move, team));
+	unsigned short rankOffset = abs(move_rank_offset(move, team));
 
 	if((fileOffset == rankOffset) && (fileOffset != 0)) return true;
 	if((fileOffset == 0) != (rankOffset == 0)) return true;
@@ -53,8 +53,8 @@ bool queen_pattern_valid(Move move, unsigned short team)
 
 bool king_pattern_valid(Move move, unsigned short team)
 {
-	unsigned short fileOffset = abs_move_foffset(move, team);
-	unsigned short rankOffset = abs_move_roffset(move, team);
+	unsigned short fileOffset = abs(move_file_offset(move, team));
+	unsigned short rankOffset = abs(move_rank_offset(move, team));
 
 	return (((fileOffset <= 1) && (rankOffset <= 1)) && (fileOffset || rankOffset));
 }
@@ -98,7 +98,7 @@ bool passant_pattern_valid(Move move, unsigned short team)
 	if((team == TEAM_WHITE) && (stopRank != (BLACK_PAWN_RANK + BLACK_MOVE_VALUE))) return false;
 	if((team == TEAM_BLACK) && (stopRank != (WHITE_PAWN_RANK + WHITE_MOVE_VALUE))) return false;
 
-	unsigned short fileOffset = abs_move_foffset(move, team);
+	unsigned short fileOffset = abs(move_file_offset(move, team));
 	signed short rankOffset = move_rank_offset(move, team);
 
 	return ((fileOffset == 1) && (rankOffset == 1));

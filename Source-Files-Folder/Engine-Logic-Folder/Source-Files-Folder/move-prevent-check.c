@@ -69,7 +69,6 @@ bool prevent_check_test(Piece* boardCopy, Info infoCopy, Move move)
 	if(!execute_chess_move(boardCopy, &infoCopy, move)) return false;
 
 	Point kingPoint = board_king_point(boardCopy, startTeam);
-
 	if(kingPoint == POINT_NONE) return false;
 
 	return !king_inside_check(boardCopy, kingPoint);
