@@ -122,7 +122,7 @@ bool conser_result_handler(const int clientSocks[], const Piece board[], Info in
   if(!send_update_string(clientSocks, board, info)) return false;
 
   unsigned short team = INFO_TEAM_MACRO(info);
-	unsigned short winningTeam = normal_team_enemy(team);
+	unsigned short winningTeam = NORMAL_TEAM_ENEMY(team);
 
   char resultString[SOCKET_STR_SIZE];
   memset(resultString, '\0', sizeof(resultString));

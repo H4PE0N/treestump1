@@ -27,6 +27,6 @@ bool input_stdin_string(char* string, const char inputPromt[])
   fflush(stdin);
   printf("%s", inputPromt);
   char buffer[1024];
-  fgets(buffer, sizeof(buffer), stdin);
+  if(fgets(buffer, sizeof(buffer), stdin) == NULL) return false;
   return sscanf(buffer, "%[^\n]%*c", string);
 }

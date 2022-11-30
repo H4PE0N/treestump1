@@ -10,7 +10,7 @@ FILES_TARGET := files
 CLEAN_TARGET := clean
 ################################################################################
 COMPILE_COMND := gcc
-COMPILE_FLAGS := -Wall -Werror -O0 -lm
+COMPILE_FLAGS := -Wall -Werror -O3 -lm
 
 SDL_LIB_FLAGS := -lSDL2main -lSDL2 -lSDL2_image
 SDL_DIR_FLAGS := -ISDL2/include -LSDL2/lib

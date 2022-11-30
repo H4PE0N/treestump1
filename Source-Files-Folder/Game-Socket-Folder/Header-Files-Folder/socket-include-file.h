@@ -7,10 +7,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#ifndef MSG_NOSIGNAL
-#define MSG_NOSIGNAL 0
-#endif
-
 #if defined(_WIN32) || defined(_WIN64)
 #include <winsock2.h>
 #include <WS2tcpip.h>
@@ -23,11 +19,7 @@
 
 #endif
 
-typedef struct sockaddr_in sockaddr_in;
-typedef struct sockaddr sockaddr;
-
-#define SOCKET_STR_SIZE 1024
-
+#include "game-socket-defines.h"
 #include "game-socket-handler.h"
 #include "game-socket-actions.h"
 
