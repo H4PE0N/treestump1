@@ -19,6 +19,8 @@ bool setup_screen_struct(Screen* screen, const char title[], unsigned short widt
 		SDL_Quit(); IMG_Quit(); return false;
 	}
 
+	screen->inverted = false;
+
 	return true;
 }
 

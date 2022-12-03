@@ -2,7 +2,7 @@
 #include "../Engine-Logic-Folder/Header-Files-Folder/englog-include-file.h"
 #include "../Game-Screen-Folder/Header-Files-Folder/screen-include-file.h"
 
-bool screen_multi_game(Piece*, Info*, Move*, Screen, bool*);
+bool screen_multi_game(Piece*, Info*, Move*, Screen*);
 
 int main(int argAmount, char* arguments[])
 {
@@ -23,11 +23,10 @@ int main(int argAmount, char* arguments[])
 	}
 
 	Move* moves = create_move_array(256);
-	bool inverted = false;
 
-	if(screen_multi_game(board, &info, moves, screen, &inverted))
+	if(screen_multi_game(board, &info, moves, &screen))
 	{
-		screen_result_handler(screen, board, info, &inverted);
+		screen_result_handler(&screen, board, info);
 	}
 
 	printf("free(board, moves, screen);\n");
@@ -36,16 +35,16 @@ int main(int argAmount, char* arguments[])
 	return false;
 }
 
-bool screen_multi_game(Piece* board, Info* info, Move* moves, Screen screen, bool* inverted)
+bool screen_multi_game(Piece* board, Info* info, Move* moves, Screen* screen)
 {
 	while(game_still_running(board, *info))
 	{
 		Info infoTeam = (*info & INFO_TEAM_MASK);
 		if(infoTeam == INFO_TEAM_NONE) return false;
 
-		if(!display_chess_board(screen, board, *info, moves, *inverted)) return false;
+		if(!display_chess_board(*screen, board, *info, moves)) return false;
 
-		if(!screen_user_handler(board, info, moves, screen, inverted)) return false;
+		if(!screen_user_handler(board, info, moves, screen)) return false;
 	}
 	return true;
 }

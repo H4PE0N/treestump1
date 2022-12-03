@@ -17,6 +17,7 @@ typedef struct Screen
   Render* render;
   unsigned short width;
   unsigned short height;
+  bool inverted;
 } Screen;
 
 #endif

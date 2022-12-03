@@ -18,13 +18,13 @@ bool screen_engine_handler(Piece* board, Info* info, Move* moves, Screen screen)
 	return true;
 }
 
-bool screen_user_handler(Piece* board, Info* info, Move* moves, Screen screen, bool* inverted)
+bool screen_user_handler(Piece* board, Info* info, Move* moves, Screen* screen)
 {
 	Move move = MOVE_NONE;
-	if(!input_screen_move(&move, screen, board, *info, moves, inverted)) return false;
+	if(!input_screen_move(&move, screen, board, *info, moves)) return false;
 
 	if(!move_chess_piece(board, info, move))
-		return screen_user_handler(board, info, moves, screen, inverted);
+		return screen_user_handler(board, info, moves, screen);
 
 	unsigned short movesAmount = move_array_amount(moves);
 	moves[movesAmount] = move;
@@ -32,9 +32,9 @@ bool screen_user_handler(Piece* board, Info* info, Move* moves, Screen screen, b
 	return true;
 }
 
-bool screen_result_handler(Screen screen, const Piece board[], Info info, bool* inverted)
+bool screen_result_handler(Screen* screen, const Piece board[], Info info)
 {
-	if(!display_result_board(screen, board, info, *inverted))
+	if(!display_result_board(*screen, board, info))
 	{
 		printf("Could not display result board!\n");
 	}
