@@ -16,4 +16,8 @@ bool input_single_move(Move*, Screen*, const Piece[], Info, const Move[]);
 
 bool input_legal_move(Move*, Screen*, const Piece[], Info, const Move[]);
 
+bool invert_screen_parser(Screen* screen, Event event);
+
+bool resize_window_parser(Screen* screen, Event event);
+
 #endif

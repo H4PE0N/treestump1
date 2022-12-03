@@ -3,7 +3,7 @@
 #include "../Game-Screen-Folder/Header-Files-Folder/screen-include-file.h"
 #include "../Engine-Logic-Folder/Header-Files-Folder/englog-include-file.h"
 
-bool screen_single_game(Piece*, Info*, Move*, Screen, bool*, bool);
+bool screen_single_game(Piece*, Info*, Move*, Screen*, bool);
 
 int main(int argAmount, char* arguments[])
 {
@@ -24,11 +24,10 @@ int main(int argAmount, char* arguments[])
 	}
 
 	Move* moves = create_move_array(256);
-	bool inverted = false;
 
-	if(screen_single_game(board, &info, moves, screen, &inverted, true))
+	if(screen_single_game(board, &info, moves, &screen, true))
 	{
-		screen_result_handler(screen, board, info, &inverted);
+		screen_result_handler(&screen, board, info);
 	}
 
 	printf("free(board, moves, screen);\n");
@@ -37,7 +36,7 @@ int main(int argAmount, char* arguments[])
 	return false;
 }
 
-bool screen_single_game(Piece* board, Info* info, Move* moves, Screen screen, bool* inverted, bool starting)
+bool screen_single_game(Piece* board, Info* info, Move* moves, Screen* screen, bool starting)
 {
 	Info userTeam = (starting) ? INFO_TEAM_WHITE : INFO_TEAM_BLACK;
 	Info engineTeam = INFO_TEAM_ENEMY(userTeam);
@@ -48,15 +47,15 @@ bool screen_single_game(Piece* board, Info* info, Move* moves, Screen screen, bo
 		Info infoTeam = (*info & INFO_TEAM_MASK);
 		if(infoTeam == INFO_TEAM_NONE) return false;
 
-		if(!display_chess_board(screen, board, *info, moves, *inverted)) return false;
+		if(!display_chess_board(*screen, board, *info, moves)) return false;
 
 		if(infoTeam == userTeam)
 		{
-			if(!screen_user_handler(board, info, moves, screen, inverted)) return false;
+			if(!screen_user_handler(board, info, moves, screen)) return false;
 		}
 		else if(infoTeam == engineTeam)
 		{
-			if(!screen_engine_handler(board, info, moves, screen)) return false;
+			if(!screen_engine_handler(board, info, moves, *screen)) return false;
 		}
 		else return false;
 	}

@@ -23,48 +23,72 @@ bool parse_promote_point(Move* promoteFlag, Point point)
 	return true;
 }
 
-bool mouse_event_check(Event event, Uint8 buttonSide, Uint32 buttonMove)
+bool mouse_event_check(Event event, Uint8 buttonSide, Uint32 eventType)
 {
-	return ((event.type == buttonMove) && (event.button.button == buttonSide));
+	return ((event.type == eventType) && (event.button.button == buttonSide));
 }
 
-bool key_event_check(Event event, int keyCode, Uint32 keyMove)
+bool key_event_check(Event event, int keyCode, Uint32 eventType)
 {
-  return ((event.type == keyMove) && (event.key.keysym.sym == keyCode));
+  return ((event.type == eventType) && (event.key.keysym.sym == keyCode));
+}
+
+bool screen_event_check(Event event, int windowEvent, Uint32 eventType)
+{
+  return ((event.type == eventType) && (event.window.event == windowEvent));
 }
 
 bool board_point_position(Rect* position, Screen screen, Point point)
 {
 	if(!POINT_INSIDE_BOARD(point)) return false;
 
-  Point renderPoint = (screen.inverted) ? (BOARD_LENGTH - 1 - point) : point;
+  Point renderPoint = check_inverted_point(point, screen.inverted);
 
 	unsigned short rank = POINT_RANK_MACRO(renderPoint);
 	unsigned short file = POINT_FILE_MACRO(renderPoint);
 
-	float squareWidth = (screen.width / BOARD_FILES);
-	float squareHeight = (screen.height / BOARD_RANKS);
+  Rect boardRect = board_screen_position(screen.width, screen.height);
 
-	float realHeight = (squareHeight * rank);
-	float realWidth = (squareWidth * file);
+  float squareWidth = (boardRect.w / BOARD_FILES);
+  float squareHeight = (boardRect.h / BOARD_RANKS);
+
+	float realHeight = (boardRect.y + squareHeight * rank);
+	float realWidth = (boardRect.x + squareWidth * file);
 
 	*position = (Rect) {realWidth, realHeight, squareWidth, squareHeight};
 
 	return true;
 }
 
+Rect board_screen_position(int screenWidth, int screenHeight)
+{
+  float boardLength = MIN_NUMBER_VALUE(screenWidth, screenHeight);
+
+  float blankWidth = ((screenWidth - boardLength) / 2);
+  float blankHeight = ((screenHeight - boardLength) / 2);
+
+  return (Rect) {blankWidth, blankHeight, boardLength, boardLength};
+}
+
 Point parse_mouse_point(Event event, Screen screen)
 {
-	float squareWidth = (screen.width / BOARD_FILES);
-	float squareHeight = (screen.height / BOARD_RANKS);
+  Rect boardRect = board_screen_position(screen.width, screen.height);
 
-	unsigned short file = (unsigned short) floor( (float) event.motion.x / squareWidth);
-	unsigned short rank = (unsigned short) floor( (float) event.motion.y / squareHeight);
+  float squareWidth = (boardRect.w / BOARD_FILES);
+  float squareHeight = (boardRect.h / BOARD_RANKS);
 
-	if(!NUMBER_IN_BOUNDS(file, 0, BOARD_FILES)) return POINT_NONE;
-	if(!NUMBER_IN_BOUNDS(rank, 0, BOARD_RANKS)) return POINT_NONE;
+  int file = floor((event.motion.x - boardRect.x) / squareWidth);
+  int rank = floor((event.motion.y - boardRect.y) / squareHeight);
+
+  if(!FILE_INSIDE_BOARD(file)) return POINT_NONE;
+  if(!RANK_INSIDE_BOARD(rank)) return POINT_NONE;
 
   Point point = RANK_FILE_POINT(rank, file);
 
-  return (screen.inverted) ? (BOARD_LENGTH - 1 - point) : point;
+  return check_inverted_point(point, screen.inverted);
+}
+
+Point check_inverted_point(Point point, bool inverted)
+{
+  return (inverted ? (BOARD_LENGTH - 1 - point) : point);
 }

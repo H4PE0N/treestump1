@@ -12,6 +12,12 @@ bool parse_quit_input(Event);
 
 bool parse_promote_point(Move*, Point);
 
-bool key_event_check(Event event, int keyCode, Uint32 keyMove);
+bool key_event_check(Event event, int keyCode, Uint32 eventType);
+
+bool screen_event_check(Event event, int windowEvent, Uint32 eventType);
+
+Rect board_screen_position(int screenWidth, int screenHeight);
+
+Point check_inverted_point(Point point, bool inverted);
 
 #endif

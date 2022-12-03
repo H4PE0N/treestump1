@@ -79,16 +79,37 @@ bool input_single_move(Move* move, Screen* screen, const Piece board[], Info inf
 
 		if(parse_quit_input(event)) return false;
 
+
 		if(mouse_event_check(event, RIGHT_BUTTON, BUTTON_DOWN))
 			input_mark_parser(markPoints, *screen, board, info, moveArray, event);
 
 		if(key_event_check(event, SDLK_SPACE, SDL_KEYDOWN))
-			screen->inverted = !(screen->inverted);
+			invert_screen_parser(screen, event);
+
+		else if(screen_event_check(event, SDL_WINDOWEVENT_RESIZED, SDL_WINDOWEVENT))
+  		resize_window_parser(screen, event);
 	}
 	while(!mouse_event_check(event, LEFT_BUTTON, BUTTON_DOWN));
 
 	input_move_parser(move, *screen, board, info, moveArray, event);
 
+	return true;
+}
+
+bool invert_screen_parser(Screen* screen, Event event)
+{
+	if(!key_event_check(event, SDLK_SPACE, SDL_KEYDOWN)) return false;
+
+	screen->inverted = !(screen->inverted); return true;
+}
+
+bool resize_window_parser(Screen* screen, Event event)
+{
+	if(!screen_event_check(event, SDL_WINDOWEVENT_RESIZED, SDL_WINDOWEVENT)) return false;
+
+	SDL_SetWindowSize(screen->window, event.window.data1, event.window.data2);
+
+	screen->width = event.window.data1; screen->height = event.window.data2;
 	return true;
 }
 
