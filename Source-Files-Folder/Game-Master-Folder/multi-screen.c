@@ -37,6 +37,8 @@ int main(int argAmount, char* arguments[])
 
 bool screen_multi_game(Piece* board, Info* info, Move* moves, Screen* screen)
 {
+	printf("counter (%d)\n", INFO_COUNTER_MACRO(*info));
+
 	while(game_still_running(board, *info))
 	{
 		Info infoTeam = (*info & INFO_TEAM_MASK);

@@ -33,22 +33,30 @@ bool current_team_move(Info info, unsigned short team)
 	return NORMAL_TEAMS_TEAM(INFO_TEAM_MACRO(info), team);
 }
 
-bool increase_info_turns(Info* info)
+void increase_info_turns(Info* info)
 {
 	unsigned short turns = INFO_TURNS_MACRO(*info);
 
-	if(INFO_STORE_TEAM(*info, INFO_TEAM_WHITE)) return true;
-
-	if(!INFO_STORE_TEAM(*info, INFO_TEAM_BLACK)) return false;
-
-	*info = ALLOC_TURNS_INFO(*info, (turns + 1)); return true;
+	*info = ALLOC_TURNS_INFO(*info, (turns + 1));
 }
 
-bool switch_current_team(Info* info)
+void increase_info_counter(Info* info)
+{
+	unsigned short counter = INFO_COUNTER_MACRO(*info);
+
+	*info = ALLOC_COUNTER_INFO(*info, (counter + 1));
+}
+
+void alloc_passant_point(Info* info, Move move)
+{
+	unsigned short startFile = MOVE_START_FILE(move);
+
+	*info = ALLOC_PASSANT_INFO(*info, (startFile + 1));
+}
+
+void switch_current_team(Info* info)
 {
 	Info infoEnemy = INFO_TEAM_ENEMY(MASK_INFO_TEAM(*info));
 
-	if(!INFO_TEAM_EXISTS(infoEnemy)) return false;
-
-	*info = ALLOC_INFO_TEAM(*info, infoEnemy); return true;
+	*info = ALLOC_INFO_TEAM(*info, infoEnemy);
 }

@@ -57,6 +57,8 @@ bool check_draw_ending(const Piece board[], Info info, unsigned short team)
 {
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
+	if(INFO_COUNTER_MACRO(info) >= 100) return true;
+
 	if(little_material_draw(board)) return true;
 
 	Point kingPoint = board_king_point(board, team);

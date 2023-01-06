@@ -21,12 +21,38 @@ bool input_screen_move(Move* move, Screen* screen, const Piece board[], Info inf
 	*move = inputMove; return true;
 }
 
+bool print_console_info(Info info)
+{
+	unsigned short team = INFO_TEAM_MACRO(info);
+	if(!NORMAL_TEAM_EXISTS(team)) return false;
+
+	printf("current team:(%s)\n", TEAM_WORDS[team]);
+
+	printf("turns:(%d)\n", INFO_TURNS_MACRO(info));
+
+	printf("counter:(%d)\n", INFO_COUNTER_MACRO(info));
+
+	char passantString[16];
+	memset(passantString, '\0', sizeof(passantString));
+
+	Point passantPoint = passant_pawn_point(info);
+	if(!create_string_point(passantString, passantPoint))
+	{
+		strcpy(passantString, "none");
+	}
+	printf("passant:(%s)\n", passantString);
+
+	return true;
+}
+
 bool input_legal_move(Move* move, Screen* screen, const Piece board[], Info info, const Move moveArray[])
 {
 	Move inputMove = MOVE_NONE;
 
 	while(!move_fully_legal(board, info, inputMove))
 	{
+		print_console_info(info);
+
 		if(!input_single_move(&inputMove, screen, board, info, moveArray)) return false;
 
 		if(!MOVE_INSIDE_BOARD(inputMove)) continue;
