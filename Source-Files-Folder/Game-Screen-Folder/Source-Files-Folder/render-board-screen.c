@@ -76,6 +76,7 @@ bool render_result_board(Screen screen, const Piece board[], Info info)
 	}
 	else if(check_draw_ending(board, info, team))
 	{
+		printf("draw\n");
 		if(!render_board_squares(screen)) return false;
 	}
 	else return false; // The game has not ended
@@ -248,10 +249,7 @@ bool render_board_squares(Screen screen)
 
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
-		unsigned short rank = POINT_RANK_MACRO(point);
-		unsigned short file = POINT_FILE_MACRO(point);
-
-		Surface* image = (rank + file) % 2 == 0 ? whiteSquare : blackSquare;
+		Surface* image = POINT_SQAURE_WHITE(point) ? whiteSquare : blackSquare;
 
 		if(!render_point_image(screen, image, point, 255)) return false;
 	}

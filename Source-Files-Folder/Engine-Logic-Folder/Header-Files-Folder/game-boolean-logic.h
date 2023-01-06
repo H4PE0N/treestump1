@@ -16,6 +16,8 @@ bool check_draw_ending(const Piece board[], Info info, unsigned short team);
 
 bool check_mate_ending(const Piece board[], Info info, unsigned short team);
 
+bool little_material_draw(const Piece board[]);
+
 bool game_still_running(const Piece board[], Info info);
 
 bool move_deliver_mate(const Piece[], Info, Move);

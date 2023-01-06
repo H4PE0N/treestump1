@@ -39,7 +39,6 @@ bool game_still_running(const Piece board[], Info info)
 	return true;
 }
 
-// Maybe remove 'team' from this function and instead use the info team
 bool check_mate_ending(const Piece board[], Info info, unsigned short team)
 {
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
@@ -54,10 +53,11 @@ bool check_mate_ending(const Piece board[], Info info, unsigned short team)
 	return true;
 }
 
-// Maybe remove 'team' from this function and instead use the info team
 bool check_draw_ending(const Piece board[], Info info, unsigned short team)
 {
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
+
+	if(little_material_draw(board)) return true;
 
 	Point kingPoint = board_king_point(board, team);
 	if(kingPoint == POINT_NONE) return false;
@@ -66,6 +66,45 @@ bool check_draw_ending(const Piece board[], Info info, unsigned short team)
 
 	if(team_pieces_movable(board, info, team)) return false;
 
+	return true;
+}
+/*
+if(knightAmount >= 2) return false;
+
+if((knightAmount >= 1) && (blackBishops || whiteBishops)) return false;
+
+if(blackBishops && whiteBishops) return false;
+
+return true;
+*/
+bool little_material_draw(const Piece board[])
+{
+	unsigned short blackBishops = 0, whiteBishops = 0, knightAmount = 0;
+
+	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	{
+		if(!CHESS_PIECE_EXISTS(board[point])) continue;
+
+		unsigned short type = PIECE_TYPE_MACRO(board[point]);
+
+		if((type == TYPE_ROOK) || (type == TYPE_PAWN) || (type == TYPE_QUEEN)) return false;
+
+		if((type != TYPE_KNIGHT) && (type != TYPE_BISHOP)) continue;
+
+
+		if(type == TYPE_KNIGHT) knightAmount += 1;
+
+		else if(POINT_SQAURE_WHITE(point)) whiteBishops += 1;
+
+		else blackBishops += 1;
+
+
+		if(knightAmount >= 2) return false;
+
+		if((knightAmount >= 1) && (blackBishops || whiteBishops)) return false;
+
+		if(blackBishops && whiteBishops) return false;
+	}
 	return true;
 }
 
