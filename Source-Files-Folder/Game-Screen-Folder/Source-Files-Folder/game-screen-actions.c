@@ -3,12 +3,10 @@
 
 bool screen_engine_handler(Piece* board, Info* info, Move* moves, Screen screen)
 {
-	unsigned short team = INFO_TEAM_MACRO(*info);
-
 	unsigned short seconds = 10;
 
 	Move computerMove;
-	if(!optimal_depth_move(&computerMove, board, *info, team, seconds)) return false;
+	if(!optimal_depth_move(&computerMove, board, *info, seconds)) return false;
 
 	if(!move_chess_piece(board, info, computerMove)) return false;
 

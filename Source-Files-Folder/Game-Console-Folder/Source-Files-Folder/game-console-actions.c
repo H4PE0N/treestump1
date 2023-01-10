@@ -21,12 +21,10 @@ bool console_user_handler(Piece* board, Info* info)
 
 bool console_engine_handler(Piece* board, Info* info)
 {
-  unsigned short team = INFO_TEAM_MACRO(*info);
-
 	unsigned short seconds = 2;
 
 	Move engineMove;
-	if(!optimal_depth_move(&engineMove, board, *info, team, seconds)) return false;
+	if(!optimal_depth_move(&engineMove, board, *info, seconds)) return false;
 
 	if(!move_chess_piece(board, info, engineMove)) return false;
 

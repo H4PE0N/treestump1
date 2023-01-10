@@ -4,8 +4,8 @@
 
 #include "../../Engine-Logic-Folder/Header-Files-Folder/englog-include-file.h"
 
-#include "board-value-defines.h"
-#include "create-board-value.h"
+#include "board-score-defines.h"
+#include "create-board-score.h"
 
 #include "move-array-sorter.h"
 #include "create-engine-move.h"

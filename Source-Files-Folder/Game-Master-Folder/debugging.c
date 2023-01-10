@@ -31,13 +31,62 @@ int main(int argc, char* argv[])
 	}
 
 
-	long startTime = clock();
+	print_console_board(board);
 
-	int depth = 5;
-	int nodes = search_depth_nodes(board, info, TEAM_WHITE, depth, startTime, 60);
-	double time = time_passed_since(startTime);
+	int depth = 6;
+	// int seconds = 10;
 
-	printf("depth: %d nodes: %d time: %.2f\n", depth, nodes, time);
+	long startTime;
+	double time;
+	char moveString[16];
+
+
+	// startTime = clock();
+	//
+	// int nodes = search_depth_nodes(board, info, TEAM_WHITE, depth, startTime, 60);
+	//
+	// time = time_passed_since(startTime);
+	//
+	// printf("depth: %d nodes: %d time: %.2f\n", depth, nodes, time);
+
+
+
+	// startTime = clock();
+	//
+	// Move bestMove;
+	// optimal_depth_move(&bestMove, board, info, seconds);
+	//
+	// time = time_passed_since(startTime);
+	//
+	// char moveString[16];
+	// create_string_move(moveString, bestMove);
+	//
+	// printf("depth %d time: %.2f move: (%s)\n", depth, time, moveString);
+
+
+
+	startTime = clock();
+
+	int moveAmount = 30;
+
+	Move* engineMoves;
+	if(amount_engine_moves(&engineMoves, board, info, TEAM_WHITE, depth, moveAmount))
+	{
+		time = time_passed_since(startTime);
+
+		printf("depth: %d time: %.4f\n", depth, time);
+
+		for(int index = 0; index < moveAmount; index += 1)
+		{
+			if(!create_string_move(moveString, engineMoves[index]))
+			{
+				printf("#%d (----)\n", index + 1);
+			}
+			else printf("#%d (%s)\n", index + 1, moveString);
+		}
+
+		printf("free(engineMoves);\n"); free(engineMoves);
+	}
 
 	printf("free(board);\n"); free(board); return false;
 }

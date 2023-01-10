@@ -3,6 +3,8 @@
 
 bool amount_engine_moves(Move** moveArray, const Piece board[], Info info, unsigned short team, short depth, short amount)
 {
+	if((amount <= 0) && (depth <= 0)) return false;
+
 	Move* engineMoves; short engineAmount;
 	if(!sorted_engine_moves(&engineMoves, &engineAmount, board, info, team, depth)) return false;
 
@@ -13,47 +15,47 @@ bool amount_engine_moves(Move** moveArray, const Piece board[], Info info, unsig
 	free(engineMoves); return true;
 }
 
-bool sorted_engine_moves(Move** moveArray, short* moveAmount, const Piece board[], Info info, unsigned short team, short depth)
+bool sorted_engine_moves(Move** moveArray, short* moveAmount, const Piece board[], Info info, unsigned short evalTeam, short depth)
 {
 	if(depth <= 0) return false;
 
-	if(!team_legal_moves(moveArray, moveAmount, board, info, team)) return false;
+	int currTeam = INFO_TEAM_MACRO(info);
 
-	short* moveValues = NULL;
-	if(!move_array_values(&moveValues, board, info, team, depth, *moveArray, *moveAmount)) return false;
+	if(!team_legal_moves(moveArray, moveAmount, board, info, currTeam)) return false;
 
-	qsort_moves_values(*moveArray, moveValues, *moveAmount, team);
+	short* moveScores;
+	if(!move_array_scores(&moveScores, board, info, currTeam, depth, *moveArray, *moveAmount)) return false;
 
-	free(moveValues); return true;
+	qsort_moves_scores(*moveArray, moveScores, *moveAmount, evalTeam);
+
+	free(moveScores); return true;
 }
 
-bool move_array_values(short** moveValues, const Piece board[], Info info, unsigned short team, short depth, const Move moveArray[], short moveAmount)
+bool move_array_scores(short** moveScores, const Piece board[], Info info, unsigned short team, short depth, const Move moveArray[], short moveAmount)
 {
 	if(moveAmount <= 0) return false;
 
-	*moveValues = create_short_array(moveAmount);
+	*moveScores = create_short_array(moveAmount);
+
+	int playerSign = TEAM_SCORE_WEIGHT(team);
 
 	for(unsigned short index = 0; index < moveAmount; index += 1)
 	{
 		Move currentMove = moveArray[index];
 
-		signed short moveValue = 0;
-		if(!chess_move_value(&moveValue, board, info, team, (depth - 1), MIN_STATE_VALUE, MAX_STATE_VALUE, currentMove))
-		{
-			free(*moveValues); return false;
-		}
+		signed short moveScore = chess_move_score(board, info, depth, MIN_STATE_SCORE, MAX_STATE_SCORE, playerSign, currentMove);
 
-		(*moveValues)[index] = moveValue;
+		(*moveScores)[index] = moveScore;
 	}
 	return true;
 }
 
 short* create_short_array(unsigned short length)
 {
-	short* moveValues = malloc(sizeof(short) * (length + 1));
+	short* array = malloc(sizeof(short) * (length + 1));
 	for(unsigned short index = 0; index < (length + 1); index += 1)
 	{
-		moveValues[index] = 0;
+		array[index] = 0;
 	}
-	return moveValues;
+	return array;
 }

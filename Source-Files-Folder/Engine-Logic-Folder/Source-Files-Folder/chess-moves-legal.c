@@ -94,6 +94,7 @@ void append_promote_moves(Move* moveArray, short* moveAmount, Move promoteMove)
 	moveArray[(*moveAmount)++] = ALLOC_MOVE_FLAG(promoteMove, MOVE_FLAG_QUEEN);
 }
 
+// Maybe remove team from the arguments and instead use info team
 bool team_legal_moves(Move** moveArray, short* moveAmount, const Piece board[], Info info, unsigned short team)
 {
 	if(!NORMAL_TEAM_EXISTS(team)) return false;

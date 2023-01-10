@@ -8,7 +8,7 @@ void paste_engine_moves(Move** moveArray, short amount, const Move engineMoves[]
 
 bool sorted_engine_moves(Move** moveArray, short* moveAmount, const Piece board[], Info info, unsigned short team, short depth);
 
-bool move_array_values(short** moveValues, const Piece board[], Info info, unsigned short team, short depth, const Move moveArray[], short moveAmount);
+bool move_array_scores(short** moveScores, const Piece board[], Info info, unsigned short team, short depth, const Move moveArray[], short moveAmount);
 
 short* create_short_array(unsigned short length);
 

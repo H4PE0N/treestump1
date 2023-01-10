@@ -1,17 +1,23 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool optimal_depth_move(Move* move, const Piece board[], Info info, unsigned short team, short seconds)
+bool optimal_depth_move(Move* move, const Piece board[], Info info, short seconds)
 {
+	int team = INFO_TEAM_MACRO(info);
+
 	Move* moveArray; short moveAmount;
 	if(!team_legal_moves(&moveArray, &moveAmount, board, info, team)) return false;
 
-	bool result = search_depths_move(move, board, info, team, seconds, moveArray, moveAmount);
+	int playerSign = TEAM_SCORE_WEIGHT(team);
+
+	bool result = search_depths_move(move, board, info, playerSign, seconds, moveArray, moveAmount);
 
 	free(moveArray); return result;
+
+	return false;
 }
 
-bool search_depths_move(Move* move, const Piece board[], Info info, unsigned short team, short seconds, const Move moveArray[], short moveAmount)
+bool search_depths_move(Move* move, const Piece board[], Info info, int playerSign, short seconds, const Move moveArray[], short moveAmount)
 {
 	if(moveAmount <= 0) return false;
 
@@ -21,45 +27,44 @@ bool search_depths_move(Move* move, const Piece board[], Info info, unsigned sho
 
 	long startClock = clock();
 
-	Move engineMove = moveArray[0]; signed short engineValue = 0;
+	Move engineMove = moveArray[0]; signed short engineScore = 0;
 
 	for(unsigned short depth = 1;; depth += 1)
 	{
-		if(!choose_timing_move(&engineMove, &engineValue, board, info, team, depth, startClock, seconds, moveArray, moveAmount)) return false;
+		if(!choose_timing_move(&engineMove, &engineScore, board, info, depth, playerSign, startClock, seconds, moveArray, moveAmount)) return false;
 
 		if(timing_limit_ended(startClock, seconds)) break;
 
+		*move = engineMove;
+
 		char moveString[16];
 		create_string_move(moveString, engineMove);
-
-		printf("info depth %d time %d move %s value %d\n", depth, (int) (time_passed_since(startClock) * 1000), moveString, engineValue);
-
-		if(current_mate_value(engineValue, team)) break;
+		printf("info depth %d time %d move %s score %d\n", depth, (int) (time_passed_since(startClock) * 1000), moveString, engineScore);
 	}
-	*move = engineMove; return true;
+	return true;
 }
 
-bool choose_timing_move(Move* move, signed short* value, const Piece board[], Info info, unsigned short team, short depth, long startClock, short seconds, const Move moveArray[], short moveAmount)
+bool choose_timing_move(Move* bestMove, signed short* bestScore, const Piece board[], Info info, short depth, int playerSign, long startClock, short seconds, const Move moveArray[], short moveAmount)
 {
 	if(moveAmount <= 0) return false;
 
-	Move bestMove = moveArray[0];
-	signed short bestValue = team_weight_value(MIN_STATE_VALUE, team);
+	*bestMove = moveArray[0];
+	*bestScore = MIN_STATE_SCORE;
 
-	for(unsigned short index = 0; index < moveAmount; index += 1)
+	for(int index = 0; index < moveAmount; index += 1)
 	{
 		if(timing_limit_ended(startClock, seconds)) return true;
 
-		Move currentMove = moveArray[index];
+		Move currMove = moveArray[index];
 
-		short currentValue;
-		if(!chess_move_value(&currentValue, board, info, team, (depth - 1), MIN_STATE_VALUE, MAX_STATE_VALUE, currentMove)) continue;
+		int currScore = chess_move_score(board, info, depth, MIN_STATE_SCORE, MAX_STATE_SCORE, playerSign, currMove);
 
-		if(update_mate_value(currentMove, currentValue, &bestMove, &bestValue, team)) break;
-
-		update_move_value(currentMove, currentValue, &bestMove, &bestValue, team);
+		if(currScore > *bestScore)
+		{
+			*bestMove = currMove; *bestScore = currScore;
+		}
 	}
-	*move = bestMove; *value = bestValue; return true;
+	return true;
 }
 
 double time_passed_since(long startClock)
