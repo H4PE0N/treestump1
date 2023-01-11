@@ -12,7 +12,7 @@ bool parse_create_board(Piece** board, Info* info, const char fenString[])
 
 bool parse_fen_string(Piece* board, Info* info, const char fenString[])
 {
-	unsigned short stringLength = strlen(fenString);
+	uint stringLength = strlen(fenString);
 
 	char* stringArray[FEN_STRING_PARTS];
 
@@ -55,7 +55,7 @@ bool parse_string_current(Info* info, const char stringToken[])
 {
 	Info infoCurrentTeam = INFO_BLANK;
 
-	unsigned short stringLength = strlen(stringToken);
+	uint stringLength = strlen(stringToken);
 
 	if(stringLength != 1) return false;
 
@@ -73,24 +73,20 @@ bool parse_string_current(Info* info, const char stringToken[])
 
 bool parse_string_counter(Info* info, const char stringToken[])
 {
-	unsigned short counter = 0;
+	int counter = atoi(stringToken);
 
-	if(!parse_string_short(&counter, stringToken)) return false;
+	if((counter == 0) && (stringToken[0] != '0')) return false;
 
-	*info = ALLOC_COUNTER_INFO(*info, counter);
-
-	return true;
+	*info = ALLOC_COUNTER_INFO(*info, counter); return true;
 }
 
 bool parse_string_turns(Info* info, const char stringToken[])
 {
-	unsigned short turns = 0;
+	int turns = atoi(stringToken);
 
-	if(!parse_string_short(&turns, stringToken)) return false;
+	if((turns == 0) && (stringToken[0] != '0')) return false;
 
-	*info = ALLOC_TURNS_INFO(*info, turns);
-
-	return true;
+	*info = ALLOC_TURNS_INFO(*info, turns); return true;
 }
 
 bool parse_string_passant(Info* info, const char stringToken[])
@@ -109,12 +105,12 @@ bool parse_string_passant(Info* info, const char stringToken[])
 
 bool parse_string_point(Point* point, const char string[])
 {
-	unsigned short stringLength = strlen(string);
+	uint stringLength = strlen(string);
 
 	if(stringLength != 2) return false;
 
-	short fileIndex = string_symbol_index(FILE_SYMBOLS, BOARD_FILES, string[0]);
-	short rankIndex = string_symbol_index(RANK_SYMBOLS, BOARD_RANKS, string[1]);
+	int fileIndex = string_symbol_index(FILE_SYMBOLS, BOARD_FILES, string[0]);
+	int rankIndex = string_symbol_index(RANK_SYMBOLS, BOARD_RANKS, string[1]);
 
 	if(fileIndex == INDEX_NONE || rankIndex == INDEX_NONE) return false;
 
@@ -125,7 +121,7 @@ bool parse_string_point(Point* point, const char string[])
 
 bool parse_string_move(Move* move, const char stringMove[])
 {
-  int stringLen = strlen(stringMove);
+  uint stringLen = strlen(stringMove);
   if(stringLen != 4 && stringLen != 5) return false;
 
   char startString[3];
@@ -143,10 +139,7 @@ bool parse_string_move(Move* move, const char stringMove[])
 
   Move parseMove = START_STOP_MOVE(startPoint, stopPoint);
 
-  if(stringLen == 5)
-  {
-    parseMove = ALLOC_MOVE_FLAG(parseMove, MOVE_FLAG_QUEEN);
-  }
+  if(stringLen == 5)   parseMove = ALLOC_MOVE_FLAG(parseMove, MOVE_FLAG_QUEEN);
 
   *move = parseMove;
 
@@ -159,10 +152,10 @@ bool parse_string_castles(Info* info, const char stringToken[])
 
 	if(!strcmp(stringToken, FEN_CASTLES_NONE)) return true;
 
-	unsigned short stringLength = strlen(stringToken);
+	uint stringLength = strlen(stringToken);
 	if(stringLength > FEN_MAX_CASTLES) return false;
 
-	for(unsigned short index = 0; index < stringLength; index += 1)
+	for(int index = 0; index < stringLength; index += 1)
 	{
 		char symbol = stringToken[index];
 
@@ -172,10 +165,7 @@ bool parse_string_castles(Info* info, const char stringToken[])
 
 		castles |= infoCastle;
 	}
-
-	*info = ALLOC_INFO_CASTLES(*info, castles);
-
-	return true;
+	*info = ALLOC_INFO_CASTLES(*info, castles); return true;
 }
 
 bool parse_castle_symbol(Info* infoCastle, char symbol)
@@ -203,7 +193,7 @@ bool parse_castle_symbol(Info* infoCastle, char symbol)
 
 bool parse_string_board(Piece* board, const char stringToken[])
 {
-	unsigned short stringLength = strlen(stringToken);
+	uint stringLength = strlen(stringToken);
 
 	char* stringArray[BOARD_RANKS];
 
@@ -215,9 +205,9 @@ bool parse_string_board(Piece* board, const char stringToken[])
 	checked that there is "amount" rank strings at this exact location.
 	*/
 
-	for(unsigned short rank = 0; rank < BOARD_RANKS; rank += 1)
+	for(uint8_t rank = 0; rank < BOARD_RANKS; rank += 1)
 	{
-		unsigned short rankLength = strlen(stringArray[rank]);
+		uint rankLength = strlen(stringArray[rank]);
 
 		if(!parse_board_files(board, rank, stringArray[rank], rankLength))
 		{
@@ -229,11 +219,11 @@ bool parse_string_board(Piece* board, const char stringToken[])
 	free_array_strings(stringArray, BOARD_RANKS); return true;
 }
 
-bool parse_board_files(Piece* board, unsigned short rank, const char rankString[], short length)
+bool parse_board_files(Piece* board, uint8_t rank, const char rankString[], int length)
 {
-	unsigned short file = 0;
+	uint8_t file = 0;
 
-	for(unsigned short index = 0; index < length; index += 1)
+	for(int index = 0; index < length; index += 1)
 	{
 		if(file >= BOARD_FILES) return false;
 
@@ -244,7 +234,7 @@ bool parse_board_files(Piece* board, unsigned short rank, const char rankString[
 	return true;
 }
 
-bool parse_board_symbol(Piece* board, unsigned short rank, unsigned short* file, char symbol)
+bool parse_board_symbol(Piece* board, uint8_t rank, uint8_t* file, char symbol)
 {
 	short potentBlanks = (symbol - '0');
 
@@ -254,7 +244,6 @@ bool parse_board_symbol(Piece* board, unsigned short rank, unsigned short* file,
 	}
 
 	Piece piece;
-
 	if(!parse_board_piece(&piece, symbol)) return false;
 
 	Point point = RANK_FILE_POINT(rank, *file);
@@ -264,9 +253,9 @@ bool parse_board_symbol(Piece* board, unsigned short rank, unsigned short* file,
 	*file += 1; return true;
 }
 
-bool parse_board_blanks(Piece* board, unsigned short rank, unsigned short* file, short blanks)
+bool parse_board_blanks(Piece* board, uint8_t rank, uint8_t* file, short blanks)
 {
-	unsigned short totalFiles = (*file + blanks);
+	short totalFiles = (*file + blanks);
 
 	if(totalFiles > BOARD_FILES) return false;
 
@@ -279,7 +268,7 @@ bool parse_board_blanks(Piece* board, unsigned short rank, unsigned short* file,
 
 bool parse_board_piece(Piece* piece, char symbol)
 {
-	for(unsigned short typeIndex = 0; typeIndex < PIECE_TYPE_SPAN; typeIndex += 1)
+	for(uint8_t typeIndex = 0; typeIndex < PIECE_TYPE_SPAN; typeIndex += 1)
 	{
 		Piece pieceType = TYPE_PIECE_MACRO(typeIndex);
 
@@ -295,15 +284,12 @@ bool parse_board_piece(Piece* piece, char symbol)
 	return false;
 }
 
-
-
 char chess_piece_symbol(Piece piece)
 {
-	unsigned short team = PIECE_TEAM_MACRO(piece);
-	unsigned short typeIndex = PIECE_TYPE_MACRO(piece);
+	uint8_t team = PIECE_TEAM_MACRO(piece);
+	uint8_t typeIndex = PIECE_TYPE_MACRO(piece);
 
 	if(team == TEAM_WHITE) return WHITE_TYPE_SYMBOLS[typeIndex];
-
 	if(team == TEAM_BLACK) return BLACK_TYPE_SYMBOLS[typeIndex];
 
 	return SYMBOL_NONE;

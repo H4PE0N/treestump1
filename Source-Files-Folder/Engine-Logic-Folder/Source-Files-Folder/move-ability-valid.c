@@ -16,8 +16,8 @@ bool castle_ability_valid(Move move, Info info)
 {
 	if(!MOVE_INSIDE_BOARD(move)) return false;
 
-	unsigned short kingPoint = MOVE_START_MACRO(move);
-	signed short movePattern = BOARD_MOVE_PATTERN(move);
+	Point kingPoint = MOVE_START_MACRO(move);
+	int8_t movePattern = BOARD_MOVE_PATTERN(move);
 
 	if((kingPoint == WHITE_KING_POINT) && (movePattern == KSIDE_FILE_OFFSET))
 		return (MASK_WHITE_KSIDE(info) == INFO_WHITE_KSIDE);

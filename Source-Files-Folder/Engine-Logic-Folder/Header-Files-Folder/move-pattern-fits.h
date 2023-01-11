@@ -8,11 +8,11 @@ bool normal_pattern_fits(const Piece board[], Move move);
 
 bool clear_moving_path(const Piece board[], Move move);
 
-bool testing_clear_path(const Piece board[], const Point movePoints[], short amount, Move move);
+bool testing_clear_path(const Piece board[], const Point movePoints[], int amount, Move move);
 
 bool moving_path_points(Point** movePoints, Move move);
 
-bool moving_path_values(signed short* rankFactor, signed short* fileFactor, short* moveSteps, Move move);
+bool moving_path_values(int8_t* rankFactor, int8_t* fileFactor, int8_t* moveSteps, Move move);
 
 bool passant_pattern_fits(const Piece board[], Move move);
 

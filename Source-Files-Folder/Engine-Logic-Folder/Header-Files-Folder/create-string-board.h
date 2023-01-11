@@ -22,9 +22,9 @@ bool create_string_board(char* string, const Piece board[]);
 
 bool create_string_board_t(char* string, char** stringArray, const Piece board[]);
 
-bool create_board_files(char* string, const Piece board[], unsigned short rank);
+bool create_board_files(char* string, const Piece board[], uint8_t rank);
 
-bool create_blank_symbol(char* symbol, unsigned short rank, unsigned short* file, const Piece board[]);
+bool create_blank_symbol(char* symbol, uint8_t rank, uint8_t* file, const Piece board[]);
 
 bool create_string_move(char* string, Move move);
 
@@ -36,6 +36,6 @@ bool promote_piece_symbol(char* symbol, Move move);
 
 bool append_piece_symbol(char* string, const Piece board[], Point point);
 
-bool append_blank_symbol(char* string, const Piece board[], unsigned short rank, unsigned short* file);
+bool append_blank_symbol(char* string, const Piece board[], uint8_t rank, uint8_t* file);
 
 #endif

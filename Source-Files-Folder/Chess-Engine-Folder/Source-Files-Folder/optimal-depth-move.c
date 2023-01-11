@@ -5,7 +5,7 @@ bool optimal_depth_move(Move* move, const Piece board[], Info info, short second
 {
 	int team = INFO_TEAM_MACRO(info);
 
-	Move* moveArray; short moveAmount;
+	Move* moveArray; int moveAmount;
 	if(!team_legal_moves(&moveArray, &moveAmount, board, info, team)) return false;
 
 	int playerSign = TEAM_SCORE_WEIGHT(team);
@@ -17,7 +17,7 @@ bool optimal_depth_move(Move* move, const Piece board[], Info info, short second
 	return false;
 }
 
-bool search_depths_move(Move* move, const Piece board[], Info info, int playerSign, short seconds, const Move moveArray[], short moveAmount)
+bool search_depths_move(Move* move, const Piece board[], Info info, int playerSign, short seconds, const Move moveArray[], int moveAmount)
 {
 	if(moveAmount <= 0) return false;
 
@@ -44,7 +44,7 @@ bool search_depths_move(Move* move, const Piece board[], Info info, int playerSi
 	return true;
 }
 
-bool choose_timing_move(Move* bestMove, signed short* bestScore, const Piece board[], Info info, short depth, int playerSign, long startClock, short seconds, const Move moveArray[], short moveAmount)
+bool choose_timing_move(Move* bestMove, signed short* bestScore, const Piece board[], Info info, short depth, int playerSign, long startClock, short seconds, const Move moveArray[], int moveAmount)
 {
 	if(moveAmount <= 0) return false;
 

@@ -2,6 +2,8 @@
 #ifndef EXECUTE_CHESS_MOVES_H
 #define EXECUTE_CHESS_MOVES_H
 
+#define PAWN_PASSANT_POINT(MOVE) RANK_FILE_POINT(MOVE_START_RANK(move), MOVE_STOP_FILE(move))
+
 bool execute_chess_move(Piece* board, Info* info, Move move);
 
 bool execute_passant_move(Piece* board, Move move);

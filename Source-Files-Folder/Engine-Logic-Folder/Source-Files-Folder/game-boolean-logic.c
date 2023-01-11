@@ -5,11 +5,11 @@ bool king_inside_check(const Piece board[], Point kingPoint)
 {
 	if(!POINT_INSIDE_BOARD(kingPoint)) return false;
 
-	unsigned short kingTeam = BOARD_POINT_TEAM(board, kingPoint);
+	uint8_t kingTeam = BOARD_POINT_TEAM(board, kingPoint);
 
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
-		unsigned short currentTeam = BOARD_POINT_TEAM(board, point);
+		uint8_t currentTeam = BOARD_POINT_TEAM(board, point);
 		if(!NORMAL_TEAMS_ENEMY(currentTeam, kingTeam)) continue;
 
 		if(piece_does_check(board, kingPoint, point)) return true;
@@ -30,7 +30,7 @@ bool piece_does_check(const Piece board[], Point kingPoint, Point point)
 
 bool game_still_running(const Piece board[], Info info)
 {
-	unsigned short currentTeam = INFO_TEAM_MACRO(info);
+	uint8_t currentTeam = INFO_TEAM_MACRO(info);
 
 	if(check_mate_ending(board, info, currentTeam)) return false;
 
@@ -39,7 +39,7 @@ bool game_still_running(const Piece board[], Info info)
 	return true;
 }
 
-bool check_mate_ending(const Piece board[], Info info, unsigned short team)
+bool check_mate_ending(const Piece board[], Info info, uint8_t team)
 {
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
@@ -53,7 +53,7 @@ bool check_mate_ending(const Piece board[], Info info, unsigned short team)
 	return true;
 }
 
-bool check_draw_ending(const Piece board[], Info info, unsigned short team)
+bool check_draw_ending(const Piece board[], Info info, uint8_t team)
 {
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
@@ -81,13 +81,13 @@ return true;
 */
 bool little_material_draw(const Piece board[])
 {
-	unsigned short blackBishops = 0, whiteBishops = 0, knightAmount = 0;
+	uint8_t blackBishops = 0, whiteBishops = 0, knightAmount = 0;
 
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
 		if(!CHESS_PIECE_EXISTS(board[point])) continue;
 
-		unsigned short type = PIECE_TYPE_MACRO(board[point]);
+		uint8_t type = PIECE_TYPE_MACRO(board[point]);
 
 		if((type == TYPE_ROOK) || (type == TYPE_PAWN) || (type == TYPE_QUEEN)) return false;
 
@@ -110,13 +110,13 @@ bool little_material_draw(const Piece board[])
 	return true;
 }
 
-bool team_pieces_movable(const Piece board[], Info info, unsigned short team)
+bool team_pieces_movable(const Piece board[], Info info, uint8_t team)
 {
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
-		unsigned short currentTeam = BOARD_POINT_TEAM(board, point);
+		uint8_t currentTeam = BOARD_POINT_TEAM(board, point);
 
 		if(!NORMAL_TEAMS_TEAM(currentTeam, team)) continue;
 
@@ -129,7 +129,7 @@ bool chess_piece_movable(const Piece board[], Info info, Point piecePoint)
 {
 	if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
-	Move* moveArray; short moveAmount;
+	Move* moveArray; int moveAmount;
 	if(!piece_pattern_moves(&moveArray, &moveAmount, board, piecePoint)) return false;
 
 	bool result = piece_movable_test(board, info, moveArray, moveAmount);
@@ -137,9 +137,9 @@ bool chess_piece_movable(const Piece board[], Info info, Point piecePoint)
 	free(moveArray); return result;
 }
 
-bool piece_movable_test(const Piece board[], Info info, const Move moveArray[], short moveAmount)
+bool piece_movable_test(const Piece board[], Info info, const Move moveArray[], int moveAmount)
 {
-	for(unsigned short index = 0; index < moveAmount; index += 1)
+	for(int index = 0; index < moveAmount; index += 1)
 	{
 		Move move = moveArray[index];
 
@@ -163,7 +163,7 @@ bool move_deliver_check(const Piece board[], Info info, Move move)
 
 bool deliver_check_test(Piece* boardCopy, Info infoCopy, Move move)
 {
-	unsigned short enemyTeam = MOVE_START_ENEMY(boardCopy, move);
+	uint8_t enemyTeam = MOVE_START_ENEMY(boardCopy, move);
 
 	if(!execute_chess_move(boardCopy, &infoCopy, move)) return false;
 
@@ -186,7 +186,7 @@ bool move_deliver_mate(const Piece board[], Info info, Move move)
 
 bool deliver_mate_test(Piece* boardCopy, Info infoCopy, Move move)
 {
-	unsigned short enemyTeam = MOVE_START_ENEMY(boardCopy, move);
+	uint8_t enemyTeam = MOVE_START_ENEMY(boardCopy, move);
 
 	if(!execute_chess_move(boardCopy, &infoCopy, move)) return false;
 

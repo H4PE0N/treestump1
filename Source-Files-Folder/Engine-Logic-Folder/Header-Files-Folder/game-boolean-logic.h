@@ -6,15 +6,15 @@ bool piece_does_check(const Piece board[], Point kingPoint, Point point);
 
 bool king_inside_check(const Piece board[], Point kingPoint);
 
-bool team_pieces_movable(const Piece board[], Info info, unsigned short team);
+bool team_pieces_movable(const Piece board[], Info info, uint8_t team);
 
 bool chess_piece_movable(const Piece board[], Info info, Point piecePoint);
 
-bool piece_movable_test(const Piece board[], Info info, const Move moveArray[], short moveAmount);
+bool piece_movable_test(const Piece board[], Info info, const Move moveArray[], int moveAmount);
 
-bool check_draw_ending(const Piece board[], Info info, unsigned short team);
+bool check_draw_ending(const Piece board[], Info info, uint8_t team);
 
-bool check_mate_ending(const Piece board[], Info info, unsigned short team);
+bool check_mate_ending(const Piece board[], Info info, uint8_t team);
 
 bool little_material_draw(const Piece board[]);
 

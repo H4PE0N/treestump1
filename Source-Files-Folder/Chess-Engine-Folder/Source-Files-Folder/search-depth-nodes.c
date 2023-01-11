@@ -1,18 +1,18 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-long search_depth_nodes(const Piece board[], Info info, unsigned short currentTeam, short depth, long startClock, short seconds)
+long search_depth_nodes(const Piece board[], Info info, uint8_t currentTeam, int depth, long startClock, int seconds)
 {
 	if(depth <= 0) return 1;
 
 	if(timing_limit_ended(startClock, seconds)) return 1;
 
-	Move* moveArray; short moveAmount;
+	Move* moveArray; int moveAmount;
 	if(!team_legal_moves(&moveArray, &moveAmount, board, info, currentTeam)) return 1;
 
 	long localNodes = 0;
 
-	for(unsigned short index = 0; index < moveAmount; index += 1)
+	for(int index = 0; index < moveAmount; index += 1)
 	{
 		Move currentMove = moveArray[index];
 
@@ -21,7 +21,7 @@ long search_depth_nodes(const Piece board[], Info info, unsigned short currentTe
 	free(moveArray); return localNodes;
 }
 
-long search_move_nodes(const Piece board[], Info info, unsigned short currentTeam, short depth, Move move, long startClock, short seconds)
+long search_move_nodes(const Piece board[], Info info, uint8_t currentTeam, int depth, Move move, long startClock, int seconds)
 {
 	Info infoCopy = ALLOC_TEAM_INFO(info, currentTeam);
 
@@ -30,7 +30,7 @@ long search_move_nodes(const Piece board[], Info info, unsigned short currentTea
 	if(!execute_chess_move(boardCopy, &infoCopy, move))
 	{ free(boardCopy); return 1; }
 
-	unsigned short nextTeam = NORMAL_TEAM_ENEMY(currentTeam);
+	uint8_t nextTeam = NORMAL_TEAM_ENEMY(currentTeam);
 
 	long moveNodes = search_depth_nodes(boardCopy, infoCopy, nextTeam, depth, startClock, seconds);
 

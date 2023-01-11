@@ -2,9 +2,9 @@
 #include "../Header-Files-Folder/engine-include-file.h"
 
 // The score of the board is positive for whites favour and negative for blacks favour
-signed short board_state_score(const Piece board[], Info info)
+int board_state_score(const Piece board[], Info info)
 {
-	signed short boardScore = 0;
+	int boardScore = 0;
 
 	boardScore += board_pieces_score(board);
 
@@ -17,9 +17,9 @@ signed short board_state_score(const Piece board[], Info info)
 	return boardScore;
 }
 
-signed short board_pieces_score(const Piece board[])
+int board_pieces_score(const Piece board[])
 {
-	signed short piecesScore = 0;
+	int piecesScore = 0;
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)
 	{
 		Piece piece = board[point];
@@ -33,9 +33,9 @@ signed short board_pieces_score(const Piece board[])
 	return piecesScore;
 }
 
-signed short check_mate_score(const Piece board[], Info info)
+int check_mate_score(const Piece board[], Info info)
 {
-	signed short mateScore = 0;
+	int mateScore = 0;
 
 	if(check_mate_ending(board, info, TEAM_WHITE)) mateScore -= MATE_SCORE;
 
@@ -44,9 +44,9 @@ signed short check_mate_score(const Piece board[], Info info)
 	return mateScore;
 }
 
-signed short check_draw_score(const Piece board[], Info info)
+int check_draw_score(const Piece board[], Info info)
 {
-	signed short drawScore = 0;
+	int drawScore = 0;
 
 	if(check_draw_ending(board, info, TEAM_WHITE)) drawScore -= DRAW_SCORE;
 
@@ -56,51 +56,43 @@ signed short check_draw_score(const Piece board[], Info info)
 }
 
 
-signed short chess_piece_score(Piece piece)
+int chess_piece_score(Piece piece)
 {
 	if(!CHESS_PIECE_EXISTS(piece)) return 0;
 
-	unsigned short team = PIECE_TEAM_MACRO(piece);
-	unsigned short type = PIECE_TYPE_MACRO(piece);
+	uint8_t team = PIECE_TEAM_MACRO(piece);
+	uint8_t type = PIECE_TYPE_MACRO(piece);
 
-	signed short pieceScore = PIECE_TYPE_SCORES[type];
+	int pieceScore = PIECE_TYPE_SCORES[type];
 
-	return team_weight_score(pieceScore, team);
+	return TEAM_WEIGHT_SCORE(pieceScore, team);
 }
 
-signed short team_weight_score(signed short score, unsigned short team)
-{
-	if(team == TEAM_BLACK) return -score;
-	if(team == TEAM_WHITE) return +score;
-
-	return 0;
-}
-
-signed short piece_matrix_score(Piece piece, Point point)
+int piece_matrix_score(Piece piece, Point point)
 {
 	if(!POINT_INSIDE_BOARD(point) || !CHESS_PIECE_EXISTS(piece)) return 0;
 
 	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
   Piece pieceType = (piece & PIECE_TYPE_MASK);
 
-  unsigned short rank = POINT_RANK_MACRO(point);
+  uint8_t rank = POINT_RANK_MACRO(point);
 
-	unsigned short teamRank = team_matrix_rank(rank, pieceTeam);
-	unsigned short teamFile = POINT_FILE_MACRO(point);
+	uint8_t teamRank = team_matrix_rank(rank, pieceTeam);
+	uint8_t teamFile = POINT_FILE_MACRO(point);
 
-	signed short matrixScore = type_matrix_score(pieceType, teamRank, teamFile);
+	int matrixScore = type_matrix_score(pieceType, teamRank, teamFile);
 
-	unsigned short team = PIECE_TEAM_MACRO(piece);
+	uint8_t team = PIECE_TEAM_MACRO(piece);
 
-	return team_weight_score(matrixScore, team);
+	return TEAM_WEIGHT_SCORE(matrixScore, team);
 }
 
-unsigned short team_matrix_rank(unsigned short rank, Piece pieceTeam)
+uint8_t team_matrix_rank(uint8_t rank, Piece pieceTeam)
 {
 	return ((pieceTeam == PIECE_TEAM_BLACK) ? (BOARD_RANKS - rank - 1) : rank);
 }
 
-signed short type_matrix_score(Piece pieceType, unsigned short rank, unsigned short file)
+int type_matrix_score(Piece pieceType, uint8_t rank, uint8_t file)
 {
 	if(pieceType == PIECE_TYPE_PAWN) return PAWN_MATRIX[rank][file];
 

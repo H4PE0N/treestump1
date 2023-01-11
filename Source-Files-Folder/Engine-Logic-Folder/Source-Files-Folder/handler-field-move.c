@@ -1,28 +1,30 @@
 
 #include "../Header-Files-Folder/englog-include-file.h"
 
-unsigned short move_array_amount(const Move moveArray[])
+int move_array_amount(const Move moveArray[])
 {
-	unsigned short movesAmount = 0;
+	int moveAmount = 0;
 
-	while(moveArray[movesAmount] != MOVE_NONE && moveArray[movesAmount] >= 0) movesAmount += 1;
+	while(MOVE_INSIDE_BOARD(moveArray[moveAmount])) moveAmount += 1;
 
-	return movesAmount;
+	return moveAmount;
 }
 
-void paste_capped_moves(Move* moves1, short amount1, const Move moves2[], short amount2)
+void paste_capped_moves(Move* moves1, int amount1, const Move moves2[], int amount2)
 {
-	short pasteAmount = MIN_NUMBER_VALUE(amount1, amount2);
+	int pasteAmount = MIN_NUMBER_VALUE(amount1, amount2);
 	paste_move_array(moves1, moves2, pasteAmount);
 }
 
-void paste_move_array(Move* moves1, const Move moves2[], short moveAmount)
+void paste_move_array(Move* moves1, const Move moves2[], int moveAmount)
 {
-	for(short index = 0; index < moveAmount; index += 1)
+	for(int index = 0; index < moveAmount; index += 1)
+	{
 		moves1[index] = moves2[index];
+	}
 }
 
-Move* copy_move_array(const Move moveArray[], short moveAmount)
+Move* copy_move_array(const Move moveArray[], int moveAmount)
 {
 	Move* movesCopy = malloc(sizeof(Move) * moveAmount);
 	memcpy(movesCopy, moveArray, sizeof(Move) * moveAmount);
@@ -30,13 +32,15 @@ Move* copy_move_array(const Move moveArray[], short moveAmount)
 	return movesCopy;
 }
 
-void append_move_array(Move* moves1, short* amount1, const Move moves2[], short amount2)
+void append_move_array(Move* moves1, int* amount1, const Move moves2[], int amount2)
 {
-	for(short index = 0; index < amount2; index += 1)
+	for(int index = 0; index < amount2; index += 1)
+	{
 		moves1[(*amount1)++] = moves2[index];
+	}
 }
 
-Move* create_move_array(short amount)
+Move* create_move_array(int amount)
 {
 	Move* moveArray = malloc(sizeof(Move) * (amount + 1));
 	memset(moveArray, MOVE_NONE, sizeof(Move) * (amount + 1));
@@ -44,33 +48,21 @@ Move* create_move_array(short amount)
 	return moveArray;
 }
 
-short move_file_offset(Move move, unsigned short team)
+int8_t move_file_offset(Move move, uint8_t team)
 {
-	unsigned short startFile = MOVE_START_FILE(move);
-	unsigned short stopFile = MOVE_STOP_FILE(move);
-
-	signed short fileOffset = (stopFile - startFile);
-
-	if(team == TEAM_WHITE) return fileOffset;
-	if(team == TEAM_BLACK) return fileOffset;
-
-	return SHORT_NONE;
+	return (MOVE_STOP_FILE(move) - MOVE_START_FILE(move));
 }
 
-short move_rank_offset(Move move, unsigned short team)
+int8_t move_rank_offset(Move move, uint8_t team)
 {
-	unsigned short startRank = MOVE_START_RANK(move);
-	unsigned short stopRank = MOVE_STOP_RANK(move);
-
-	signed short rankOffset = (stopRank - startRank);
+	int8_t rankOffset = (MOVE_STOP_RANK(move) - MOVE_START_RANK(move));
 
 	if(team == TEAM_WHITE) return (rankOffset * WHITE_MOVE_VALUE);
-	if(team == TEAM_BLACK) return (rankOffset * BLACK_MOVE_VALUE);
 
-	return SHORT_NONE;
+	return (rankOffset * BLACK_MOVE_VALUE);
 }
 
-short normal_rank_offset(Move move)
+int8_t normal_rank_offset(Move move)
 {
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
@@ -78,7 +70,7 @@ short normal_rank_offset(Move move)
 	return (POINT_RANK_MACRO(stopPoint) - POINT_RANK_MACRO(startPoint));
 }
 
-short normal_file_offset(Move move)
+int8_t normal_file_offset(Move move)
 {
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
@@ -95,7 +87,7 @@ char piece_move_symbol(Piece piece)
 
 bool castle_move_string(char* moveString, Move move)
 {
-	signed short movePattern = BOARD_MOVE_PATTERN(move);
+	int8_t movePattern = BOARD_MOVE_PATTERN(move);
 
 	if(movePattern == KSIDE_FILE_OFFSET) strcpy(moveString, KSIDE_MOVE_STRING);
 
@@ -108,7 +100,7 @@ bool castle_move_string(char* moveString, Move move)
 
 bool chess_move_capture(Move move, const Piece board[], Info info)
 {
-	unsigned short stopFile = MOVE_STOP_FILE(move);
+	uint8_t stopFile = MOVE_STOP_FILE(move);
 
 	if(MOVE_POINTS_ENEMY(board, move)) return true;
 
@@ -119,10 +111,10 @@ bool chess_move_capture(Move move, const Piece board[], Info info)
 
 bool equal_piece_rank(const Piece board[], Point point)
 {
-	unsigned short pieceFile = POINT_FILE_MACRO(point);
-	unsigned short pieceRank = POINT_RANK_MACRO(point);
+	uint8_t pieceFile = POINT_FILE_MACRO(point);
+	uint8_t pieceRank = POINT_RANK_MACRO(point);
 
-	for(unsigned short file = 0; file < BOARD_FILES; file += 1)
+	for(uint8_t file = 0; file < BOARD_FILES; file += 1)
 	{
 		if(pieceFile == file) continue;
 
@@ -134,10 +126,10 @@ bool equal_piece_rank(const Piece board[], Point point)
 
 bool equal_piece_file(const Piece board[], Point point)
 {
-	unsigned short pieceFile = POINT_FILE_MACRO(point);
-	unsigned short pieceRank = POINT_RANK_MACRO(point);
+	uint8_t pieceFile = POINT_FILE_MACRO(point);
+	uint8_t pieceRank = POINT_RANK_MACRO(point);
 
-	for(unsigned short rank = 0; rank < BOARD_RANKS; rank += 1)
+	for(uint8_t rank = 0; rank < BOARD_RANKS; rank += 1)
 	{
 		if(pieceRank == rank) continue;
 
@@ -149,8 +141,8 @@ bool equal_piece_file(const Piece board[], Point point)
 
 bool piece_place_string(char* placeString, const Piece board[], Point point)
 {
-	unsigned short pieceFile = POINT_FILE_MACRO(point);
-	unsigned short pieceRank = POINT_RANK_MACRO(point);
+	uint8_t pieceFile = POINT_FILE_MACRO(point);
+	uint8_t pieceRank = POINT_RANK_MACRO(point);
 
 	if(!equal_piece_file(board, point))
 		strncpy(placeString, &FILE_SYMBOLS[pieceFile], 1);
@@ -185,10 +177,10 @@ bool start_pieces_equal(const Piece board[], Move move1, Move move2)
 
 bool equal_piece_attack(const Piece board[], Info info, Move move)
 {
-	Move* equalMoves; short moveAmount;
+	Move* equalMoves; int moveAmount;
 	if(!equal_pattern_moves(&equalMoves, &moveAmount, board, move)) return false;
 
-	for(short index = 0; index < moveAmount; index += 1)
+	for(int index = 0; index < moveAmount; index += 1)
 	{
 		Move currentMove = equalMoves[index];
 
@@ -203,17 +195,18 @@ bool equal_piece_attack(const Piece board[], Info info, Move move)
 	free(equalMoves); return false;
 }
 
-bool equal_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Move move)
+bool equal_pattern_moves(Move** moves, int* moveAmount, const Piece board[], Move move)
 {
 	if(!target_pattern_moves(moves, moveAmount, board, move)) return false;
 
-	for(short index = 0; index < *moveAmount; index += 1)
+	for(int index = 0; index < *moveAmount; index += 1)
+	{
 		(*moves)[index] = INVERT_CHESS_MOVE((*moves)[index]);
-
+	}
 	return true;
 }
 
-bool target_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Move move)
+bool target_pattern_moves(Move** moves, int* moveAmount, const Piece board[], Move move)
 {
 	if(!MOVE_INSIDE_BOARD(move)) return false;
 

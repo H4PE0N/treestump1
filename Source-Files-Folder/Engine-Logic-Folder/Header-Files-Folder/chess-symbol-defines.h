@@ -34,8 +34,8 @@ extern const char FEN_BQUEEN_SYMBOL;
 extern const char FEN_STRING_DELIM[];
 extern const char FEN_RANK_DELIM[];
 
-extern const unsigned short FEN_STRING_PARTS;
-extern const unsigned short FEN_MAX_CASTLES;
+extern const uint8_t FEN_STRING_PARTS;
+extern const uint8_t FEN_MAX_CASTLES;
 
 extern const char FEN_PASSANT_NONE[];
 extern const char FEN_CASTLES_NONE[];

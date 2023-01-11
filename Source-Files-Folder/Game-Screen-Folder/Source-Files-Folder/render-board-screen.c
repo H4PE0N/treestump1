@@ -178,10 +178,8 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Point po
 	if(!current_team_move(info, team)) return false;
 
 
-	Point* pointArray;
-	if(!piece_legal_points(&pointArray, board, info, point)) return true;
-
-  unsigned short pointAmount = point_array_amount(pointArray);
+	Point* pointArray; int pointAmount;
+	if(!piece_legal_points(&pointArray, &pointAmount, board, info, point)) return true;
 
 
 	if(pointAmount <= 0) { free(pointArray); return false; }
@@ -209,7 +207,7 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Point po
 
 bool render_latest_move(Screen screen, const Move moveArray[])
 {
-	unsigned short moveAmount = move_array_amount(moveArray);
+	int moveAmount = move_array_amount(moveArray);
 
 	if(moveAmount <= 0) return true;
 
@@ -226,7 +224,7 @@ bool render_latest_move(Screen screen, const Move moveArray[])
 
 bool render_engine_moves(Screen screen, const Move engineMoves[])
 {
-	unsigned short moveAmount = move_array_amount(engineMoves);
+	int moveAmount = move_array_amount(engineMoves);
 
 	Surface* movedSquare;
 

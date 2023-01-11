@@ -16,10 +16,10 @@ const Info INFO_TEAM_NONE = 0b000000000000000000000000;
 const Info INFO_TEAM_WHITE = 0b000000000000000000000001;
 const Info INFO_TEAM_BLACK = 0b000000000000000000000010;
 
-const unsigned short INFO_TEAM_SHIFT = 0;
-const unsigned short INFO_PASSANT_SHIFT = 6;
-const unsigned short INFO_COUNTER_SHIFT = 10;
-const unsigned short INFO_TURNS_SHIFT = 17;
+const uint8_t INFO_TEAM_SHIFT = 0;
+const uint8_t INFO_PASSANT_SHIFT = 6;
+const uint8_t INFO_COUNTER_SHIFT = 10;
+const uint8_t INFO_TURNS_SHIFT = 17;
 
 const Info INFO_NONE = 0;
 const Info INFO_BLANK = 0b000000000000000000000000;

@@ -14,8 +14,8 @@ const Move MOVE_STOP_MASK = 0b000000000111111;
 const Move MOVE_START_MASK = 0b000111111000000;
 const Move MOVE_FLAG_MASK = 0b111000000000000;
 
-const unsigned short MOVE_STOP_SHIFT = 0;
-const unsigned short MOVE_START_SHIFT = 6;
+const uint8_t MOVE_STOP_SHIFT = 0;
+const uint8_t MOVE_START_SHIFT = 6;
 
 const Move MOVE_NONE = -1;
 const Move MOVE_BLANK = 0b000000000000000;

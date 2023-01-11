@@ -30,13 +30,11 @@ bool parse_castle_symbol(Info* infoCastle, char symbol);
 
 bool parse_string_current(Info* info, const char stringToken[]);
 
-bool parse_board_files(Piece* board, unsigned short rank, const char rankString[], short length);
+bool parse_board_files(Piece* board, uint8_t rank, const char rankString[], int length);
 
-bool parse_board_symbol(Piece* board, unsigned short rank, unsigned short* file, char symbol);
+bool parse_board_symbol(Piece* board, uint8_t rank, uint8_t* file, char symbol);
 
-bool parse_board_blanks(Piece* board, unsigned short rank, unsigned short* file, short blanks);
-
-
+bool parse_board_blanks(Piece* board, uint8_t rank, uint8_t* file, short blanks);
 
 char chess_piece_symbol(Piece piece);
 

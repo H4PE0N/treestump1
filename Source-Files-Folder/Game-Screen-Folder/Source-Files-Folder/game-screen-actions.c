@@ -10,7 +10,7 @@ bool screen_engine_handler(Piece* board, Info* info, Move* moves, Screen screen)
 
 	if(!move_chess_piece(board, info, computerMove)) return false;
 
-	unsigned short movesAmount = move_array_amount(moves);
+	int movesAmount = move_array_amount(moves);
 	moves[movesAmount] = computerMove;
 
 	return true;
@@ -24,7 +24,7 @@ bool screen_user_handler(Piece* board, Info* info, Move* moves, Screen* screen)
 	if(!move_chess_piece(board, info, move))
 		return screen_user_handler(board, info, moves, screen);
 
-	unsigned short movesAmount = move_array_amount(moves);
+	int movesAmount = move_array_amount(moves);
 	moves[movesAmount] = move;
 
 	return true;

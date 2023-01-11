@@ -130,7 +130,7 @@ bool execute_passant_move(Piece* board, Move move)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	Point pawnPoint = pawn_passant_point(move);
+	Point pawnPoint = PAWN_PASSANT_POINT(move);
 
 	board[stopPoint] = board[startPoint];
 	board[startPoint] = PIECE_NONE;
@@ -170,14 +170,4 @@ bool execute_castle_move(Piece* board, Move move)
 	board[startRook] = PIECE_NONE;
 
 	return true;
-}
-
-Point pawn_passant_point(Move move)
-{
-	if(!MOVE_INSIDE_BOARD(move)) return POINT_NONE;
-
-	unsigned short pawnRank = MOVE_START_RANK(move);
-	unsigned short pawnFile = MOVE_STOP_FILE(move);
-
-	return RANK_FILE_POINT(pawnRank, pawnFile);
 }

@@ -1,14 +1,13 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-// Maybe remove team from the arguments, and instead use info team
 bool engine_depth_move(Move* bestMove, const Piece board[], Info info, int depth)
 {
 	if(depth <= 0) return false;
 
 	int team = INFO_TEAM_MACRO(info);
 
-	Move* moveArray; short moveAmount;
+	Move* moveArray; int moveAmount;
 	if(!team_legal_moves(&moveArray, &moveAmount, board, info, team)) return false;
 
 	int playerSign = TEAM_SCORE_WEIGHT(team);
@@ -18,7 +17,7 @@ bool engine_depth_move(Move* bestMove, const Piece board[], Info info, int depth
 	free(moveArray); return result;
 }
 
-bool choose_engine_move(Move* bestMove, const Piece board[], Info info, int depth, int playerSign, const Move moveArray[], short moveAmount)
+bool choose_engine_move(Move* bestMove, const Piece board[], Info info, int depth, int playerSign, const Move moveArray[], int moveAmount)
 {
 	if(moveAmount <= 0) return false;
 
@@ -48,7 +47,7 @@ int board_depth_score(const Piece board[], Info info, int depth, int alpha, int 
 
 	int team = INFO_TEAM_MACRO(info);
 
-	Move* moveArray; short moveAmount;
+	Move* moveArray; int moveAmount;
 	if(!ordered_legal_moves(&moveArray, &moveAmount, board, info, team))
 	{
 		return (playerSign * board_state_score(board, info));
@@ -58,7 +57,7 @@ int board_depth_score(const Piece board[], Info info, int depth, int alpha, int 
 	free(moveArray); return bestScore;
 }
 
-int choose_move_score(const Piece board[], Info info, int depth, int alpha, int beta, int playerSign, const Move moveArray[], short moveAmount)
+int choose_move_score(const Piece board[], Info info, int depth, int alpha, int beta, int playerSign, const Move moveArray[], int moveAmount)
 {
 	int bestScore = MIN_STATE_SCORE;
 

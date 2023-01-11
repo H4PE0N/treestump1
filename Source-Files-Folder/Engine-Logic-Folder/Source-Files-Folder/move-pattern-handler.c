@@ -3,7 +3,7 @@
 
 bool move_pattern_valid(Move move, Piece piece)
 {
-	unsigned short team = PIECE_TEAM_MACRO(piece);
+	uint8_t team = PIECE_TEAM_MACRO(piece);
 
 	if(PIECE_STORE_TYPE(piece, PIECE_TYPE_PAWN))
 		return pawn_pattern_handler(move, team);
@@ -26,7 +26,7 @@ bool move_pattern_valid(Move move, Piece piece)
 	return false;
 }
 
-bool pawn_pattern_handler(Move move, unsigned short team)
+bool pawn_pattern_handler(Move move, uint8_t team)
 {
 	if(MOVE_STORE_FLAG(move, MOVE_FLAG_DOUBLE))
 		return double_pattern_valid(move, team);
@@ -43,35 +43,35 @@ bool pawn_pattern_handler(Move move, unsigned short team)
 	return false;
 }
 
-bool knight_pattern_handler(Move move, unsigned short team)
+bool knight_pattern_handler(Move move, uint8_t team)
 {
 	if(!MOVE_STORE_FLAG(move, MOVE_FLAG_NONE)) return false;
 
 	return knight_pattern_valid(move, team);
 }
 
-bool bishop_pattern_handler(Move move, unsigned short team)
+bool bishop_pattern_handler(Move move, uint8_t team)
 {
 	if(!MOVE_STORE_FLAG(move, MOVE_FLAG_NONE)) return false;
 
 	return bishop_pattern_valid(move, team);
 }
 
-bool rook_pattern_handler(Move move, unsigned short team)
+bool rook_pattern_handler(Move move, uint8_t team)
 {
 	if(!MOVE_STORE_FLAG(move, MOVE_FLAG_NONE)) return false;
 
 	return rook_pattern_valid(move, team);
 }
 
-bool queen_pattern_handler(Move move, unsigned short team)
+bool queen_pattern_handler(Move move, uint8_t team)
 {
 	if(!MOVE_STORE_FLAG(move, MOVE_FLAG_NONE)) return false;
 
 	return queen_pattern_valid(move, team);
 }
 
-bool king_pattern_handler(Move move, unsigned short team)
+bool king_pattern_handler(Move move, uint8_t team)
 {
 	if(MOVE_STORE_FLAG(move, MOVE_FLAG_CASTLE))
 		return castle_pattern_valid(move, team);

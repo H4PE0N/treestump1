@@ -6,14 +6,14 @@ bool board_points_team(const Piece board[], Point point1, Point point2);
 
 bool board_points_enemy(const Piece board[], Point point1, Point point2);
 
-short array_point_index(const Point pointArray[], short amount, Point point);
+int array_point_index(const Point pointArray[], int amount, Point point);
 
-bool delete_array_point(Point* pointArray, short amount, short delIndex);
+bool delete_array_point(Point* pointArray, int amount, int delIndex);
 
-unsigned short point_array_amount(const Point pointArray[]);
+uint point_array_amount(const Point pointArray[]);
 
-Point* create_point_array(short amount);
+Point* create_point_array(int amount);
 
-Point board_king_point(const Piece board[], unsigned short team);
+Point board_king_point(const Piece board[], uint8_t team);
 
 #endif

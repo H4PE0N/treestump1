@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 
 	print_console_board(board);
 
-	int depth = 6;
+	int depth = 4;
 	// int seconds = 10;
 
 	long startTime;
@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
 
 	startTime = clock();
 
-	int moveAmount = 30;
+	int moveAmount = 10;
 
 	Move* engineMoves;
 	if(amount_engine_moves(&engineMoves, board, info, TEAM_WHITE, depth, moveAmount))

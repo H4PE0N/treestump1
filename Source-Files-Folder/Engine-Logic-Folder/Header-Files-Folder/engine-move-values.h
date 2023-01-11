@@ -2,7 +2,7 @@
 #ifndef ENGINE_MOVE_VALUES_H
 #define ENGINE_MOVE_VALUES_H
 
-typedef signed short Move;
+typedef int16_t Move;
 
 extern const Move MOVE_FLAG_NONE;
 extern const Move MOVE_FLAG_KNIGHT;
@@ -17,8 +17,8 @@ extern const Move MOVE_STOP_MASK;
 extern const Move MOVE_START_MASK;
 extern const Move MOVE_FLAG_MASK;
 
-extern const unsigned short MOVE_STOP_SHIFT;
-extern const unsigned short MOVE_START_SHIFT;
+extern const uint8_t MOVE_STOP_SHIFT;
+extern const uint8_t MOVE_START_SHIFT;
 
 extern const Move MOVE_NONE;
 extern const Move MOVE_BLANK;

@@ -33,8 +33,8 @@ const char FEN_BQUEEN_SYMBOL = 'q';
 const char FEN_STRING_DELIM[] = " ";
 const char FEN_RANK_DELIM[] = "/";
 
-const unsigned short FEN_STRING_PARTS = 6;
-const unsigned short FEN_MAX_CASTLES = 4;
+const uint8_t FEN_STRING_PARTS = 6;
+const uint8_t FEN_MAX_CASTLES = 4;
 
 const char FEN_PASSANT_NONE[] = "-";
 const char FEN_CASTLES_NONE[] = "-";

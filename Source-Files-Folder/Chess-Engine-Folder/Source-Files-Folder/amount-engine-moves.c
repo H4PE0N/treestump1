@@ -1,11 +1,11 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool amount_engine_moves(Move** moveArray, const Piece board[], Info info, unsigned short team, short depth, short amount)
+bool amount_engine_moves(Move** moveArray, const Piece board[], Info info, uint8_t team, int depth, int amount)
 {
 	if((amount <= 0) && (depth <= 0)) return false;
 
-	Move* engineMoves; short engineAmount;
+	Move* engineMoves; int engineAmount;
 	if(!sorted_engine_moves(&engineMoves, &engineAmount, board, info, team, depth)) return false;
 
 	*moveArray = create_move_array(amount);
@@ -15,7 +15,7 @@ bool amount_engine_moves(Move** moveArray, const Piece board[], Info info, unsig
 	free(engineMoves); return true;
 }
 
-bool sorted_engine_moves(Move** moveArray, short* moveAmount, const Piece board[], Info info, unsigned short evalTeam, short depth)
+bool sorted_engine_moves(Move** moveArray, int* moveAmount, const Piece board[], Info info, uint8_t evalTeam, int depth)
 {
 	if(depth <= 0) return false;
 
@@ -23,7 +23,7 @@ bool sorted_engine_moves(Move** moveArray, short* moveAmount, const Piece board[
 
 	if(!team_legal_moves(moveArray, moveAmount, board, info, currTeam)) return false;
 
-	short* moveScores;
+	int* moveScores;
 	if(!move_array_scores(&moveScores, board, info, currTeam, depth, *moveArray, *moveAmount)) return false;
 
 	qsort_moves_scores(*moveArray, moveScores, *moveAmount, evalTeam);
@@ -31,15 +31,16 @@ bool sorted_engine_moves(Move** moveArray, short* moveAmount, const Piece board[
 	free(moveScores); return true;
 }
 
-bool move_array_scores(short** moveScores, const Piece board[], Info info, unsigned short team, short depth, const Move moveArray[], short moveAmount)
+bool move_array_scores(int** moveScores, const Piece board[], Info info, uint8_t team, int depth, const Move moveArray[], int moveAmount)
 {
 	if(moveAmount <= 0) return false;
 
-	*moveScores = create_short_array(moveAmount);
+	*moveScores = malloc(sizeof(int) * moveAmount);
+	memset(*moveScores, 0, sizeof(int) * moveAmount);
 
 	int playerSign = TEAM_SCORE_WEIGHT(team);
 
-	for(unsigned short index = 0; index < moveAmount; index += 1)
+	for(int index = 0; index < moveAmount; index += 1)
 	{
 		Move currentMove = moveArray[index];
 
@@ -48,14 +49,4 @@ bool move_array_scores(short** moveScores, const Piece board[], Info info, unsig
 		(*moveScores)[index] = moveScore;
 	}
 	return true;
-}
-
-short* create_short_array(unsigned short length)
-{
-	short* array = malloc(sizeof(short) * (length + 1));
-	for(unsigned short index = 0; index < (length + 1); index += 1)
-	{
-		array[index] = 0;
-	}
-	return array;
 }

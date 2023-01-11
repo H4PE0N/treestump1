@@ -16,8 +16,8 @@ const Piece PIECE_TEAM_BLACK = 0b10000;
 const Piece PIECE_TEAM_MASK = 0b11000;
 const Piece PIECE_TYPE_MASK = 0b00111;
 
-const unsigned short PIECE_TEAM_SHIFT = 3;
-const unsigned short PIECE_TYPE_SHIFT = 0;
+const uint8_t PIECE_TEAM_SHIFT = 3;
+const uint8_t PIECE_TYPE_SHIFT = 0;
 
 const Piece PIECE_NONE = 0;
 const Piece PIECE_BLANK = 0b00000;

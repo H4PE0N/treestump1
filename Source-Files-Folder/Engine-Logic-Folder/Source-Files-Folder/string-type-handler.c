@@ -1,7 +1,7 @@
 
 #include "../Header-Files-Folder/englog-include-file.h"
 
-bool split_string_delim(char* stringArray[], const char string[], short length, const char delim[], short amount)
+bool split_string_delim(char* stringArray[], const char string[], int length, const char delim[], int amount)
 {
 	if(amount < 1) return false;
 
@@ -16,7 +16,7 @@ bool split_string_delim(char* stringArray[], const char string[], short length, 
 		free_array_strings(stringArray, amount); return false;
 	}
 
-	for(unsigned short index = 0; index < amount; index += 1)
+	for(int index = 0; index < amount; index += 1)
 	{
 		strcpy(stringArray[index], stringToken);
 
@@ -25,11 +25,11 @@ bool split_string_delim(char* stringArray[], const char string[], short length, 
 	return true;
 }
 
-bool merge_string_delim(char* string, char* stringArray[], short amount, const char delim[])
+bool merge_string_delim(char* string, char* stringArray[], int amount, const char delim[])
 {
 	if(amount < 1) return false;
 
-	for(unsigned short index = 0; index < amount; index += 1)
+	for(int index = 0; index < amount; index += 1)
 	{
 		strcat(string, stringArray[index]);
 
@@ -38,34 +38,35 @@ bool merge_string_delim(char* string, char* stringArray[], short amount, const c
 	return true;
 }
 
-void alloc_array_strings(char* stringArray[], short amount, short length)
+void alloc_array_strings(char* stringArray[], int amount, int length)
 {
-	for(unsigned short index = 0; index < amount; index += 1)
+	for(int index = 0; index < amount; index += 1)
 	{
 		stringArray[index] = create_char_string(length);
 	}
 }
 
-void free_array_strings(char* stringArray[], short amount)
+void free_array_strings(char* stringArray[], int amount)
 {
-	for(unsigned short index = 0; index < amount; index += 1)
+	for(int index = 0; index < amount; index += 1)
 	{
 		free(stringArray[index]);
 	}
 }
 
-short string_symbol_index(const char string[], short length, char symbol)
+int string_symbol_index(const char string[], int length, char symbol)
 {
-	for(unsigned short index = 0; index < length; index += 1)
+	for(int index = 0; index < length; index += 1)
 	{
 		if(symbol == string[index]) return index;
 	}
 	return INDEX_NONE;
 }
 
-char* create_char_string(short length)
+char* create_char_string(int length)
 {
 	char* string = malloc(sizeof(char) * (length + 1));
+
 	memset(string, '\0', sizeof(char) * (length + 1));
 
 	return string;
@@ -99,25 +100,4 @@ bool parse_spaced_token(char* result, const char string[], const char token[])
   if((strToken = strtok(NULL, " ")) == NULL) return false;
 
   strcpy(result, strToken); return true;
-}
-
-bool parse_string_short(unsigned short* number, const char string[])
-{
-	unsigned short stringLength = strlen(string);
-
-	if(stringLength < 1) return false;
-
-	unsigned short dummyNumber = 0;
-
-	for(unsigned short index = 0; index < stringLength; index += 1)
-	{
-		unsigned short value = pow(10, (stringLength - index - 1));
-
-		signed short potentNumber = (string[index] - '0');
-
-		if(!NUMBER_IN_BOUNDS(potentNumber, 0, 9)) return false;
-
-		dummyNumber += (value * potentNumber);
-	}
-	*number = dummyNumber; return true;
 }

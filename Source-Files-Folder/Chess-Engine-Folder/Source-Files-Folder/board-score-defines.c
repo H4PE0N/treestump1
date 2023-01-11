@@ -1,7 +1,7 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-const signed short PAWN_MATRIX[8][8] =
+const int PAWN_MATRIX[8][8] =
 {
 	{+0, +0, +0, +0, +0, +0, +0, +0},
 	{+50, +50, +50, +50, +50, +50, +50, +50},
@@ -13,7 +13,7 @@ const signed short PAWN_MATRIX[8][8] =
 	{+0, +0, +0, +0, +0, +0, +0, +0}
 };
 
-const signed short KNIGHT_MATRIX[8][8] =
+const int KNIGHT_MATRIX[8][8] =
 {
 	{-50, -40, -30, -30, -30, -30, -40, -50},
 	{-40, -20, +0, +0, +0, +0, -20, -40},
@@ -25,7 +25,7 @@ const signed short KNIGHT_MATRIX[8][8] =
 	{-50, -40, -30, -30, -30, -30, -40, -50}
 };
 
-const signed short BISHOP_MATRIX[8][8] =
+const int BISHOP_MATRIX[8][8] =
 {
 	{-20, -10, -10, -10, -10, -10, -10, -20},
 	{-10, +0, +0, +0, +0, +0, +0, -10},
@@ -37,7 +37,7 @@ const signed short BISHOP_MATRIX[8][8] =
 	{-20, -10, -10, -10, -10, -10, -10, -20}
 };
 
-const signed short ROOK_MATRIX[8][8] =
+const int ROOK_MATRIX[8][8] =
 {
 	{+0, +0, +0, +0, +0, +0, +0, +0},
 	{+5, +10, +10, +10, +10, +10, +10, +5},
@@ -49,7 +49,7 @@ const signed short ROOK_MATRIX[8][8] =
 	{+0, +0, +0, +5, +5, +0, +0, +0}
 };
 
-const signed short QUEEN_MATRIX[8][8] =
+const int QUEEN_MATRIX[8][8] =
 {
 	{-20, -10, -10, -5, -5, -10, -10, -20},
 	{-10, +0, +0, +0, +0, +0, +0, -10},
@@ -61,7 +61,7 @@ const signed short QUEEN_MATRIX[8][8] =
 	{-20, -10, -10, -5, -5, -10, -10, -20}
 };
 
-const signed short KING_MATRIX[8][8] =
+const int KING_MATRIX[8][8] =
 {
 	{-30, -40, -40, -50, -50, -40, -40, -30},
 	{-30, -40, -40, -50, -50, -40, -40, -30},
@@ -73,13 +73,13 @@ const signed short KING_MATRIX[8][8] =
 	{+20, +30, +10, +0, +0, +10, +30, +20}
 };
 
-const signed short PIECE_TYPE_SCORES[] = {0, +10, +30, +30, +50, +90, +900};
+const int PIECE_TYPE_SCORES[] = {0, +10, +30, +30, +50, +90, +900};
 
-const signed short MATE_SCORE = +10000;
-const signed short DRAW_SCORE = -0;
+const int MATE_SCORE = +10000;
+const int DRAW_SCORE = -0;
 
 const float MATRIX_FACTOR = 1.0;
 const float PIECE_FACTOR = 5.0;
 
-const signed short MIN_STATE_SCORE = -20000;
-const signed short MAX_STATE_SCORE = +20000;
+const int MIN_STATE_SCORE = -20000;
+const int MAX_STATE_SCORE = +20000;

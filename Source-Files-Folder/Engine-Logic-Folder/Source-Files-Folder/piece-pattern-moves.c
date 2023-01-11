@@ -1,7 +1,7 @@
 
 #include "../Header-Files-Folder/englog-include-file.h"
 
-bool piece_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Point piecePoint)
+bool piece_pattern_moves(Move** moves, int* moveAmount, const Piece board[], Point piecePoint)
 {
   if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
@@ -26,26 +26,26 @@ bool piece_pattern_moves(Move** moves, short* moveAmount, const Piece board[], P
 	return false;
 }
 
-bool pawn_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Point piecePoint)
+bool pawn_pattern_moves(Move** moves, int* moveAmount, const Piece board[], Point piecePoint)
 {
   if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
 	*moves = create_move_array(4); *moveAmount = 0;
 
-  unsigned short pieceRank = POINT_RANK_MACRO(piecePoint);
-  unsigned short pieceFile = POINT_FILE_MACRO(piecePoint);
+  uint8_t pieceRank = POINT_RANK_MACRO(piecePoint);
+  uint8_t pieceFile = POINT_FILE_MACRO(piecePoint);
 
-  unsigned short team = BOARD_POINT_TEAM(board, piecePoint);
+  uint8_t team = BOARD_POINT_TEAM(board, piecePoint);
 
-	for(unsigned short rank = 0; rank < 2; rank += 1)
+	for(uint8_t rank = 0; rank < 2; rank += 1)
 	{
-		for(unsigned short file = 0; file < 3; file += 1)
+		for(uint8_t file = 0; file < 3; file += 1)
 		{
 			if(rank == 1 && (file == 0 || file == 2) ) continue;
 
       // This here should be a seperate function:
-      short realRank = pieceRank + (rank + 1) * ((team == TEAM_WHITE) ? WHITE_MOVE_VALUE : BLACK_MOVE_VALUE);
-			short realFile = (pieceFile - 1) + file;
+      int8_t realRank = pieceRank + (rank + 1) * ((team == TEAM_WHITE) ? WHITE_MOVE_VALUE : BLACK_MOVE_VALUE);
+			int8_t realFile = (pieceFile - 1) + file;
 
       if(!RANK_FILE_INSIDE(realRank, realFile)) continue;
 
@@ -57,24 +57,24 @@ bool pawn_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Po
 	return true;
 }
 
-bool knight_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Point piecePoint)
+bool knight_pattern_moves(Move** moves, int* moveAmount, const Piece board[], Point piecePoint)
 {
   if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
   *moves = create_move_array(8); *moveAmount = 0;
 
-  unsigned short pieceRank = POINT_RANK_MACRO(piecePoint);
-  unsigned short pieceFile = POINT_FILE_MACRO(piecePoint);
+  uint8_t pieceRank = POINT_RANK_MACRO(piecePoint);
+  uint8_t pieceFile = POINT_FILE_MACRO(piecePoint);
 
-	for(unsigned short rank = 0; rank < 5; rank += 1)
+	for(uint8_t rank = 0; rank < 5; rank += 1)
 	{
-		for(unsigned short file = 0; file < 5; file += 1)
+		for(uint8_t file = 0; file < 5; file += 1)
 		{
 			if(rank == file || (rank + file) == 4) continue;
 			if(rank == 2 || file == 2) continue;
 
-			short realRank = (pieceRank - 2) + rank;
-			short realFile = (pieceFile - 2) + file;
+			int8_t realRank = (pieceRank - 2) + rank;
+			int8_t realFile = (pieceFile - 2) + file;
 
 			if(!RANK_FILE_INSIDE(realRank, realFile)) continue;
 
@@ -86,16 +86,16 @@ bool knight_pattern_moves(Move** moves, short* moveAmount, const Piece board[], 
   return true;
 }
 
-bool straight_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Point piecePoint)
+bool straight_pattern_moves(Move** moves, int* moveAmount, const Piece board[], Point piecePoint)
 {
   if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
   *moves = create_move_array(14); *moveAmount = 0;
 
-  unsigned short pieceRank = POINT_RANK_MACRO(piecePoint);
-  unsigned short pieceFile = POINT_FILE_MACRO(piecePoint);
+  uint8_t pieceRank = POINT_RANK_MACRO(piecePoint);
+  uint8_t pieceFile = POINT_FILE_MACRO(piecePoint);
 
-  for(unsigned short rank = 0; rank < BOARD_RANKS; rank += 1)
+  for(uint8_t rank = 0; rank < BOARD_RANKS; rank += 1)
 	{
     Point point = RANK_FILE_POINT(rank, pieceFile);
     if(piecePoint == point) continue;
@@ -103,7 +103,7 @@ bool straight_pattern_moves(Move** moves, short* moveAmount, const Piece board[]
 		(*moves)[(*moveAmount)++] = START_STOP_MOVE(piecePoint, point);
 	}
 
-	for(unsigned short file = 0; file < BOARD_FILES; file += 1)
+	for(uint8_t file = 0; file < BOARD_FILES; file += 1)
 	{
 		Point point = RANK_FILE_POINT(pieceRank, file);
     if(piecePoint == point) continue;
@@ -113,19 +113,19 @@ bool straight_pattern_moves(Move** moves, short* moveAmount, const Piece board[]
   return true;
 }
 
-bool diagonal_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Point piecePoint)
+bool diagonal_pattern_moves(Move** moves, int* moveAmount, const Piece board[], Point piecePoint)
 {
   if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
   *moves = create_move_array(14); *moveAmount = 0;
 
-  unsigned short pieceRank = POINT_RANK_MACRO(piecePoint);
-  unsigned short pieceFile = POINT_FILE_MACRO(piecePoint);
+  uint8_t pieceRank = POINT_RANK_MACRO(piecePoint);
+  uint8_t pieceFile = POINT_FILE_MACRO(piecePoint);
 
-  for(short index = -8; index <= 16; index += 1)
+  for(int8_t index = -8; index <= 16; index += 1)
 	{
-		short realRank = (pieceRank + index);
-		short realFile = (pieceFile + index);
+		int8_t realRank = (pieceRank + index);
+		int8_t realFile = (pieceFile + index);
 
     if(!RANK_FILE_INSIDE(realRank, realFile)) continue;
 
@@ -135,10 +135,10 @@ bool diagonal_pattern_moves(Move** moves, short* moveAmount, const Piece board[]
     (*moves)[(*moveAmount)++] = START_STOP_MOVE(piecePoint, point);
 	}
 
-	for(short index = -8; index <= 16; index += 1)
+	for(int8_t index = -8; index <= 16; index += 1)
 	{
-		short realRank = (pieceRank + index);
-		short realFile = (pieceFile - index);
+		int8_t realRank = (pieceRank + index);
+		int8_t realFile = (pieceFile - index);
 
     if(!RANK_FILE_INSIDE(realRank, realFile)) continue;
 
@@ -150,13 +150,13 @@ bool diagonal_pattern_moves(Move** moves, short* moveAmount, const Piece board[]
   return true;
 }
 
-bool rook_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Point piecePoint)
+bool rook_pattern_moves(Move** moves, int* moveAmount, const Piece board[], Point piecePoint)
 {
   if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
   *moves = create_move_array(14); *moveAmount = 0;
 
-  Move* straightMoves; short addingAmount;
+  Move* straightMoves; int addingAmount;
   if(straight_pattern_moves(&straightMoves, &addingAmount, board, piecePoint))
   {
     append_move_array(*moves, moveAmount, straightMoves, addingAmount);
@@ -166,13 +166,13 @@ bool rook_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Po
   return true;
 }
 
-bool bishop_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Point piecePoint)
+bool bishop_pattern_moves(Move** moves, int* moveAmount, const Piece board[], Point piecePoint)
 {
   if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
   *moves = create_move_array(14); *moveAmount = 0;
 
-  Move* diagonalMoves; short addingAmount;
+  Move* diagonalMoves; int addingAmount;
   if(diagonal_pattern_moves(&diagonalMoves, &addingAmount, board, piecePoint))
   {
   	append_move_array(*moves, moveAmount, diagonalMoves, addingAmount);
@@ -182,13 +182,13 @@ bool bishop_pattern_moves(Move** moves, short* moveAmount, const Piece board[], 
   return true;
 }
 
-bool queen_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Point piecePoint)
+bool queen_pattern_moves(Move** moves, int* moveAmount, const Piece board[], Point piecePoint)
 {
   if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
   *moves = create_move_array(28); *moveAmount = 0;
 
-  Move* diagonalMoves; short addingAmount;
+  Move* diagonalMoves; int addingAmount;
   if(diagonal_pattern_moves(&diagonalMoves, &addingAmount, board, piecePoint))
   {
   	append_move_array(*moves, moveAmount, diagonalMoves, addingAmount);
@@ -206,23 +206,23 @@ bool queen_pattern_moves(Move** moves, short* moveAmount, const Piece board[], P
   return true;
 }
 
-bool king_pattern_moves(Move** moves, short* moveAmount, const Piece board[], Point piecePoint)
+bool king_pattern_moves(Move** moves, int* moveAmount, const Piece board[], Point piecePoint)
 {
   if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
   *moves = create_move_array(10); *moveAmount = 0;
 
-  unsigned short pieceRank = POINT_RANK_MACRO(piecePoint);
-  unsigned short pieceFile = POINT_FILE_MACRO(piecePoint);
+  uint8_t pieceRank = POINT_RANK_MACRO(piecePoint);
+  uint8_t pieceFile = POINT_FILE_MACRO(piecePoint);
 
-  for(unsigned short rank = 0; rank < 3; rank += 1)
+  for(uint8_t rank = 0; rank < 3; rank += 1)
 	{
-		for(unsigned short file = 0; file < 5; file += 1)
+		for(uint8_t file = 0; file < 5; file += 1)
 		{
       if((file == 0 || file == 4) && rank != 1) continue;
 
-			short realRank = (pieceRank - 1) + rank;
-			short realFile = (pieceFile - 2) + file;
+			int8_t realRank = (pieceRank - 1) + rank;
+			int8_t realFile = (pieceFile - 2) + file;
 
       if(!RANK_FILE_INSIDE(realRank, realFile)) continue;
 

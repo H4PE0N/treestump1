@@ -103,7 +103,7 @@ bool create_string_board(char* string, const Piece board[])
 
 bool create_string_board_t(char* string, char** stringArray, const Piece board[])
 {
-	for(unsigned short rank = 0; rank < BOARD_RANKS; rank += 1)
+	for(uint8_t rank = 0; rank < BOARD_RANKS; rank += 1)
 		if(!create_board_files(stringArray[rank], board, rank)) return false;
 
 	merge_string_delim(string, stringArray, BOARD_RANKS, FEN_RANK_DELIM);
@@ -111,9 +111,9 @@ bool create_string_board_t(char* string, char** stringArray, const Piece board[]
 	return true;
 }
 
-bool create_board_files(char* string, const Piece board[], unsigned short rank)
+bool create_board_files(char* string, const Piece board[], uint8_t rank)
 {
-	for(unsigned short file = 0; file < BOARD_FILES; file += 1)
+	for(uint8_t file = 0; file < BOARD_FILES; file += 1)
 	{
 		Point point = RANK_FILE_POINT(rank, file);
 
@@ -135,7 +135,7 @@ bool append_piece_symbol(char* string, const Piece board[], Point point)
 	strncat(string, &symbol, 1); return true;
 }
 
-bool append_blank_symbol(char* string, const Piece board[], unsigned short rank, unsigned short* file)
+bool append_blank_symbol(char* string, const Piece board[], uint8_t rank, uint8_t* file)
 {
 	char symbol;
 	if(!create_blank_symbol(&symbol, rank, file, board)) return false;
@@ -143,9 +143,9 @@ bool append_blank_symbol(char* string, const Piece board[], unsigned short rank,
 	strncat(string, &symbol, 1); return true;
 }
 
-bool create_blank_symbol(char* symbol, unsigned short rank, unsigned short* file, const Piece board[])
+bool create_blank_symbol(char* symbol, uint8_t rank, uint8_t* file, const Piece board[])
 {
-	short blanks = 0;
+	uint8_t blanks = 0;
 
 	for(; (*file + blanks) < BOARD_FILES; blanks += 1)
 	{
@@ -162,8 +162,8 @@ bool create_string_point(char* string, Point point)
 {
 	if(!POINT_INSIDE_BOARD(point)) return false;
 
-	unsigned short rankIndex = POINT_RANK_MACRO(point);
-	unsigned short fileIndex = POINT_FILE_MACRO(point);
+	uint8_t rankIndex = POINT_RANK_MACRO(point);
+	uint8_t fileIndex = POINT_FILE_MACRO(point);
 
 	sprintf(string, "%c%c", FILE_SYMBOLS[fileIndex], RANK_SYMBOLS[rankIndex]);
 

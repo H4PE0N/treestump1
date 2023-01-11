@@ -37,7 +37,7 @@ bool passant_pattern_fits(const Piece board[], Move move)
 	if(!MOVE_INSIDE_BOARD(move)) return false;
 
 	Point startPoint = MOVE_START_MACRO(move);
-	Point passantPoint = pawn_passant_point(move);
+	Point passantPoint = PAWN_PASSANT_POINT(move);
 
 	if(POINT_PIECE_TYPE(board, startPoint) != PIECE_TYPE_PAWN) return false;
 	if(POINT_PIECE_TYPE(board, passantPoint) != PIECE_TYPE_PAWN) return false;
@@ -54,7 +54,7 @@ bool castle_pattern_fits(const Piece board[], Move castleMove)
 {
 	if(!MOVE_INSIDE_BOARD(castleMove)) return false;
 
-	unsigned short startTeam = MOVE_START_TEAM(board, castleMove);
+	uint8_t startTeam = MOVE_START_TEAM(board, castleMove);
 
 	if(START_PIECE_TYPE(board, castleMove) != PIECE_TYPE_KING) return false;
 
@@ -62,7 +62,7 @@ bool castle_pattern_fits(const Piece board[], Move castleMove)
 	if(rookPoint == POINT_NONE) return false;
 
 	Piece rookPieceType = POINT_PIECE_TYPE(board, rookPoint);
-	unsigned short rookTeam = BOARD_POINT_TEAM(board, rookPoint);
+	uint8_t rookTeam = BOARD_POINT_TEAM(board, rookPoint);
 
 	if(!((rookPieceType == PIECE_TYPE_ROOK) && (rookTeam == startTeam))) return false;
 
@@ -75,8 +75,8 @@ Point castle_rook_point(Move castleMove)
 {
 	if(!MOVE_INSIDE_BOARD(castleMove)) return POINT_NONE;
 
-	unsigned short kingPoint = MOVE_START_MACRO(castleMove);
-	signed short movePattern = BOARD_MOVE_PATTERN(castleMove);
+	Point kingPoint = MOVE_START_MACRO(castleMove);
+	int8_t movePattern = BOARD_MOVE_PATTERN(castleMove);
 
 	if((kingPoint == WHITE_KING_POINT) && (movePattern == KSIDE_FILE_OFFSET))
 		return WROOK_KSIDE_POINT;
@@ -102,11 +102,11 @@ bool pawn_pattern_fits(const Piece board[], Move move)
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	unsigned short startTeam = BOARD_POINT_TEAM(board, startPoint);
-	unsigned short stopTeam = BOARD_POINT_TEAM(board, stopPoint);
+	uint8_t startTeam = BOARD_POINT_TEAM(board, startPoint);
+	uint8_t stopTeam = BOARD_POINT_TEAM(board, stopPoint);
 
-	unsigned short fileOffset = abs(move_file_offset(move, startTeam));
-	signed short rankOffset = move_rank_offset(move, startTeam);
+	int8_t fileOffset = abs(move_file_offset(move, startTeam));
+	int8_t rankOffset = move_rank_offset(move, startTeam);
 
 	if((fileOffset == 0) && ((rankOffset == 1) || (rankOffset == 2)))
 	{
@@ -125,19 +125,19 @@ bool clear_moving_path(const Piece board[], Move move)
 
 	if(START_PIECE_TYPE(board, move) == PIECE_TYPE_KNIGHT) return true;
 
-	short rankFactor, fileFactor, moveSteps;
+	int8_t rankFactor, fileFactor, moveSteps;
 	if(!moving_path_values(&rankFactor, &fileFactor, &moveSteps, move)) return false;
 
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
-	short startRank = POINT_RANK_MACRO(startPoint);
-	short startFile = POINT_FILE_MACRO(startPoint);
+	uint8_t startRank = POINT_RANK_MACRO(startPoint);
+	uint8_t startFile = POINT_FILE_MACRO(startPoint);
 
-	for(short index = 0; index <= moveSteps; index += 1)
+	for(uint8_t index = 0; index <= moveSteps; index += 1)
 	{
-		short currentFile = (startFile + index * fileFactor);
-		short currentRank = (startRank + index * rankFactor);
+		uint8_t currentFile = (startFile + index * fileFactor);
+		uint8_t currentRank = (startRank + index * rankFactor);
 
 		Point point = RANK_FILE_POINT(currentRank, currentFile);
 
@@ -148,13 +148,13 @@ bool clear_moving_path(const Piece board[], Move move)
 	return true;
 }
 
-bool moving_path_values(signed short* rankFactor, signed short* fileFactor, short* moveSteps, Move move)
+bool moving_path_values(int8_t* rankFactor, int8_t* fileFactor, int8_t* moveSteps, Move move)
 {
-	short rankOffset = normal_rank_offset(move);
-	short fileOffset = normal_file_offset(move);
+	int8_t rankOffset = normal_rank_offset(move);
+	int8_t fileOffset = normal_file_offset(move);
 
-	short absRankOffset = abs(rankOffset);
-	short absFileOffset = abs(fileOffset);
+	int8_t absRankOffset = abs(rankOffset);
+	int8_t absFileOffset = abs(fileOffset);
 
 	bool moveStraight = ((absRankOffset == 0) || (absFileOffset == 0));
 	bool moveDiagonal = (absRankOffset == absFileOffset);

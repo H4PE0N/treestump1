@@ -2,23 +2,21 @@
 #ifndef CREATE_BOARD_SCORE_H
 #define CREATE_BOARD_SCORE_H
 
-signed short board_state_score(const Piece board[], Info info);
+int board_state_score(const Piece board[], Info info);
 
-signed short board_pieces_score(const Piece board[]);
+int board_pieces_score(const Piece board[]);
 
-signed short check_mate_score(const Piece board[], Info info);
+int check_mate_score(const Piece board[], Info info);
 
-signed short check_draw_score(const Piece board[], Info info);
+int check_draw_score(const Piece board[], Info info);
 
 
-signed short chess_piece_score(Piece piece);
+int chess_piece_score(Piece piece);
 
-signed short team_weight_score(signed short score, unsigned short team);
+int piece_matrix_score(Piece piece, Point point);
 
-signed short piece_matrix_score(Piece piece, Point point);
+int type_matrix_score(Piece pieceType, uint8_t rank, uint8_t file);
 
-signed short type_matrix_score(Piece pieceType, unsigned short rank, unsigned short file);
-
-unsigned short team_matrix_rank(unsigned short rank, Piece pieceTeam);
+uint8_t team_matrix_rank(uint8_t rank, Piece pieceTeam);
 
 #endif
