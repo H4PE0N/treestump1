@@ -12,7 +12,7 @@ bool parse_create_board(Piece** board, Info* info, const char fenString[])
 
 bool parse_fen_string(Piece* board, Info* info, const char fenString[])
 {
-	uint stringLength = strlen(fenString);
+	int stringLength = strlen(fenString);
 
 	char* stringArray[FEN_STRING_PARTS];
 
@@ -55,7 +55,7 @@ bool parse_string_current(Info* info, const char stringToken[])
 {
 	Info infoCurrentTeam = INFO_BLANK;
 
-	uint stringLength = strlen(stringToken);
+	int stringLength = strlen(stringToken);
 
 	if(stringLength != 1) return false;
 
@@ -105,7 +105,7 @@ bool parse_string_passant(Info* info, const char stringToken[])
 
 bool parse_string_point(Point* point, const char string[])
 {
-	uint stringLength = strlen(string);
+	int stringLength = strlen(string);
 
 	if(stringLength != 2) return false;
 
@@ -121,7 +121,7 @@ bool parse_string_point(Point* point, const char string[])
 
 bool parse_string_move(Move* move, const char stringMove[])
 {
-  uint stringLen = strlen(stringMove);
+  int stringLen = strlen(stringMove);
   if(stringLen != 4 && stringLen != 5) return false;
 
   char startString[3];
@@ -152,7 +152,7 @@ bool parse_string_castles(Info* info, const char stringToken[])
 
 	if(!strcmp(stringToken, FEN_CASTLES_NONE)) return true;
 
-	uint stringLength = strlen(stringToken);
+	int stringLength = strlen(stringToken);
 	if(stringLength > FEN_MAX_CASTLES) return false;
 
 	for(int index = 0; index < stringLength; index += 1)
@@ -193,7 +193,7 @@ bool parse_castle_symbol(Info* infoCastle, char symbol)
 
 bool parse_string_board(Piece* board, const char stringToken[])
 {
-	uint stringLength = strlen(stringToken);
+	int stringLength = strlen(stringToken);
 
 	char* stringArray[BOARD_RANKS];
 
@@ -207,7 +207,7 @@ bool parse_string_board(Piece* board, const char stringToken[])
 
 	for(uint8_t rank = 0; rank < BOARD_RANKS; rank += 1)
 	{
-		uint rankLength = strlen(stringArray[rank]);
+		int rankLength = strlen(stringArray[rank]);
 
 		if(!parse_board_files(board, rank, stringArray[rank], rankLength))
 		{

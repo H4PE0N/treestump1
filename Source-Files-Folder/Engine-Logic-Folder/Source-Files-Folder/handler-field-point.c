@@ -43,9 +43,9 @@ Point* create_point_array(int amount)
 	return pointArray;
 }
 
-uint point_array_amount(const Point pointArray[])
+int point_array_amount(const Point pointArray[])
 {
-	uint amount = 0;
+	int amount = 0;
 
 	while(POINT_INSIDE_BOARD(pointArray[amount])) amount += 1;
 

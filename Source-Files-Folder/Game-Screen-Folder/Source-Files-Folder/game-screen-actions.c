@@ -1,12 +1,12 @@
 
 #include "../Header-Files-Folder/screen-include-file.h"
 
-bool screen_engine_handler(Piece* board, Info* info, Move* moves, Screen screen)
+bool screen_engine_handler(Piece* board, Info* info, Entry* hashTable, Move* moves, Screen screen)
 {
 	unsigned short seconds = 10;
 
 	Move computerMove;
-	if(!optimal_depth_move(&computerMove, board, *info, seconds)) return false;
+	if(!optimal_depth_move(&computerMove, board, *info, hashTable, seconds)) return false;
 
 	if(!move_chess_piece(board, info, computerMove)) return false;
 

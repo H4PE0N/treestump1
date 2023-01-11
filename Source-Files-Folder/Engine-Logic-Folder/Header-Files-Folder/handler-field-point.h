@@ -10,7 +10,7 @@ int array_point_index(const Point pointArray[], int amount, Point point);
 
 bool delete_array_point(Point* pointArray, int amount, int delIndex);
 
-uint point_array_amount(const Point pointArray[]);
+int point_array_amount(const Point pointArray[]);
 
 Point* create_point_array(int amount);
 

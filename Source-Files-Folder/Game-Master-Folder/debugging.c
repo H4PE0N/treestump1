@@ -33,7 +33,18 @@ int main(int argc, char* argv[])
 
 	print_console_board(board);
 
-	int depth = 4;
+
+
+	hashMatrix = create_uint64_matrix(BOARD_LENGTH, 12, 0, UINT64_MAX - 1);
+
+	Entry* hashTable = malloc(sizeof(Entry) * HASH_TABLE_SIZE);
+
+	for(int index = 0; index < HASH_TABLE_SIZE; index += 1)
+	{
+		hashTable[index] = (Entry) {.hash = 0, .depth = 0, .score = 0, .flag = 0};
+	}
+
+	int depth = 5;
 	// int seconds = 10;
 
 	long startTime;
@@ -51,42 +62,44 @@ int main(int argc, char* argv[])
 
 
 
-	// startTime = clock();
-	//
-	// Move bestMove;
-	// optimal_depth_move(&bestMove, board, info, seconds);
-	//
-	// time = time_passed_since(startTime);
-	//
-	// char moveString[16];
-	// create_string_move(moveString, bestMove);
-	//
-	// printf("depth %d time: %.2f move: (%s)\n", depth, time, moveString);
-
-
-
 	startTime = clock();
 
-	int moveAmount = 10;
+	Move bestMove;
+	engine_depth_move(&bestMove, board, info, hashTable, depth);
 
-	Move* engineMoves;
-	if(amount_engine_moves(&engineMoves, board, info, TEAM_WHITE, depth, moveAmount))
-	{
-		time = time_passed_since(startTime);
+	time = time_passed_since(startTime);
 
-		printf("depth: %d time: %.4f\n", depth, time);
+	create_string_move(moveString, bestMove);
 
-		for(int index = 0; index < moveAmount; index += 1)
-		{
-			if(!create_string_move(moveString, engineMoves[index]))
-			{
-				printf("#%d (----)\n", index + 1);
-			}
-			else printf("#%d (%s)\n", index + 1, moveString);
-		}
+	printf("depth %d time: %.2f move: (%s)\n", depth, time, moveString);
 
-		printf("free(engineMoves);\n"); free(engineMoves);
-	}
+
+
+	// startTime = clock();
+	//
+	// int moveAmount = 10;
+	//
+	// Move* engineMoves;
+	// if(amount_engine_moves(&engineMoves, board, info, TEAM_WHITE, depth, moveAmount))
+	// {
+	// 	time = time_passed_since(startTime);
+	//
+	// 	printf("depth: %d time: %.4f\n", depth, time);
+	//
+	// 	for(int index = 0; index < moveAmount; index += 1)
+	// 	{
+	// 		if(!create_string_move(moveString, engineMoves[index]))
+	// 		{
+	// 			printf("#%d (----)\n", index + 1);
+	// 		}
+	// 		else printf("#%d (%s)\n", index + 1, moveString);
+	// 	}
+	//
+	// 	printf("free(engineMoves);\n"); free(engineMoves);
+	// }
+
+	printf("free(hashMatrix); free(hashTable);\n");
+	free_uint64_matrix(hashMatrix, BOARD_LENGTH, 12); free(hashTable);
 
 	printf("free(board);\n"); free(board); return false;
 }

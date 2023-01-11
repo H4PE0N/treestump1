@@ -6,7 +6,8 @@
 
 #include "board-score-defines.h"
 #include "create-board-score.h"
-
+#include "board-zobrist-hash.h"
+#include "trans-table-defines.h"
 #include "move-array-sorter.h"
 #include "create-engine-move.h"
 #include "amount-engine-moves.h"

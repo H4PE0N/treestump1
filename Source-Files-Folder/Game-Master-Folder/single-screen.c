@@ -3,7 +3,7 @@
 #include "../Game-Screen-Folder/Header-Files-Folder/screen-include-file.h"
 #include "../Engine-Logic-Folder/Header-Files-Folder/englog-include-file.h"
 
-bool screen_single_game(Piece*, Info*, Move*, Screen*, bool);
+bool screen_single_game(Piece*, Info*, Entry* hashTable, Move*, Screen*, bool);
 
 int main(int argAmount, char* arguments[])
 {
@@ -23,12 +23,28 @@ int main(int argAmount, char* arguments[])
     free_screen_struct(screen); return false;
 	}
 
+
+	hashMatrix = create_uint64_matrix(BOARD_LENGTH, 12, 0, UINT64_MAX - 1);
+
+	Entry* hashTable = malloc(sizeof(Entry) * HASH_TABLE_SIZE);
+
+	for(int index = 0; index < HASH_TABLE_SIZE; index += 1)
+	{
+		hashTable[index] = (Entry) {.hash = 0, .depth = 0, .score = 0, .flag = 0};
+	}
+
+
+
 	Move* moves = create_move_array(256);
 
-	if(screen_single_game(board, &info, moves, &screen, true))
+	if(screen_single_game(board, &info, hashTable, moves, &screen, true))
 	{
 		screen_result_handler(&screen, board, info);
 	}
+
+
+	printf("free(hashMatrix); free(hashTable);\n");
+	free_uint64_matrix(hashMatrix, BOARD_LENGTH, 12); free(hashTable);
 
 	printf("free(board, moves, screen);\n");
 	free(board); free(moves); free_screen_struct(screen);
@@ -36,7 +52,7 @@ int main(int argAmount, char* arguments[])
 	return false;
 }
 
-bool screen_single_game(Piece* board, Info* info, Move* moves, Screen* screen, bool starting)
+bool screen_single_game(Piece* board, Info* info, Entry* hashTable, Move* moves, Screen* screen, bool starting)
 {
 	Info userTeam = (starting) ? INFO_TEAM_WHITE : INFO_TEAM_BLACK;
 	Info engineTeam = INFO_TEAM_ENEMY(userTeam);
@@ -55,7 +71,7 @@ bool screen_single_game(Piece* board, Info* info, Move* moves, Screen* screen, b
 		}
 		else if(infoTeam == engineTeam)
 		{
-			if(!screen_engine_handler(board, info, moves, *screen)) return false;
+			if(!screen_engine_handler(board, info, hashTable, moves, *screen)) return false;
 		}
 		else return false;
 	}
