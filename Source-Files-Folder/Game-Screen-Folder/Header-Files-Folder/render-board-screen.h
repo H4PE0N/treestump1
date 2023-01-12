@@ -8,7 +8,7 @@ bool render_mark_board(Screen, const Piece[], Info, const Move[], const Point[])
 
 bool render_move_board(Screen, const Piece[], Info, const Move[], Point);
 
-bool render_promote_board(Screen, unsigned short);
+bool render_promote_board(Screen, uint8_t);
 
 bool render_result_board(Screen, const Piece[], Info);
 
@@ -30,7 +30,7 @@ bool render_check_square(Screen, const Piece[], Info, Point);
 
 bool render_board_squares(Screen);
 
-bool render_team_squares(Screen, unsigned short);
+bool render_team_squares(Screen, uint8_t);
 
 bool render_point_image(Screen, Surface*, Point, Uint8);
 

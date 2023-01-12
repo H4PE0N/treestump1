@@ -48,7 +48,7 @@ bool render_mark_board(Screen screen, const Piece board[], Info info, const Move
 	return true;
 }
 
-bool render_promote_board(Screen screen, unsigned short team)
+bool render_promote_board(Screen screen, uint8_t team)
 {
 	Piece pieceTeam = TEAM_PIECE_MACRO(team);
 
@@ -67,8 +67,8 @@ bool render_promote_board(Screen screen, unsigned short team)
 
 bool render_result_board(Screen screen, const Piece board[], Info info)
 {
-	unsigned short team = INFO_TEAM_MACRO(info);
-	unsigned short winningTeam = NORMAL_TEAM_ENEMY(team);
+	uint8_t team = INFO_TEAM_MACRO(info);
+	uint8_t winningTeam = NORMAL_TEAM_ENEMY(team);
 
 	if(check_mate_ending(board, info, team))
 	{
@@ -96,7 +96,7 @@ bool render_input_marks(Screen screen, const Point markPoints[])
 
 	if(!extract_file_image(&image, MARK_SQUARE_FILE)) return false;
 
-	unsigned short amount = point_array_amount(markPoints);
+	int amount = point_array_amount(markPoints);
 
 	for(int index = 0; index < amount; index += 1)
 	{
@@ -107,7 +107,7 @@ bool render_input_marks(Screen screen, const Point markPoints[])
 	return true;
 }
 
-bool render_team_squares(Screen screen, unsigned short team)
+bool render_team_squares(Screen screen, uint8_t team)
 {
 	Surface* squareImage;
 
@@ -173,7 +173,7 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Point po
 {
 	if(!POINT_INSIDE_BOARD(point)) return true;
 
-	unsigned short team = BOARD_POINT_TEAM(board, point);
+	uint8_t team = BOARD_POINT_TEAM(board, point);
 
 	if(!current_team_move(info, team)) return false;
 
@@ -193,7 +193,7 @@ bool render_move_squares(Screen screen, const Piece board[], Info info, Point po
 	}
 
 
-	for(unsigned short index = 0; index < pointAmount; index += 1)
+	for(int index = 0; index < pointAmount; index += 1)
 	{
 		Point stopPoint = pointArray[index];
 
@@ -230,7 +230,7 @@ bool render_engine_moves(Screen screen, const Move engineMoves[])
 
 	if(!extract_file_image(&movedSquare, MOVED_SQUARE_FILE)) return false;
 
-	for(unsigned short index = 0; index < moveAmount; index += 1)
+	for(int index = 0; index < moveAmount; index += 1)
 	{
 		if(!render_board_move(screen, movedSquare, engineMoves[index], 255)) return false;
 	}

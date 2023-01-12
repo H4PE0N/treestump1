@@ -4,6 +4,8 @@
 
 bool split_string_delim(char* stringArray[], const char string[], int length, const char delim[], int amount);
 
+bool split_string_delim_t(char* stringArray[], char* stringCopy, const char delim[], int amount);
+
 void alloc_array_strings(char* stringArray[], int amount, int length);
 
 void free_array_strings(char* stringArray[], int amount);

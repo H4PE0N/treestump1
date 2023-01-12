@@ -1,13 +1,13 @@
 
 #include "../Header-Files-Folder/screen-include-file.h"
 
-bool setup_screen_struct(Screen* screen, const char title[], unsigned short width, unsigned short height)
+bool setup_screen_struct(Screen* screen, const char title[], int width, int height)
 {
 	if(!init_screen_drivers(SDL_INIT_VIDEO, IMG_INIT_PNG)) return false;
 
 	screen->width = width; screen->height = height;
 
-	if(!create_screen_window(&screen->window, title, screen->height, screen->width))
+	if(!create_screen_window(&screen->window, title, screen->width, screen->height))
 	{
 		SDL_Quit(); IMG_Quit(); return false;
 	}
@@ -33,7 +33,7 @@ bool init_screen_drivers(Uint32 sdlFlags, Uint32 imgFlags)
 	return true;
 }
 
-bool create_screen_window(Window** window, const char title[], unsigned short height, unsigned short width)
+bool create_screen_window(Window** window, const char title[], int width, int height)
 {
 	*window = SDL_CreateWindow(title, WINDOW_CENTER, WINDOW_CENTER, width, height, WINDOW_SHOWN | WINDOW_RESIZE | WINDOW_OPENGL);
 

@@ -3,15 +3,14 @@
 
 bool screen_engine_handler(Piece* board, Info* info, Entry* hashTable, Move* moves, Screen screen)
 {
-	unsigned short seconds = 10;
+	int seconds = 10;
 
 	Move computerMove;
 	if(!optimal_depth_move(&computerMove, board, *info, hashTable, seconds)) return false;
 
 	if(!move_chess_piece(board, info, computerMove)) return false;
 
-	int movesAmount = move_array_amount(moves);
-	moves[movesAmount] = computerMove;
+	moves[move_array_amount(moves)] = computerMove;
 
 	return true;
 }
@@ -24,8 +23,7 @@ bool screen_user_handler(Piece* board, Info* info, Move* moves, Screen* screen)
 	if(!move_chess_piece(board, info, move))
 		return screen_user_handler(board, info, moves, screen);
 
-	int movesAmount = move_array_amount(moves);
-	moves[movesAmount] = move;
+	moves[move_array_amount(moves)] = move;
 
 	return true;
 }

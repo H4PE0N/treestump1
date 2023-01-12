@@ -35,25 +35,21 @@ bool extract_piece_path(char** filePath, Piece piece)
 {
 	*filePath = malloc(sizeof(char) * 256);
 
-	unsigned short team = PIECE_TEAM_MACRO(piece);
-	unsigned short type = PIECE_TYPE_MACRO(piece);
+	const char* teamWord = TEAM_WORDS[PIECE_TEAM_MACRO(piece)];
+	const char* typeWord = TYPE_WORDS[PIECE_TYPE_MACRO(piece)];
 
-	sprintf(*filePath, "%s/%s-%s.png", IMAGES_FOLDER, TEAM_WORDS[team], TYPE_WORDS[type]);
+	sprintf(*filePath, "%s/%s-%s.png", IMAGES_FOLDER, teamWord, typeWord);
 
 	return true;
 }
 
-bool extract_team_square(Surface** squareImage, unsigned short team)
+bool extract_team_square(Surface** squareImage, uint8_t team)
 {
 	if(team == TEAM_WHITE)
-	{
-		if(!extract_file_image(squareImage, WHITE_SQUARE_FILE)) return false;
-	}
-	else if(team == TEAM_BLACK)
-	{
-		if(!extract_file_image(squareImage, BLACK_SQUARE_FILE)) return false;
-	}
-	else return false;
+		return extract_file_image(squareImage, WHITE_SQUARE_FILE);
 
-	return true;
+	else if(team == TEAM_BLACK)
+		return extract_file_image(squareImage, BLACK_SQUARE_FILE);
+
+	return false;
 }

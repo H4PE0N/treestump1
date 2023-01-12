@@ -199,12 +199,6 @@ bool parse_string_board(Piece* board, const char stringToken[])
 
 	if(!split_string_delim(stringArray, stringToken, stringLength, FEN_RANK_DELIM, BOARD_RANKS)) return false;
 
-	/*
-	Just now: split_string_delim can return an array with less than BOARD_RANKS (8) ranks of strings.
-	This must be fixed. Either the function must return exactly "amount" of strings, or it must be
-	checked that there is "amount" rank strings at this exact location.
-	*/
-
 	for(uint8_t rank = 0; rank < BOARD_RANKS; rank += 1)
 	{
 		int rankLength = strlen(stringArray[rank]);

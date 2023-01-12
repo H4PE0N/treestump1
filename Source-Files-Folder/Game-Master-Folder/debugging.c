@@ -16,35 +16,35 @@ int main(int argc, char* argv[])
 {
 	srand(time(NULL));
 
+	// if(!extract_score_matrixs(TYPE_SCORE_MATRIX)) return false;
+	//
+	// create_hash_matrix(HASH_MATRIX);
+
 	char* fenString = (argc >= 2) ? argv[1] : (char*) FEN_START_STRING;
 
-	if(!extract_score_matrixs(TYPE_SCORE_MATRIX)) return false;
-	
-	create_hash_matrix(HASH_MATRIX);
-
-	Piece* board; Info info; 
+	Piece* board; Info info;
 	if(!parse_create_board(&board, &info, fenString)) return false;
 
-	Entry* hashTable = create_hash_table(HASH_TABLE_SIZE);
-
-
-	int depth = 5;
-	
-	long startTime = clock();
-
-	Move bestMove;
-	engine_depth_move(&bestMove, board, info, hashTable, depth);
-
-	double time = time_passed_since(startTime);
-
-	char moveString[16];
-	create_string_move(moveString, bestMove);
-
-	printf("depth %d time: %.2f move: (%s)\n", depth, time, moveString);
-
-
-
-	printf("free(hashTable);\n"); free(hashTable);
+	// Entry* hashTable = create_hash_table(HASH_TABLE_SIZE);
+	//
+	//
+	// int depth = 5;
+	//
+	// long startTime = clock();
+	//
+	// Move bestMove;
+	// engine_depth_move(&bestMove, board, info, hashTable, depth);
+	//
+	// double time = time_passed_since(startTime);
+	//
+	// char moveString[16];
+	// create_string_move(moveString, bestMove);
+	//
+	// printf("depth %d time: %.2f move: (%s)\n", depth, time, moveString);
+	//
+	//
+	//
+	// printf("free(hashTable);\n"); free(hashTable);
 
 	printf("free(board);\n"); free(board);
 

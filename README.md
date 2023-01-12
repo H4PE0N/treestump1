@@ -7,4 +7,5 @@ Todo:
 - create a history of positions. That way, a move list can be created, and moves can be undone
 - implement three fold repitition rule (maybe using zobrist hash for lookup)
 - implement look up table for openings
-- store piece score matrix in seperate files and load them into a variable in the beginning
+- store images of chess pieces ans so on in a variable for fast lookup
+- implement sound effects, like in my minesweeper game

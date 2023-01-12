@@ -5,7 +5,7 @@
 
 bool screen_single_game(Piece*, Info*, Entry* hashTable, Move*, Screen*, bool);
 
-int main(int argAmount, char* arguments[])
+int main(int argc, char* argv[])
 {
 	Screen screen;
 	if(!setup_screen_struct(&screen, "single-screen", 800, 800))
@@ -14,24 +14,18 @@ int main(int argAmount, char* arguments[])
     return false;
 	}
 
-	char* fenString = (argAmount >= 2) ? arguments[1] : (char*) FEN_START_STRING;
+	srand(time(NULL));
 
-  Piece* board; Info info;
-	if(!parse_create_board(&board, &info, fenString))
-	{
-		printf("Could not parse game string!\n");
-    free_screen_struct(screen); return false;
-	}
+	char* fenString = (argc >= 2) ? argv[1] : (char*) FEN_START_STRING;
 
+	if(!extract_score_matrixs(TYPE_SCORE_MATRIX)) return false;
 
-	hashMatrix = create_uint64_matrix(BOARD_LENGTH, 12, 0, UINT64_MAX - 1);
+	create_hash_matrix(HASH_MATRIX);
 
-	Entry* hashTable = malloc(sizeof(Entry) * HASH_TABLE_SIZE);
+	Piece* board; Info info;
+	if(!parse_create_board(&board, &info, fenString)) return false;
 
-	for(int index = 0; index < HASH_TABLE_SIZE; index += 1)
-	{
-		hashTable[index] = (Entry) {.hash = 0, .depth = 0, .score = 0, .flag = 0};
-	}
+	Entry* hashTable = create_hash_table(HASH_TABLE_SIZE);
 
 
 
@@ -43,8 +37,7 @@ int main(int argAmount, char* arguments[])
 	}
 
 
-	printf("free(hashMatrix); free(hashTable);\n");
-	free_uint64_matrix(hashMatrix, BOARD_LENGTH, 12); free(hashTable);
+	printf("free(hashTable);\n"); free(hashTable);
 
 	printf("free(board, moves, screen);\n");
 	free(board); free(moves); free_screen_struct(screen);

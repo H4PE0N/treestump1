@@ -14,6 +14,7 @@ bool extract_score_matrix_t(int scoreMatrix[BOARD_RANKS][BOARD_FILES], FILE* fil
 		{
 			scoreMatrix[rank][file] = atoi(scoreStrings[file]);
 		}
+		free_array_strings(scoreStrings, BOARD_FILES);
 	}
 	return true;
 }
@@ -24,7 +25,7 @@ bool extract_score_matrix(int scoreMatrix[BOARD_RANKS][BOARD_FILES], const char 
 	if(filePointer == NULL) return false;
 
 	bool result = extract_score_matrix_t(scoreMatrix, filePointer);
-	
+
 	fclose(filePointer); return result;
 }
 

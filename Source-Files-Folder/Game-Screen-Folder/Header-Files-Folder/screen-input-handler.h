@@ -2,9 +2,9 @@
 #ifndef SCREEN_INPUT_HANDLER_H
 #define SCREEN_INPUT_HANDLER_H
 
-bool input_promote_flag(Move* promoteFlag, Screen* screen, unsigned short team);
+bool input_promote_flag(Move* promoteFlag, Screen* screen, uint8_t team);
 
-bool input_promote_flagX(Move* promoteFlag, Screen* screen, unsigned short team);
+bool input_promote_flagX(Move* promoteFlag, Screen* screen, uint8_t team);
 
 bool input_mark_parser(Point*, Screen, const Piece[], Info, const Move[], Event);
 

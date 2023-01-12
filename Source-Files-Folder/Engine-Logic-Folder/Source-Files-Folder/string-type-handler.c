@@ -5,22 +5,30 @@ bool split_string_delim(char* stringArray[], const char string[], int length, co
 {
 	if(amount < 1) return false;
 
-	char stringCopy[length + 1]; strcpy(stringCopy, string);
-
 	alloc_array_strings(stringArray, amount, length);
 
-	char* stringToken = NULL;
+	char stringCopy[length + 1]; strcpy(stringCopy, string);
 
-	if((stringToken = strtok(stringCopy, delim)) == NULL)
+	if(!split_string_delim_t(stringArray, stringCopy, delim, amount))
 	{
 		free_array_strings(stringArray, amount); return false;
 	}
+	return true;
+}
 
-	for(int index = 0; index < amount; index += 1)
+bool split_string_delim_t(char* stringArray[], char* stringCopy, const char delim[], int amount)
+{
+	char* stringToken = NULL;
+	
+	if((stringToken = strtok(stringCopy, delim)) == NULL) return false;
+
+	strcpy(stringArray[0], stringToken);
+
+	for(int index = 1; index < amount; index += 1)
 	{
-		strcpy(stringArray[index], stringToken);
+		if((stringToken = strtok(NULL, delim)) == NULL) return false;
 
-		if((stringToken = strtok(NULL, delim)) == NULL) break;
+		strcpy(stringArray[index], stringToken);
 	}
 	return true;
 }

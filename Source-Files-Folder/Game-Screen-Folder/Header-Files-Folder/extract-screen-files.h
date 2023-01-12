@@ -10,6 +10,6 @@ bool extract_piece_image(Surface**, Piece);
 
 bool extract_piece_path(char**, Piece);
 
-bool extract_team_square(Surface**, unsigned short);
+bool extract_team_square(Surface**, uint8_t team);
 
 #endif

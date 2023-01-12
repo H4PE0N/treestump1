@@ -8,7 +8,7 @@ bool input_screen_move(Move* move, Screen* screen, const Piece board[], Info inf
 
 	if(MOVE_PROMOTE_FLAG(inputMove))
 	{
-		unsigned short startTeam = MOVE_START_TEAM(board, inputMove);
+		uint8_t startTeam = MOVE_START_TEAM(board, inputMove);
 
 		Move promoteFlag = MOVE_FLAG_NONE;
 		if(!input_promote_flag(&promoteFlag, screen, startTeam)) return false;
@@ -23,7 +23,7 @@ bool input_screen_move(Move* move, Screen* screen, const Piece board[], Info inf
 
 bool print_console_info(Info info)
 {
-	unsigned short team = INFO_TEAM_MACRO(info);
+	uint8_t team = INFO_TEAM_MACRO(info);
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
 	printf("current team:(%s)\n", TEAM_WORDS[team]);
@@ -57,7 +57,7 @@ bool input_legal_move(Move* move, Screen* screen, const Piece board[], Info info
 
 		if(!MOVE_INSIDE_BOARD(inputMove)) continue;
 
-		unsigned short startTeam = MOVE_START_TEAM(board, inputMove);
+		uint8_t startTeam = MOVE_START_TEAM(board, inputMove);
 		if(!current_team_move(info, startTeam)) continue;
 
 		if(!correct_move_flag(&inputMove, board, info)) continue;
@@ -65,7 +65,7 @@ bool input_legal_move(Move* move, Screen* screen, const Piece board[], Info info
 	*move = inputMove; return true;
 }
 
-bool input_promote_flag(Move* promoteFlag, Screen* screen, unsigned short team)
+bool input_promote_flag(Move* promoteFlag, Screen* screen, uint8_t team)
 {
 	*promoteFlag = MOVE_FLAG_NONE;
 
@@ -76,7 +76,7 @@ bool input_promote_flag(Move* promoteFlag, Screen* screen, unsigned short team)
 	screen->inverted = inverted; return result;
 }
 
-bool input_promote_flagX(Move* promoteFlag, Screen* screen, unsigned short team)
+bool input_promote_flagX(Move* promoteFlag, Screen* screen, uint8_t team)
 {
 	if(!display_promote_board(*screen, team)) return false;
 
@@ -157,9 +157,9 @@ bool input_mark_parser(Point* markPoints, Screen screen, const Piece board[], In
 
 	// ====== THIS IS WHERE THE MARKING IS HANDLED ===============================
 
-	unsigned short amount = point_array_amount(markPoints);
+	int amount = point_array_amount(markPoints);
 
-	signed short pointIndex = array_point_index(markPoints, amount, startPoint);
+	int pointIndex = array_point_index(markPoints, amount, startPoint);
 
 	// If the point you marked is not already marked -> add it to the list
 	if(pointIndex == INDEX_NONE) markPoints[amount] = startPoint;

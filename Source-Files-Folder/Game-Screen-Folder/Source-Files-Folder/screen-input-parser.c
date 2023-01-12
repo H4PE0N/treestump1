@@ -44,8 +44,8 @@ bool board_point_position(Rect* position, Screen screen, Point point)
 
   Point renderPoint = check_inverted_point(point, screen.inverted);
 
-	unsigned short rank = POINT_RANK_MACRO(renderPoint);
-	unsigned short file = POINT_FILE_MACRO(renderPoint);
+	uint8_t rank = POINT_RANK_MACRO(renderPoint);
+	uint8_t file = POINT_FILE_MACRO(renderPoint);
 
   Rect boardRect = board_screen_position(screen.width, screen.height);
 

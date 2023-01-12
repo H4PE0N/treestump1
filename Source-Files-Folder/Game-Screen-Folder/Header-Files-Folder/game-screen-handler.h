@@ -2,11 +2,11 @@
 #ifndef GAME_SCREEN_HANDLER_H
 #define GAME_SCREEN_HANDLER_H
 
-bool create_screen_window(Window**, const char[], unsigned short, unsigned short);
+bool create_screen_window(Window**, const char[], int width, int height);
 
 bool create_window_render(Render**, Window*);
 
-bool setup_screen_struct(Screen*, const char[], unsigned short, unsigned short);
+bool setup_screen_struct(Screen*, const char[], int width, int height);
 
 void free_screen_struct(Screen);
 
