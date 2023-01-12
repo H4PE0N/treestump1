@@ -1,34 +1,35 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-uint64_t** hashMatrix;
+uint64_t HASH_MATRIX[64][12];
 
-uint64_t** create_uint64_matrix(int height, int width, uint64_t minimum, uint64_t maximum)
+Entry* create_hash_table(int tableSize)
 {
-	uint64_t** matrix = malloc(sizeof(uint64_t*) * height);
+	Entry* hashTable = malloc(sizeof(Entry) * tableSize);
 
-	for(int index = 0; index < height; index += 1)
+	for(int index = 0; index < tableSize; index += 1)
 	{
-		matrix[index] = random_uint64_array(width, minimum, maximum);
+		hashTable[index] = (Entry) {.hash = 0, .depth = 0, .score = 0, .flag = 0};
 	}
-	return matrix;
+	return hashTable;
 }
 
-void free_uint64_matrix(uint64_t* matrix[], int height, int width)
+void create_hash_matrix(uint64_t hashMatrix[BOARD_LENGTH][12])
 {
-	for(int index = 0; index < height; index += 1)
-	{ free(matrix[index]); } free(matrix);
+	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	{
+		create_pieces_hashes(hashMatrix, point);
+	}
 }
 
-uint64_t* random_uint64_array(int amount, uint64_t minimum, uint64_t maximum)
+void create_pieces_hashes(uint64_t hashMatrix[BOARD_LENGTH][12], Point point)
 {
-	uint64_t* array = malloc(sizeof(uint64_t) * amount);
-
-	for(int index = 0; index < amount; index += 1)
+	for(uint8_t index = 0; index < 12; index += 1)
 	{
-		array[index] = create_random_uint64(minimum, maximum);
+		uint64_t random64bit = create_random_uint64(0, (UINT64_MAX - 1));
+
+		hashMatrix[point][index] = random64bit;
 	}
-	return array;
 }
 
 uint64_t create_random_uint64(uint64_t minimum, uint64_t maximum)

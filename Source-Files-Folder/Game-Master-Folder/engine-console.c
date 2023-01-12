@@ -3,31 +3,40 @@
 #include "../Chess-Engine-Folder/Header-Files-Folder/engine-include-file.h"
 #include "../Game-Console-Folder/Header-Files-Folder/console-include-file.h"
 
-bool engine_console_loop(Piece*, Info*);
+bool engine_console_loop(Piece*, Info*, Entry* hashTable);
 
-bool parse_coneng_action(Piece*, Info*, const char[]);
+bool parse_coneng_action(Piece*, Info*, Entry* hashTable, const char[]);
 
-bool parse_coneng_move(Piece*, Info*, const char[]);
+bool parse_coneng_move(Piece*, Info*, Entry* hashTable, const char[]);
 
 
 int main(int argc, char* argv[])
 {
-	Piece* board = malloc(sizeof(Piece) * BOARD_LENGTH);
-  memset(board, PIECE_NONE, sizeof(Piece) * BOARD_LENGTH);
+	srand(time(NULL));
 
-	Info info;
+	char* fenString = (argc >= 2) ? argv[1] : (char*) FEN_START_STRING;
 
-	parse_fen_string(board, &info, FEN_START_STRING);
+	if(!extract_score_matrixs(TYPE_SCORE_MATRIX)) return false;
 
-  engine_console_loop(board, &info);
+	create_hash_matrix(HASH_MATRIX);
 
-	printf("free(board);\n");
-	free(board);
+	Piece* board; Info info; 
+	if(!parse_create_board(&board, &info, fenString)) return false;
+
+	Entry* hashTable = create_hash_table(HASH_TABLE_SIZE);
+
+
+  engine_console_loop(board, &info, hashTable);
+
+
+  printf("free(hashTable);\n"); free(hashTable);
+
+	printf("free(board);\n"); free(board);
 
 	return false;
 }
 
-bool engine_console_loop(Piece* board, Info* info)
+bool engine_console_loop(Piece* board, Info* info, Entry* hashTable)
 {
   char inputString[256];
 
@@ -37,25 +46,25 @@ bool engine_console_loop(Piece* board, Info* info)
 
     if(!input_stdin_string(inputString, "input -> ")) return false;
 
-    if(!parse_coneng_action(board, info, inputString)) return false;
+    if(!parse_coneng_action(board, info, hashTable, inputString)) return false;
   }
   return true;
 }
 
-bool parse_coneng_action(Piece* board, Info* info, const char string[])
+bool parse_coneng_action(Piece* board, Info* info, Entry* hashTable, const char string[])
 {
   if(!strncmp(string, "update", 6))
     return parse_update_string(board, info, string);
 
   else if(!strncmp(string, "move", 4))
-    return parse_coneng_move(board, info, string);
+    return parse_coneng_move(board, info, hashTable, string);
 
   else if(!strncmp(string, "quit", 4)) return false;
 
   return false;
 }
 
-bool parse_coneng_move(Piece* board, Info* info, const char string[])
+bool parse_coneng_move(Piece* board, Info* info, Entry* hashTable, const char string[])
 {
 	int depth = -1, mtime = -1;
 
@@ -88,19 +97,18 @@ bool parse_coneng_move(Piece* board, Info* info, const char string[])
 
 
 
-	unsigned short team = INFO_TEAM_MACRO(*info);
 	Move engineMove = MOVE_NONE;
 
 	printf("moving depth=%d mtime=%d\n", depth, mtime);
 
 	if(mtime == -1)
 	{
-		if(!engine_depth_move(&engineMove, board, *info, team, depth)) return false;
+		if(!engine_depth_move(&engineMove, board, *info, hashTable, depth)) return false;
 	}
 	else
 	{
 		int seconds = mtime / 1000;
-		if(!optimal_depth_move(&engineMove, board, *info, team, seconds)) return false;
+		if(!optimal_depth_move(&engineMove, board, *info, hashTable, seconds)) return false;
 	}
 
 	char moveString[16];

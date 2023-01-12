@@ -14,92 +14,39 @@
 
 int main(int argc, char* argv[])
 {
-	char fenString[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 1 0";
+	srand(time(NULL));
 
-	Piece* board; Info info;
-	if(!parse_create_board(&board, &info, fenString))
-	{
-		printf("Could not parse game string!\n"); return false;
-	}
+	char* fenString = (argc >= 2) ? argv[1] : (char*) FEN_START_STRING;
 
-	for(unsigned short rank = 0; rank < BOARD_RANKS; rank += 1)
-	{
-		for(unsigned short file = 0; file < BOARD_FILES; file += 1)
-			printf("%02d ", (rank * BOARD_FILES) + file);
+	if(!extract_score_matrixs(TYPE_SCORE_MATRIX)) return false;
+	
+	create_hash_matrix(HASH_MATRIX);
 
-		printf("\n");
-	}
+	Piece* board; Info info; 
+	if(!parse_create_board(&board, &info, fenString)) return false;
 
+	Entry* hashTable = create_hash_table(HASH_TABLE_SIZE);
 
-	print_console_board(board);
-
-
-
-	hashMatrix = create_uint64_matrix(BOARD_LENGTH, 12, 0, UINT64_MAX - 1);
-
-	Entry* hashTable = malloc(sizeof(Entry) * HASH_TABLE_SIZE);
-
-	for(int index = 0; index < HASH_TABLE_SIZE; index += 1)
-	{
-		hashTable[index] = (Entry) {.hash = 0, .depth = 0, .score = 0, .flag = 0};
-	}
 
 	int depth = 5;
-	// int seconds = 10;
-
-	long startTime;
-	double time;
-	char moveString[16];
-
-
-	// startTime = clock();
-	//
-	// int nodes = search_depth_nodes(board, info, TEAM_WHITE, depth, startTime, 60);
-	//
-	// time = time_passed_since(startTime);
-	//
-	// printf("depth: %d nodes: %d time: %.2f\n", depth, nodes, time);
-
-
-
-	startTime = clock();
+	
+	long startTime = clock();
 
 	Move bestMove;
 	engine_depth_move(&bestMove, board, info, hashTable, depth);
 
-	time = time_passed_since(startTime);
+	double time = time_passed_since(startTime);
 
+	char moveString[16];
 	create_string_move(moveString, bestMove);
 
 	printf("depth %d time: %.2f move: (%s)\n", depth, time, moveString);
 
 
 
-	// startTime = clock();
-	//
-	// int moveAmount = 10;
-	//
-	// Move* engineMoves;
-	// if(amount_engine_moves(&engineMoves, board, info, TEAM_WHITE, depth, moveAmount))
-	// {
-	// 	time = time_passed_since(startTime);
-	//
-	// 	printf("depth: %d time: %.4f\n", depth, time);
-	//
-	// 	for(int index = 0; index < moveAmount; index += 1)
-	// 	{
-	// 		if(!create_string_move(moveString, engineMoves[index]))
-	// 		{
-	// 			printf("#%d (----)\n", index + 1);
-	// 		}
-	// 		else printf("#%d (%s)\n", index + 1, moveString);
-	// 	}
-	//
-	// 	printf("free(engineMoves);\n"); free(engineMoves);
-	// }
+	printf("free(hashTable);\n"); free(hashTable);
 
-	printf("free(hashMatrix); free(hashTable);\n");
-	free_uint64_matrix(hashMatrix, BOARD_LENGTH, 12); free(hashTable);
+	printf("free(board);\n"); free(board);
 
-	printf("free(board);\n"); free(board); return false;
+	return false;
 }

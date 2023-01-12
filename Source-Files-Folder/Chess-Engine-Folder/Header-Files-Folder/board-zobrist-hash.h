@@ -2,13 +2,13 @@
 #ifndef BOARD_ZOBRIST_HASH_H
 #define BOARD_ZOBRIST_HASH_H
 
-extern uint64_t** hashMatrix;
+extern uint64_t HASH_MATRIX[64][12];
 
-uint64_t** create_uint64_matrix(int height, int width, uint64_t minimum, uint64_t maximum);
+Entry* create_hash_table(int tableSize);
 
-void free_uint64_matrix(uint64_t* matrix[], int height, int width);
+void create_hash_matrix(uint64_t hashMatrix[BOARD_LENGTH][12]);
 
-uint64_t* random_uint64_array(int amount, uint64_t minimum, uint64_t maximum);
+void create_pieces_hashes(uint64_t hashMatrix[BOARD_LENGTH][12], Point point);
 
 uint64_t create_random_uint64(uint64_t minimum, uint64_t maximum);
 
