@@ -5,7 +5,7 @@ bool engine_depth_move(Move* bestMove, const Piece board[], State state, Entry* 
 {
 	if(depth <= 0) return false;
 
-	int team = STATE_TEAM_MACRO(state);
+	int team = STATE_CURRENT_MACRO(state);
 
 	Move* moveArray; int moveAmount;
 	if(!team_legal_moves(&moveArray, &moveAmount, board, state, team)) return false;
@@ -86,7 +86,7 @@ int board_depth_score(const Piece board[], State state, Entry* hashTable, int de
 {
 	if(depth <= 0) return (playerSign * board_state_score(board, state));
 
-	int team = STATE_TEAM_MACRO(state);
+	int team = STATE_CURRENT_MACRO(state);
 
 	Move* moveArray; int moveAmount;
 	if(!ordered_legal_moves(&moveArray, &moveAmount, board, state, team))

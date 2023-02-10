@@ -21,15 +21,15 @@ bool execute_chess_move(Piece* board, State* state, Move move)
 
 void update_state_values(State* state, const Piece board[], Move move)
 {
-	if(STATE_STORE_TEAM(*state, STATE_TEAM_BLACK))
+	if(STATE_STORE_CURRENT(*state, STATE_TEAM_BLACK))
 		increase_state_turns(state);
 
 	switch_current_team(state);
 
 	if((START_PIECE_TYPE(board, move) == PIECE_TYPE_PAWN) || STOP_PIECE_EXISTS(board, move))
-		*state = CLEAR_STATE_COUNTER(*state);
+		*state = CLEAR_STATE_CLOCK(*state);
 
-	else increase_state_counter(state);
+	else increase_state_clock(state);
 
 	if(MOVE_STORE_FLAG(move, MOVE_FLAG_DOUBLE))
 		alloc_passant_point(state, move);

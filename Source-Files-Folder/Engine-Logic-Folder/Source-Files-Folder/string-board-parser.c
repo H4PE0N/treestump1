@@ -3,7 +3,7 @@
 
 bool parse_create_board(Piece** board, State* state, const char fenString[])
 {
-	*board = malloc(sizeof(Piece) * BOARD_LENGTH);
+	*board = malloc(sizeof(Piece) * BOARD_POINTS);
 
 	if(parse_fen_string(*board, state, fenString)) return true;
 
@@ -44,7 +44,7 @@ bool parse_string_state(State* state, char* stringArray[])
 
 	if(!parse_string_passant(state, stringArray[3])) return false;
 
-	if(!parse_string_counter(state, stringArray[4])) return false;
+	if(!parse_string_clock(state, stringArray[4])) return false;
 
 	if(!parse_string_turns(state, stringArray[5])) return false;
 
@@ -66,18 +66,18 @@ bool parse_string_current(State* state, const char stringToken[])
 
 	else return false;
 
-	*state = ALLOC_STATE_TEAM(*state, stateCurrentTeam);
+	*state = ALLOC_STATE_CURRENT(*state, stateCurrentTeam);
 
 	return true;
 }
 
-bool parse_string_counter(State* state, const char stringToken[])
+bool parse_string_clock(State* state, const char stringToken[])
 {
-	int counter = atoi(stringToken);
+	int clock = atoi(stringToken);
 
-	if((counter == 0) && (stringToken[0] != '0')) return false;
+	if((clock == 0) && (stringToken[0] != '0')) return false;
 
-	*state = ALLOC_COUNTER_STATE(*state, counter); return true;
+	*state = ALLOC_CLOCK_STATE(*state, clock); return true;
 }
 
 bool parse_string_turns(State* state, const char stringToken[])

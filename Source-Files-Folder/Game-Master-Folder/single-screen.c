@@ -53,7 +53,7 @@ bool screen_single_game(Piece* board, State* state, Entry* hashTable, Move* move
 
 	while(game_still_running(board, *state))
 	{
-		State stateTeam = (*state & STATE_TEAM_MASK);
+		State stateTeam = (*state & STATE_CURRENT_MASK);
 		if(stateTeam == STATE_TEAM_NONE) return false;
 
 		if(!display_chess_board(*screen, board, *state, moves)) return false;

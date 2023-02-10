@@ -5,9 +5,9 @@ Point board_king_point(const Piece board[], uint8_t team)
 {
 	Piece kingPiece = (PIECE_TYPE_KING | TEAM_PIECE_MACRO(team));
 
-	for(Point index = 0; index < BOARD_LENGTH; index += 1)
+	for(Point index = 0; index < BOARD_POINTS; index += 1)
 	{
-		Point point = (team == TEAM_WHITE) ? (BOARD_LENGTH - index - 1) : index;
+		Point point = (team == TEAM_WHITE) ? (BOARD_POINTS - index - 1) : index;
 
 		if(board[point] == kingPiece) return point;
 	}

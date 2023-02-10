@@ -3,7 +3,7 @@
 
 const uint8_t BOARD_RANKS = 8;
 const uint8_t BOARD_FILES = 8;
-const uint8_t BOARD_LENGTH = 64;
+const uint8_t BOARD_POINTS = 64;
 
 const uint8_t PIECE_TYPE_SPAN = 7;
 const uint8_t PIECE_TEAM_SPAN = 3;

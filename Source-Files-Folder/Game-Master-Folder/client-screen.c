@@ -32,8 +32,8 @@ int main(int argc, char* argv[])
 	}
 
 
-  Piece* board = malloc(sizeof(Piece) * BOARD_LENGTH);
-  memset(board, PIECE_NONE, sizeof(Piece) * BOARD_LENGTH);
+  Piece* board = malloc(sizeof(Piece) * BOARD_POINTS);
+  memset(board, PIECE_NONE, sizeof(Piece) * BOARD_POINTS);
   State state;
 
 

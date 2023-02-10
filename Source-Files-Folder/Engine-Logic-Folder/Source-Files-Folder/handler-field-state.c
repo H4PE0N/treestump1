@@ -6,7 +6,7 @@ Point passant_pawn_point(State state)
 	uint8_t passantFile = STATE_PASSANT_MACRO(state);
 	if(passantFile == 0) return POINT_NONE;
 
-	uint8_t currentTeam = STATE_TEAM_MACRO(state);
+	uint8_t currentTeam = STATE_CURRENT_MACRO(state);
 	if(currentTeam == TEAM_NONE) return POINT_NONE;
 
 	uint8_t enemyTeam = NORMAL_TEAM_ENEMY(currentTeam);
@@ -20,7 +20,7 @@ bool current_team_move(State state, uint8_t team)
 {
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
-	return NORMAL_TEAMS_TEAM(STATE_TEAM_MACRO(state), team);
+	return NORMAL_TEAMS_TEAM(STATE_CURRENT_MACRO(state), team);
 }
 
 void increase_state_turns(State* state)
@@ -30,11 +30,11 @@ void increase_state_turns(State* state)
 	*state = ALLOC_TURNS_STATE(*state, (turns + 1));
 }
 
-void increase_state_counter(State* state)
+void increase_state_clock(State* state)
 {
-	uint8_t counter = STATE_COUNTER_MACRO(*state);
+	uint8_t clock = STATE_CLOCK_MACRO(*state);
 
-	*state = ALLOC_COUNTER_STATE(*state, (counter + 1));
+	*state = ALLOC_CLOCK_STATE(*state, (clock + 1));
 }
 
 void alloc_passant_point(State* state, Move move)
@@ -46,7 +46,7 @@ void alloc_passant_point(State* state, Move move)
 
 void switch_current_team(State* state)
 {
-	State stateEnemy = STATE_TEAM_ENEMY(MASK_STATE_TEAM(*state));
+	State stateEnemy = STATE_TEAM_ENEMY(MASK_STATE_CURRENT(*state));
 
-	*state = ALLOC_STATE_TEAM(*state, stateEnemy);
+	*state = ALLOC_STATE_CURRENT(*state, stateEnemy);
 }

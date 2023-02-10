@@ -7,7 +7,7 @@ bool king_inside_check(const Piece board[], Point kingPoint)
 
 	uint8_t kingTeam = BOARD_POINT_TEAM(board, kingPoint);
 
-	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	for(Point point = 0; point < BOARD_POINTS; point += 1)
 	{
 		uint8_t currentTeam = BOARD_POINT_TEAM(board, point);
 		if(!NORMAL_TEAMS_ENEMY(currentTeam, kingTeam)) continue;
@@ -30,7 +30,7 @@ bool piece_does_check(const Piece board[], Point kingPoint, Point point)
 
 bool game_still_running(const Piece board[], State state)
 {
-	uint8_t currentTeam = STATE_TEAM_MACRO(state);
+	uint8_t currentTeam = STATE_CURRENT_MACRO(state);
 
 	if(check_mate_ending(board, state, currentTeam)) return false;
 
@@ -57,7 +57,7 @@ bool check_draw_ending(const Piece board[], State state, uint8_t team)
 {
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
-	if(STATE_COUNTER_MACRO(state) >= 100) return true;
+	if(STATE_CLOCK_MACRO(state) >= 100) return true;
 
 	if(little_material_draw(board)) return true;
 
@@ -83,7 +83,7 @@ bool little_material_draw(const Piece board[])
 {
 	uint8_t blackBishops = 0, whiteBishops = 0, knightAmount = 0;
 
-	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	for(Point point = 0; point < BOARD_POINTS; point += 1)
 	{
 		if(!CHESS_PIECE_EXISTS(board[point])) continue;
 
@@ -114,7 +114,7 @@ bool team_pieces_movable(const Piece board[], State state, uint8_t team)
 {
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
-	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	for(Point point = 0; point < BOARD_POINTS; point += 1)
 	{
 		uint8_t currentTeam = BOARD_POINT_TEAM(board, point);
 

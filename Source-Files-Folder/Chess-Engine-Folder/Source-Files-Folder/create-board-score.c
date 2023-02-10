@@ -4,7 +4,7 @@
 // The score of the board is positive for whites favour and negative for blacks favour
 int board_state_score(const Piece board[], State state)
 {
-	uint8_t team = STATE_TEAM_MACRO(state);
+	uint8_t team = STATE_CURRENT_MACRO(state);
 
 	if(check_mate_ending(board, state, team))
 	{
@@ -20,7 +20,7 @@ int board_state_score(const Piece board[], State state)
 int board_pieces_score(const Piece board[])
 {
 	int piecesScore = 0;
-	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	for(Point point = 0; point < BOARD_POINTS; point += 1)
 	{
 		if(!CHESS_PIECE_EXISTS(board[point])) continue;
 

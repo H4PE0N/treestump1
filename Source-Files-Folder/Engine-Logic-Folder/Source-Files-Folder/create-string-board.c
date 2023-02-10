@@ -32,16 +32,16 @@ bool create_fenstr_parts(char* stringArray[], const Piece board[], State state)
 
 	if(!create_string_passant(stringArray[3], state)) return false;
 
-	if(!create_string_counter(stringArray[4], state)) return false;
+	if(!create_string_clock(stringArray[4], state)) return false;
 
 	if(!create_string_turns(stringArray[5], state)) return false;
 
 	return true;
 }
 
-bool create_string_counter(char* string, State state)
+bool create_string_clock(char* string, State state)
 {
-	return sprintf(string, "%d", STATE_COUNTER_MACRO(state));
+	return sprintf(string, "%d", STATE_CLOCK_MACRO(state));
 }
 
 bool create_string_turns(char* string, State state)
@@ -82,9 +82,9 @@ bool create_string_castles(char* string, State state)
 
 bool create_string_current(char* string, State state)
 {
-	if(STATE_TEAM_MACRO(state) == TEAM_WHITE) string[0] = WHITE_SYMBOL;
+	if(STATE_CURRENT_MACRO(state) == TEAM_WHITE) string[0] = WHITE_SYMBOL;
 
-	else if(STATE_TEAM_MACRO(state) == TEAM_BLACK) string[0] = BLACK_SYMBOL;
+	else if(STATE_CURRENT_MACRO(state) == TEAM_BLACK) string[0] = BLACK_SYMBOL;
 
 	else return false;
 

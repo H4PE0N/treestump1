@@ -90,5 +90,5 @@ Point parse_mouse_point(Event event, Screen screen)
 
 Point check_inverted_point(Point point, bool inverted)
 {
-  return (inverted ? (BOARD_LENGTH - 1 - point) : point);
+  return (inverted ? (BOARD_POINTS - 1 - point) : point);
 }

@@ -67,7 +67,7 @@ bool render_promote_board(Screen screen, uint8_t team)
 
 bool render_result_board(Screen screen, const Piece board[], State state)
 {
-	uint8_t team = STATE_TEAM_MACRO(state);
+	uint8_t team = STATE_CURRENT_MACRO(state);
 	uint8_t winningTeam = NORMAL_TEAM_ENEMY(team);
 
 	if(check_mate_ending(board, state, team))
@@ -113,7 +113,7 @@ bool render_team_squares(Screen screen, uint8_t team)
 
 	if(!extract_team_square(&squareImage, team)) return false;
 
-	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	for(Point point = 0; point < BOARD_POINTS; point += 1)
 	{
 		if(!render_point_image(screen, squareImage, point, 255)) return false;
 	}
@@ -122,7 +122,7 @@ bool render_team_squares(Screen screen, uint8_t team)
 
 bool render_board_pieces(Screen screen, const Piece board[])
 {
-	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	for(Point point = 0; point < BOARD_POINTS; point += 1)
 	{
 		if(!BOARD_POINT_EXISTS(board, point)) continue;
 
@@ -245,7 +245,7 @@ bool render_board_squares(Screen screen)
 
   if(!extract_file_image(&blackSquare, BLACK_SQUARE_FILE)) return false;
 
-	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	for(Point point = 0; point < BOARD_POINTS; point += 1)
 	{
 		Surface* image = POINT_SQAURE_WHITE(point) ? whiteSquare : blackSquare;
 

@@ -19,7 +19,7 @@ bool sorted_engine_moves(Move** moveArray, int* moveAmount, const Piece board[],
 {
 	if(depth <= 0) return false;
 
-	int currTeam = STATE_TEAM_MACRO(state);
+	int currTeam = STATE_CURRENT_MACRO(state);
 
 	if(!team_legal_moves(moveArray, moveAmount, board, state, currTeam)) return false;
 

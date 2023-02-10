@@ -25,8 +25,8 @@ int main(int argc, char* argv[])
   send_socket_string(clientSock, joinString, SOCKET_STR_SIZE);
 
 
-  Piece* board = malloc(sizeof(Piece) * BOARD_LENGTH);
-  memset(board, PIECE_NONE, sizeof(Piece) * BOARD_LENGTH);
+  Piece* board = malloc(sizeof(Piece) * BOARD_POINTS);
+  memset(board, PIECE_NONE, sizeof(Piece) * BOARD_POINTS);
   State state;
 
 
@@ -102,7 +102,7 @@ bool parse_soceng_move(int clientSock, const Piece board[], State state, const c
 
 
 
-	unsigned short team = STATE_TEAM_MACRO(state);
+	unsigned short team = STATE_CURRENT_MACRO(state);
 	Move engineMove = MOVE_NONE;
 
 	printf("moving depth=%d mtime=%d\n", depth, mtime);

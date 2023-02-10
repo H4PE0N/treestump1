@@ -37,11 +37,11 @@ int main(int argAmount, char* arguments[])
 
 bool screen_multi_game(Piece* board, State* state, Move* moves, Screen* screen)
 {
-	printf("counter (%d)\n", STATE_COUNTER_MACRO(*state));
+	printf("clock (%d)\n", STATE_CLOCK_MACRO(*state));
 
 	while(game_still_running(board, *state))
 	{
-		State stateTeam = (*state & STATE_TEAM_MASK);
+		State stateTeam = (*state & STATE_CURRENT_MASK);
 		if(stateTeam == STATE_TEAM_NONE) return false;
 
 		if(!display_chess_board(*screen, board, *state, moves)) return false;

@@ -23,7 +23,7 @@ long search_depth_nodes(const Piece board[], State state, uint8_t currentTeam, i
 
 long search_move_nodes(const Piece board[], State state, uint8_t currentTeam, int depth, Move move, long startClock, int seconds)
 {
-	State stateCopy = ALLOC_TEAM_STATE(state, currentTeam);
+	State stateCopy = ALLOC_CURRENT_STATE(state, currentTeam);
 
 	Piece* boardCopy = copy_chess_board(board);
 

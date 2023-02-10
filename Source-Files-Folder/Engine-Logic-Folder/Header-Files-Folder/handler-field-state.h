@@ -12,7 +12,7 @@ void switch_current_team(State* state);
 
 void increase_state_turns(State* state);
 
-void increase_state_counter(State* state);
+void increase_state_clock(State* state);
 
 void alloc_passant_point(State* state, Move move);
 

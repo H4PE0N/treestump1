@@ -8,7 +8,7 @@ bool create_fen_string_t(char* fenString, char** stringArray, const Piece board[
 
 bool create_string_state(char* stringArray[], State state);
 
-bool create_string_counter(char* string, State state);
+bool create_string_clock(char* string, State state);
 
 bool create_string_turns(char* string, State state);
 

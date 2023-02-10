@@ -121,7 +121,7 @@ bool conser_result_handler(const int clientSocks[], const Piece board[], State s
 {
   if(!send_update_string(clientSocks, board, state)) return false;
 
-  unsigned short team = STATE_TEAM_MACRO(state);
+  unsigned short team = STATE_CURRENT_MACRO(state);
 	unsigned short winningTeam = NORMAL_TEAM_ENEMY(team);
 
   char resultString[SOCKET_STR_SIZE];
@@ -241,7 +241,7 @@ bool server_console_loop(const int clientSocks[], Piece* board, State* state)
 
     if(!send_update_string(clientSocks, board, *state)) return false;
 
-    int moveIndex = (STATE_TEAM_MACRO(*state) == TEAM_WHITE) ? 0 : 1;
+    int moveIndex = (STATE_CURRENT_MACRO(*state) == TEAM_WHITE) ? 0 : 1;
 
     Move recvMove = MOVE_NONE;
     if(!recv_socket_move(&recvMove, clientSocks[moveIndex], board, *state))

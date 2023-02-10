@@ -101,7 +101,7 @@ bool team_legal_moves(Move** moveArray, int* moveAmount, const Piece board[], St
 
 	*moveArray = create_move_array(256); *moveAmount = 0;
 
-	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	for(Point point = 0; point < BOARD_POINTS; point += 1)
 	{
 		uint8_t currentTeam = BOARD_POINT_TEAM(board, point);
 		if(!NORMAL_TEAMS_TEAM(currentTeam, team)) continue;

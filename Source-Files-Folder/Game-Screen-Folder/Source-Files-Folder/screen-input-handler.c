@@ -23,14 +23,14 @@ bool input_screen_move(Move* move, Screen* screen, const Piece board[], State st
 
 bool print_console_state(State state)
 {
-	uint8_t team = STATE_TEAM_MACRO(state);
+	uint8_t team = STATE_CURRENT_MACRO(state);
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
 	printf("current team:(%s)\n", TEAM_WORDS[team]);
 
 	printf("turns:(%d)\n", STATE_TURNS_MACRO(state));
 
-	printf("counter:(%d)\n", STATE_COUNTER_MACRO(state));
+	printf("clock:(%d)\n", STATE_CLOCK_MACRO(state));
 
 	char passantString[16];
 	memset(passantString, '\0', sizeof(passantString));
@@ -94,8 +94,8 @@ bool input_promote_flagX(Move* promoteFlag, Screen* screen, uint8_t team)
 
 bool input_single_move(Move* move, Screen* screen, const Piece board[], State state, const Move moveArray[])
 {
-	Point markPoints[BOARD_LENGTH];
-	memset(markPoints, POINT_NONE, sizeof(Point) * BOARD_LENGTH);
+	Point markPoints[BOARD_POINTS];
+	memset(markPoints, POINT_NONE, sizeof(Point) * BOARD_POINTS);
 
 	Event event;
 	do {

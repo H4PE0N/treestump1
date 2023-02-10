@@ -4,7 +4,7 @@
 
 extern const uint8_t BOARD_RANKS;
 extern const uint8_t BOARD_FILES;
-extern const uint8_t BOARD_LENGTH;
+extern const uint8_t BOARD_POINTS;
 
 extern const uint8_t PIECE_TYPE_SPAN;
 extern const uint8_t PIECE_TEAM_SPAN;

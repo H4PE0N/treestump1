@@ -3,7 +3,7 @@
 
 bool optimal_depth_move(Move* move, const Piece board[], State state, Entry* hashTable, int seconds)
 {
-	uint8_t team = STATE_TEAM_MACRO(state);
+	uint8_t team = STATE_CURRENT_MACRO(state);
 
 	Move* moveArray; int moveAmount;
 	if(!team_legal_moves(&moveArray, &moveAmount, board, state, team)) return false;
@@ -21,7 +21,7 @@ bool search_depths_move(Move* move, const Piece board[], State state, Entry* has
 
 	if(moveAmount == 1) return true;
 
-	uint8_t team = STATE_TEAM_MACRO(state);
+	uint8_t team = STATE_CURRENT_MACRO(state);
 
 	int playerSign = TEAM_SCORE_WEIGHT(team);
 

@@ -14,15 +14,15 @@ Entry* create_hash_table(int tableSize)
 	return hashTable;
 }
 
-void create_hash_matrix(uint64_t hashMatrix[BOARD_LENGTH][12])
+void create_hash_matrix(uint64_t hashMatrix[BOARD_POINTS][12])
 {
-	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	for(Point point = 0; point < BOARD_POINTS; point += 1)
 	{
 		create_pieces_hashes(hashMatrix, point);
 	}
 }
 
-void create_pieces_hashes(uint64_t hashMatrix[BOARD_LENGTH][12], Point point)
+void create_pieces_hashes(uint64_t hashMatrix[BOARD_POINTS][12], Point point)
 {
 	for(uint8_t index = 0; index < 12; index += 1)
 	{
@@ -40,7 +40,7 @@ uint64_t create_random_uint64(uint64_t minimum, uint64_t maximum)
 uint64_t create_zobrist_hash(uint64_t* hashMatrix[], const Piece board[], State state)
 {
 	uint64_t zobristHash = 0;
-	for(Point point = 0; point < BOARD_LENGTH; point += 1)
+	for(Point point = 0; point < BOARD_POINTS; point += 1)
 	{
 		if(!CHESS_PIECE_EXISTS(board[point])) continue;
 

@@ -14,7 +14,7 @@ bool parse_string_array(Piece* board, State* state, char* stringArray[]);
 
 bool parse_string_state(State* state, char* stringArray[]);
 
-bool parse_string_counter(State* state, const char stringToken[]);
+bool parse_string_clock(State* state, const char stringToken[]);
 
 bool parse_string_turns(State* state, const char stringToken[]);
 

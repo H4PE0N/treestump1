@@ -49,8 +49,8 @@ int main(int argc, char* argv[])
   send_socket_string(clientSock, joinString, SOCKET_STR_SIZE);
 
 
-  Piece* board = malloc(sizeof(Piece) * BOARD_LENGTH);
-  memset(board, PIECE_NONE, sizeof(Piece) * BOARD_LENGTH);
+  Piece* board = malloc(sizeof(Piece) * BOARD_POINTS);
+  memset(board, PIECE_NONE, sizeof(Piece) * BOARD_POINTS);
   State state;
 
 
