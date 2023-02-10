@@ -2,33 +2,33 @@
 #ifndef STRING_BOARD_PARSER_H
 #define STRING_BOARD_PARSER_H
 
-bool parse_create_board(Piece** board, Info* info, const char fenString[]);
+bool parse_create_board(Piece** board, State* state, const char fenString[]);
 
-bool parse_fen_string(Piece* board, Info* info, const char fenString[]);
+bool parse_fen_string(Piece* board, State* state, const char fenString[]);
 
 bool parse_string_board(Piece* board, const char stringToken[]);
 
 bool parse_board_piece(Piece* piece, char symbol);
 
-bool parse_string_array(Piece* board, Info* info, char* stringArray[]);
+bool parse_string_array(Piece* board, State* state, char* stringArray[]);
 
-bool parse_string_info(Info* info, char* stringArray[]);
+bool parse_string_state(State* state, char* stringArray[]);
 
-bool parse_string_counter(Info* info, const char stringToken[]);
+bool parse_string_counter(State* state, const char stringToken[]);
 
-bool parse_string_turns(Info* info, const char stringToken[]);
+bool parse_string_turns(State* state, const char stringToken[]);
 
-bool parse_string_passant(Info* info, const char stringToken[]);
+bool parse_string_passant(State* state, const char stringToken[]);
 
 bool parse_string_point(Point* point, const char string[]);
 
 bool parse_string_move(Move* move, const char stringMove[]);
 
-bool parse_string_castles(Info* info, const char stringToken[]);
+bool parse_string_castles(State* state, const char stringToken[]);
 
-bool parse_castle_symbol(Info* infoCastle, char symbol);
+bool parse_castle_symbol(State* stateCastle, char symbol);
 
-bool parse_string_current(Info* info, const char stringToken[]);
+bool parse_string_current(State* state, const char stringToken[]);
 
 bool parse_board_files(Piece* board, uint8_t rank, const char rankString[], int length);
 

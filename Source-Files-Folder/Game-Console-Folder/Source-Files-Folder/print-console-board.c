@@ -29,21 +29,21 @@ bool print_console_board(const Piece board[])
   printf("  A B C D E F G H\n"); return true;
 }
 
-bool print_console_info(Info info)
+bool print_console_state(State state)
 {
-	unsigned short team = INFO_TEAM_MACRO(info);
+	unsigned short team = STATE_TEAM_MACRO(state);
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
 	printf("current team:(%s)\n", TEAM_WORDS[team]);
 
-	printf("turns:(%d)\n", INFO_TURNS_MACRO(info));
+	printf("turns:(%d)\n", STATE_TURNS_MACRO(state));
 
-	printf("counter:(%d)\n", INFO_COUNTER_MACRO(info));
+	printf("counter:(%d)\n", STATE_COUNTER_MACRO(state));
 
 	char passantString[16];
 	memset(passantString, '\0', sizeof(passantString));
 
-	Point passantPoint = passant_pawn_point(info);
+	Point passantPoint = passant_pawn_point(state);
 	if(!create_string_point(passantString, passantPoint))
 	{
 		strcpy(passantString, "none");

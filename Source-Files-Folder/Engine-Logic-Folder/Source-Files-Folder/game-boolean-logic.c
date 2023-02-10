@@ -28,18 +28,18 @@ bool piece_does_check(const Piece board[], Point kingPoint, Point point)
 	return board_move_legal(board, move);
 }
 
-bool game_still_running(const Piece board[], Info info)
+bool game_still_running(const Piece board[], State state)
 {
-	uint8_t currentTeam = INFO_TEAM_MACRO(info);
+	uint8_t currentTeam = STATE_TEAM_MACRO(state);
 
-	if(check_mate_ending(board, info, currentTeam)) return false;
+	if(check_mate_ending(board, state, currentTeam)) return false;
 
-	if(check_draw_ending(board, info, currentTeam)) return false;
+	if(check_draw_ending(board, state, currentTeam)) return false;
 
 	return true;
 }
 
-bool check_mate_ending(const Piece board[], Info info, uint8_t team)
+bool check_mate_ending(const Piece board[], State state, uint8_t team)
 {
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
@@ -48,16 +48,16 @@ bool check_mate_ending(const Piece board[], Info info, uint8_t team)
 
 	if(!king_inside_check(board, kingPoint)) return false;
 
-	if(team_pieces_movable(board, info, team)) return false;
+	if(team_pieces_movable(board, state, team)) return false;
 
 	return true;
 }
 
-bool check_draw_ending(const Piece board[], Info info, uint8_t team)
+bool check_draw_ending(const Piece board[], State state, uint8_t team)
 {
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
-	if(INFO_COUNTER_MACRO(info) >= 100) return true;
+	if(STATE_COUNTER_MACRO(state) >= 100) return true;
 
 	if(little_material_draw(board)) return true;
 
@@ -66,7 +66,7 @@ bool check_draw_ending(const Piece board[], Info info, uint8_t team)
 
 	if(king_inside_check(board, kingPoint)) return false;
 
-	if(team_pieces_movable(board, info, team)) return false;
+	if(team_pieces_movable(board, state, team)) return false;
 
 	return true;
 }
@@ -110,7 +110,7 @@ bool little_material_draw(const Piece board[])
 	return true;
 }
 
-bool team_pieces_movable(const Piece board[], Info info, uint8_t team)
+bool team_pieces_movable(const Piece board[], State state, uint8_t team)
 {
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
@@ -120,52 +120,52 @@ bool team_pieces_movable(const Piece board[], Info info, uint8_t team)
 
 		if(!NORMAL_TEAMS_TEAM(currentTeam, team)) continue;
 
-		if(chess_piece_movable(board, info, point)) return true;
+		if(chess_piece_movable(board, state, point)) return true;
 	}
 	return false;
 }
 
-bool chess_piece_movable(const Piece board[], Info info, Point piecePoint)
+bool chess_piece_movable(const Piece board[], State state, Point piecePoint)
 {
 	if(!POINT_INSIDE_BOARD(piecePoint)) return false;
 
 	Move* moveArray; int moveAmount;
 	if(!piece_pattern_moves(&moveArray, &moveAmount, board, piecePoint)) return false;
 
-	bool result = piece_movable_test(board, info, moveArray, moveAmount);
+	bool result = piece_movable_test(board, state, moveArray, moveAmount);
 
 	free(moveArray); return result;
 }
 
-bool piece_movable_test(const Piece board[], Info info, const Move moveArray[], int moveAmount)
+bool piece_movable_test(const Piece board[], State state, const Move moveArray[], int moveAmount)
 {
 	for(int index = 0; index < moveAmount; index += 1)
 	{
 		Move move = moveArray[index];
 
-		if(!correct_move_flag(&move, board, info)) continue;
+		if(!correct_move_flag(&move, board, state)) continue;
 
-		if(move_fully_legal(board, info, move)) return true;
+		if(move_fully_legal(board, state, move)) return true;
 	}
 	return false;
 }
 
-bool move_deliver_check(const Piece board[], Info info, Move move)
+bool move_deliver_check(const Piece board[], State state, Move move)
 {
 	if(!MOVE_INSIDE_BOARD(move)) return false;
 
 	Piece* boardCopy = copy_chess_board(board);
 
-	bool result = deliver_check_test(boardCopy, info, move);
+	bool result = deliver_check_test(boardCopy, state, move);
 
 	free(boardCopy); return result;
 }
 
-bool deliver_check_test(Piece* boardCopy, Info infoCopy, Move move)
+bool deliver_check_test(Piece* boardCopy, State stateCopy, Move move)
 {
 	uint8_t enemyTeam = MOVE_START_ENEMY(boardCopy, move);
 
-	if(!execute_chess_move(boardCopy, &infoCopy, move)) return false;
+	if(!execute_chess_move(boardCopy, &stateCopy, move)) return false;
 
 	Point kingPoint = board_king_point(boardCopy, enemyTeam);
 	if(kingPoint == POINT_NONE) return false;
@@ -173,22 +173,22 @@ bool deliver_check_test(Piece* boardCopy, Info infoCopy, Move move)
 	return king_inside_check(boardCopy, kingPoint);
 }
 
-bool move_deliver_mate(const Piece board[], Info info, Move move)
+bool move_deliver_mate(const Piece board[], State state, Move move)
 {
 	if(!MOVE_INSIDE_BOARD(move)) return false;
 
 	Piece* boardCopy = copy_chess_board(board);
 
-	bool result = deliver_mate_test(boardCopy, info, move);
+	bool result = deliver_mate_test(boardCopy, state, move);
 
 	free(boardCopy); return result;
 }
 
-bool deliver_mate_test(Piece* boardCopy, Info infoCopy, Move move)
+bool deliver_mate_test(Piece* boardCopy, State stateCopy, Move move)
 {
 	uint8_t enemyTeam = MOVE_START_ENEMY(boardCopy, move);
 
-	if(!execute_chess_move(boardCopy, &infoCopy, move)) return false;
+	if(!execute_chess_move(boardCopy, &stateCopy, move)) return false;
 
-	return check_mate_ending(boardCopy, infoCopy, enemyTeam);
+	return check_mate_ending(boardCopy, stateCopy, enemyTeam);
 }

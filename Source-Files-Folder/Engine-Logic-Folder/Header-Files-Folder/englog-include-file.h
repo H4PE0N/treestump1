@@ -14,18 +14,18 @@
 #include "engine-point-values.h"
 #include "engine-piece-values.h"
 #include "engine-move-values.h"
-#include "engine-info-values.h"
+#include "engine-state-values.h"
 
 #include "engine-point-macros.h"
 #include "engine-piece-macros.h"
 #include "engine-move-macros.h"
-#include "engine-info-macros.h"
+#include "engine-state-macros.h"
 
 #include "chess-engine-values.h"
 #include "chess-engine-macros.h"
 #include "chess-board-values.h"
 
-#include "handler-field-info.h"
+#include "handler-field-state.h"
 #include "handler-field-move.h"
 #include "handler-field-point.h"
 #include "handler-field-piece.h"

@@ -4,17 +4,17 @@
 #include "../Engine-Logic-Folder/Header-Files-Folder/englog-include-file.h"
 #include "../Game-Console-Folder/Header-Files-Folder/console-include-file.h"
 
-bool server_console_loop(const int[], Piece*, Info*);
+bool server_console_loop(const int[], Piece*, State*);
 
 bool accept_conct_clients(int*, int, const char[], int);
 
-bool send_update_string(const int[], const Piece[], Info);
+bool send_update_string(const int[], const Piece[], State);
 
 bool send_move_string(int);
 
-bool recv_socket_move(Move*, int, const Piece[], Info);
+bool recv_socket_move(Move*, int, const Piece[], State);
 
-bool conser_result_handler(const int[], const Piece[], Info);
+bool conser_result_handler(const int[], const Piece[], State);
 
 
 int create_random_number(int minimum, int maximum)
@@ -97,17 +97,17 @@ int main(int argc, char* argv[])
   }
 
   Piece* board;
-  Info info;
+  State state;
 
-  if(!parse_create_board(&board, &info, fenString))
+  if(!parse_create_board(&board, &state, fenString))
   {
     close_socket_desc(serverSock); return true;
   }
 
 
-  if(server_console_loop(clientSocks, board, &info))
+  if(server_console_loop(clientSocks, board, &state))
   {
-    conser_result_handler(clientSocks, board, info);
+    conser_result_handler(clientSocks, board, state);
   }
 
 
@@ -117,17 +117,17 @@ int main(int argc, char* argv[])
   return false;
 }
 
-bool conser_result_handler(const int clientSocks[], const Piece board[], Info info)
+bool conser_result_handler(const int clientSocks[], const Piece board[], State state)
 {
-  if(!send_update_string(clientSocks, board, info)) return false;
+  if(!send_update_string(clientSocks, board, state)) return false;
 
-  unsigned short team = INFO_TEAM_MACRO(info);
+  unsigned short team = STATE_TEAM_MACRO(state);
 	unsigned short winningTeam = NORMAL_TEAM_ENEMY(team);
 
   char resultString[SOCKET_STR_SIZE];
   memset(resultString, '\0', sizeof(resultString));
 
-  if(check_mate_ending(board, info, team))
+  if(check_mate_ending(board, state, team))
   {
     sprintf(resultString, "quit state %s", TEAM_WORDS[winningTeam]);
 
@@ -136,7 +136,7 @@ bool conser_result_handler(const int clientSocks[], const Piece board[], Info in
       if(!send_socket_string(clientSocks[index], resultString, SOCKET_STR_SIZE)) return false;
     }
   }
-  else if(check_draw_ending(board, info, team))
+  else if(check_draw_ending(board, state, team))
   {
     sprintf(resultString, "quit state draw");
 
@@ -178,14 +178,14 @@ bool accept_conct_clients(int* clientSocks, int serverSock, const char sockAddr[
   return true;
 }
 
-bool send_update_string(const int clientSocks[], const Piece board[], Info info)
+bool send_update_string(const int clientSocks[], const Piece board[], State state)
 {
   char updateString[SOCKET_STR_SIZE];
   memset(updateString, '\0', sizeof(updateString));
 
   char fenString[128];
   memset(fenString, '\0', sizeof(fenString));
-  if(!create_fen_string(fenString, board, info)) return false;
+  if(!create_fen_string(fenString, board, state)) return false;
 
   sprintf(updateString, "update board \"%s\"", fenString);
 
@@ -208,10 +208,10 @@ bool send_move_string(int clientSock)
   return true;
 }
 
-bool recv_socket_move(Move* move, int clientSock, const Piece board[], Info info)
+bool recv_socket_move(Move* move, int clientSock, const Piece board[], State state)
 {
   Move recvMove = MOVE_NONE;
-  while(!move_fully_legal(board, info, recvMove))
+  while(!move_fully_legal(board, state, recvMove))
   {
     if(!send_move_string(clientSock)) return false;
 
@@ -227,30 +227,30 @@ bool recv_socket_move(Move* move, int clientSock, const Piece board[], Info info
 
     if(!parse_string_move(&recvMove, moveString)) continue;
 
-    if(!correct_move_flag(&recvMove, board, info)) continue;
+    if(!correct_move_flag(&recvMove, board, state)) continue;
   }
   *move = recvMove; return true;
 }
 
-bool server_console_loop(const int clientSocks[], Piece* board, Info* info)
+bool server_console_loop(const int clientSocks[], Piece* board, State* state)
 {
-  while(game_still_running(board, *info))
+  while(game_still_running(board, *state))
   {
     if(!print_console_board(board)) return false;
-    if(!print_console_info(*info)) return false;
+    if(!print_console_state(*state)) return false;
 
-    if(!send_update_string(clientSocks, board, *info)) return false;
+    if(!send_update_string(clientSocks, board, *state)) return false;
 
-    int moveIndex = (INFO_TEAM_MACRO(*info) == TEAM_WHITE) ? 0 : 1;
+    int moveIndex = (STATE_TEAM_MACRO(*state) == TEAM_WHITE) ? 0 : 1;
 
     Move recvMove = MOVE_NONE;
-    if(!recv_socket_move(&recvMove, clientSocks[moveIndex], board, *info))
+    if(!recv_socket_move(&recvMove, clientSocks[moveIndex], board, *state))
     {
       printf("player #%d quit!\n", moveIndex + 1);
       return false;
     }
 
-    if(!move_chess_piece(board, info, recvMove)) return false;
+    if(!move_chess_piece(board, state, recvMove)) return false;
   }
   return true;
 }

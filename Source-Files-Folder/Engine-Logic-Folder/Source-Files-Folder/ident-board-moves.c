@@ -1,7 +1,7 @@
 
 #include "../Header-Files-Folder/englog-include-file.h"
 
-bool castle_move_ident(Info info, Move move, Piece piece)
+bool castle_move_ident(State state, Move move, Piece piece)
 {
 	if(!MOVE_INSIDE_BOARD(move) || !CHESS_PIECE_EXISTS(piece)) return false;
 
@@ -12,7 +12,7 @@ bool castle_move_ident(Info info, Move move, Piece piece)
 	return ((movePattern == KSIDE_FILE_OFFSET) || (movePattern == QSIDE_FILE_OFFSET));
 }
 
-bool passant_move_ident(Info info, Move move, Piece piece)
+bool passant_move_ident(State state, Move move, Piece piece)
 {
 	if(!MOVE_INSIDE_BOARD(move) || !CHESS_PIECE_EXISTS(piece)) return false;
 
@@ -22,7 +22,7 @@ bool passant_move_ident(Info info, Move move, Piece piece)
 	uint8_t stopRank = POINT_RANK_MACRO(stopPoint);
 
 	if(MASK_PIECE_TYPE(piece) != PIECE_TYPE_PAWN) return false;
-	if((POINT_FILE_MACRO(stopPoint) + 1) != INFO_PASSANT_MACRO(info)) return false;
+	if((POINT_FILE_MACRO(stopPoint) + 1) != STATE_PASSANT_MACRO(state)) return false;
 
 	if((team == TEAM_WHITE) && (stopRank == (BLACK_PAWN_RANK + BLACK_MOVE_VALUE))) return true;
 	if((team == TEAM_BLACK) && (stopRank == (WHITE_PAWN_RANK + WHITE_MOVE_VALUE))) return true;
@@ -30,7 +30,7 @@ bool passant_move_ident(Info info, Move move, Piece piece)
 	return false;
 }
 
-bool promote_move_ident(Info info, Move move, Piece piece)
+bool promote_move_ident(State state, Move move, Piece piece)
 {
 	if(!MOVE_INSIDE_BOARD(move) || !CHESS_PIECE_EXISTS(piece)) return false;
 
@@ -45,7 +45,7 @@ bool promote_move_ident(Info info, Move move, Piece piece)
 	return false;
 }
 
-bool double_move_ident(Info info, Move move, Piece piece)
+bool double_move_ident(State state, Move move, Piece piece)
 {
 	if(!MOVE_INSIDE_BOARD(move) || !CHESS_PIECE_EXISTS(piece)) return false;
 

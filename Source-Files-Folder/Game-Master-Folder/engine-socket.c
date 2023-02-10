@@ -4,11 +4,11 @@
 #include "../Game-Console-Folder/Header-Files-Folder/console-include-file.h"
 #include "../Game-Socket-Folder/Header-Files-Folder/socket-include-file.h"
 
-bool engine_console_loop(int, Piece*, Info*);
+bool engine_console_loop(int, Piece*, State*);
 
-bool parse_soceng_action(int, Piece*, Info*, const char[]);
+bool parse_soceng_action(int, Piece*, State*, const char[]);
 
-bool parse_soceng_move(int, const Piece[], Info, const char[]);
+bool parse_soceng_move(int, const Piece[], State, const char[]);
 
 
 int main(int argc, char* argv[])
@@ -27,10 +27,10 @@ int main(int argc, char* argv[])
 
   Piece* board = malloc(sizeof(Piece) * BOARD_LENGTH);
   memset(board, PIECE_NONE, sizeof(Piece) * BOARD_LENGTH);
-  Info info;
+  State state;
 
 
-  if(!engine_console_loop(clientSock, board, &info));
+  if(!engine_console_loop(clientSock, board, &state));
 
 
   printf("close_socket_desc(clientSock); free(board); \n");
@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
   return false;
 }
 
-bool engine_console_loop(int clientSock, Piece* board, Info* info)
+bool engine_console_loop(int clientSock, Piece* board, State* state)
 {
   char recvString[SOCKET_STR_SIZE];
 
@@ -47,7 +47,7 @@ bool engine_console_loop(int clientSock, Piece* board, Info* info)
   {
     printf("server -> %s\n", recvString);
 
-    if(!parse_soceng_action(clientSock, board, info, recvString))
+    if(!parse_soceng_action(clientSock, board, state, recvString))
     {
       return false;
     }
@@ -56,20 +56,20 @@ bool engine_console_loop(int clientSock, Piece* board, Info* info)
   return true;
 }
 
-bool parse_soceng_action(int clientSock, Piece* board, Info* info, const char string[])
+bool parse_soceng_action(int clientSock, Piece* board, State* state, const char string[])
 {
   if(!strncmp(string, "update", 6))
-    return parse_update_string(board, info, string);
+    return parse_update_string(board, state, string);
 
   else if(!strncmp(string, "move", 4))
-    return parse_soceng_move(clientSock, board, *info, string);
+    return parse_soceng_move(clientSock, board, *state, string);
 
   else if(!strncmp(string, "quit", 4)) return false;
 
   return false;
 }
 
-bool parse_soceng_move(int clientSock, const Piece board[], Info info, const char string[])
+bool parse_soceng_move(int clientSock, const Piece board[], State state, const char string[])
 {
 	int depth = -1, mtime = -1;
 
@@ -102,19 +102,19 @@ bool parse_soceng_move(int clientSock, const Piece board[], Info info, const cha
 
 
 
-	unsigned short team = INFO_TEAM_MACRO(info);
+	unsigned short team = STATE_TEAM_MACRO(state);
 	Move engineMove = MOVE_NONE;
 
 	printf("moving depth=%d mtime=%d\n", depth, mtime);
 
 	if(mtime == -1)
 	{
-		if(!engine_depth_move(&engineMove, board, info, team, depth)) return false;
+		if(!engine_depth_move(&engineMove, board, state, team, depth)) return false;
 	}
 	else
 	{
 		int seconds = mtime / 1000;
-		if(!optimal_depth_move(&engineMove, board, info, team, seconds)) return false;
+		if(!optimal_depth_move(&engineMove, board, state, team, seconds)) return false;
 	}
 
 

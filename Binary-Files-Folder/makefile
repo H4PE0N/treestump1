@@ -1,7 +1,7 @@
 ################################################################################
 ROOT_FOLDER := ..
 ################################################################################
-GROUP1_FILES := engine-console single-console multi-console debugging
+GROUP1_FILES := engine-console single-console multi-console debug-program
 GROUP2_FILES := engine-socket client-console server-console
 GROUP3_FILES := single-screen multi-screen
 GROUP4_FILES := client-screen server-screen

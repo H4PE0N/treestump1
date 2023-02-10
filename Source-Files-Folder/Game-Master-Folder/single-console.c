@@ -3,22 +3,22 @@
 #include "../Game-Console-Folder/Header-Files-Folder/console-include-file.h"
 #include "../Engine-Logic-Folder/Header-Files-Folder/englog-include-file.h"
 
-bool console_single_game(Piece*, Info*, bool);
+bool console_single_game(Piece*, State*, bool);
 
 int main(int argc, char* argv[])
 {
 	char* fenString = (argc >= 2) ? argv[1] : (char*) FEN_START_STRING;
 
-  Piece* board; Info info;
-	if(!parse_create_board(&board, &info, fenString))
+  Piece* board; State state;
+	if(!parse_create_board(&board, &state, fenString))
 	{
 		printf("Could not parse game string!\n");
     return false;
 	}
 
-	if(console_single_game(board, &info, true))
+	if(console_single_game(board, &state, true))
 	{
-		console_result_handler(board, info);
+		console_result_handler(board, state);
 	}
 
 	printf("free(board);\n");
@@ -27,26 +27,26 @@ int main(int argc, char* argv[])
 	return false;
 }
 
-bool console_single_game(Piece* board, Info* info, bool starting)
+bool console_single_game(Piece* board, State* state, bool starting)
 {
-	Info userTeam = (starting) ? INFO_TEAM_WHITE : INFO_TEAM_BLACK;
-	Info engineTeam = info_team_enemy(userTeam);
-	if(engineTeam == INFO_TEAM_NONE) return false;
+	State userTeam = (starting) ? STATE_TEAM_WHITE : STATE_TEAM_BLACK;
+	State engineTeam = state_team_enemy(userTeam);
+	if(engineTeam == STATE_TEAM_NONE) return false;
 
-	while(game_still_running(board, *info))
+	while(game_still_running(board, *state))
 	{
-		Info infoTeam = (*info & INFO_TEAM_MASK);
-		if(infoTeam == INFO_TEAM_NONE) return false;
+		State stateTeam = (*state & STATE_TEAM_MASK);
+		if(stateTeam == STATE_TEAM_NONE) return false;
 
 		if(!print_console_board(board)) return false;
 
-		if(infoTeam == userTeam)
+		if(stateTeam == userTeam)
 		{
-			if(!console_user_handler(board, info)) return false;
+			if(!console_user_handler(board, state)) return false;
 		}
-		else if(infoTeam == engineTeam)
+		else if(stateTeam == engineTeam)
 		{
-			if(!console_engine_handler(board, info)) return false;
+			if(!console_engine_handler(board, state)) return false;
 		}
 		else return false;
 	}

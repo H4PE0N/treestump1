@@ -3,7 +3,7 @@
 #include "../Game-Screen-Folder/Header-Files-Folder/screen-include-file.h"
 #include "../Engine-Logic-Folder/Header-Files-Folder/englog-include-file.h"
 
-bool screen_single_game(Piece*, Info*, Entry* hashTable, Move*, Screen*, bool);
+bool screen_single_game(Piece*, State*, Entry* hashTable, Move*, Screen*, bool);
 
 int main(int argc, char* argv[])
 {
@@ -22,8 +22,8 @@ int main(int argc, char* argv[])
 
 	create_hash_matrix(HASH_MATRIX);
 
-	Piece* board; Info info;
-	if(!parse_create_board(&board, &info, fenString)) return false;
+	Piece* board; State state;
+	if(!parse_create_board(&board, &state, fenString)) return false;
 
 	Entry* hashTable = create_hash_table(HASH_TABLE_SIZE);
 
@@ -31,9 +31,9 @@ int main(int argc, char* argv[])
 
 	Move* moves = create_move_array(256);
 
-	if(screen_single_game(board, &info, hashTable, moves, &screen, true))
+	if(screen_single_game(board, &state, hashTable, moves, &screen, true))
 	{
-		screen_result_handler(&screen, board, info);
+		screen_result_handler(&screen, board, state);
 	}
 
 
@@ -45,26 +45,26 @@ int main(int argc, char* argv[])
 	return false;
 }
 
-bool screen_single_game(Piece* board, Info* info, Entry* hashTable, Move* moves, Screen* screen, bool starting)
+bool screen_single_game(Piece* board, State* state, Entry* hashTable, Move* moves, Screen* screen, bool starting)
 {
-	Info userTeam = (starting) ? INFO_TEAM_WHITE : INFO_TEAM_BLACK;
-	Info engineTeam = INFO_TEAM_ENEMY(userTeam);
-	if(engineTeam == INFO_TEAM_NONE) return false;
+	State userTeam = (starting) ? STATE_TEAM_WHITE : STATE_TEAM_BLACK;
+	State engineTeam = STATE_TEAM_ENEMY(userTeam);
+	if(engineTeam == STATE_TEAM_NONE) return false;
 
-	while(game_still_running(board, *info))
+	while(game_still_running(board, *state))
 	{
-		Info infoTeam = (*info & INFO_TEAM_MASK);
-		if(infoTeam == INFO_TEAM_NONE) return false;
+		State stateTeam = (*state & STATE_TEAM_MASK);
+		if(stateTeam == STATE_TEAM_NONE) return false;
 
-		if(!display_chess_board(*screen, board, *info, moves)) return false;
+		if(!display_chess_board(*screen, board, *state, moves)) return false;
 
-		if(infoTeam == userTeam)
+		if(stateTeam == userTeam)
 		{
-			if(!screen_user_handler(board, info, moves, screen)) return false;
+			if(!screen_user_handler(board, state, moves, screen)) return false;
 		}
-		else if(infoTeam == engineTeam)
+		else if(stateTeam == engineTeam)
 		{
-			if(!screen_engine_handler(board, info, hashTable, moves, *screen)) return false;
+			if(!screen_engine_handler(board, state, hashTable, moves, *screen)) return false;
 		}
 		else return false;
 	}

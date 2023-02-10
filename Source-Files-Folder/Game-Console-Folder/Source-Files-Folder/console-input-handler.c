@@ -4,7 +4,7 @@
 const char CONSOLE_MOVE_PROMT[] = "input move -> ";
 const char CONSOLE_QUIT_STRING[] = "quit";
 
-bool input_console_move(Move* move, const Piece board[], Info info)
+bool input_console_move(Move* move, const Piece board[], State state)
 {
   Move inputMove = MOVE_NONE;
 

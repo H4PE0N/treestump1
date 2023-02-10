@@ -1,29 +1,29 @@
 
 #include "../Header-Files-Folder/screen-include-file.h"
 
-bool render_chess_board(Screen screen, const Piece board[], Info info, const Move moveArray[])
+bool render_chess_board(Screen screen, const Piece board[], State state, const Move moveArray[])
 {
 	if(!render_board_squares(screen)) return false;
 
 	if(!render_latest_move(screen, moveArray)) return false;
 
-	if(!render_check_squares(screen, board, info)) return false;
+	if(!render_check_squares(screen, board, state)) return false;
 
 	if(!render_board_pieces(screen, board)) return false;
 
 	return true;
 }
 
-bool render_move_board(Screen screen, const Piece board[], Info info, const Move moveArray[], Point point)
+bool render_move_board(Screen screen, const Piece board[], State state, const Move moveArray[], Point point)
 {
 	if(!render_board_squares(screen)) return false;
 
 	if(!render_latest_move(screen, moveArray)) return false;
 
-	if(!render_check_squares(screen, board, info)) return false;
+	if(!render_check_squares(screen, board, state)) return false;
 
 
-	if(!render_move_squares(screen, board, info, point)) return false;
+	if(!render_move_squares(screen, board, state, point)) return false;
 
 
 	if(!render_board_pieces(screen, board)) return false;
@@ -31,13 +31,13 @@ bool render_move_board(Screen screen, const Piece board[], Info info, const Move
 	return true;
 }
 
-bool render_mark_board(Screen screen, const Piece board[], Info info, const Move moveArray[], const Point markPoints[])
+bool render_mark_board(Screen screen, const Piece board[], State state, const Move moveArray[], const Point markPoints[])
 {
 	if(!render_board_squares(screen)) return false;
 
 	if(!render_latest_move(screen, moveArray)) return false;
 
-	if(!render_check_squares(screen, board, info)) return false;
+	if(!render_check_squares(screen, board, state)) return false;
 
 
 	if(!render_board_pieces(screen, board)) return false;
@@ -65,23 +65,23 @@ bool render_promote_board(Screen screen, uint8_t team)
 	return true;
 }
 
-bool render_result_board(Screen screen, const Piece board[], Info info)
+bool render_result_board(Screen screen, const Piece board[], State state)
 {
-	uint8_t team = INFO_TEAM_MACRO(info);
+	uint8_t team = STATE_TEAM_MACRO(state);
 	uint8_t winningTeam = NORMAL_TEAM_ENEMY(team);
 
-	if(check_mate_ending(board, info, team))
+	if(check_mate_ending(board, state, team))
 	{
 		if(!render_team_squares(screen, winningTeam)) return false;
 	}
-	else if(check_draw_ending(board, info, team))
+	else if(check_draw_ending(board, state, team))
 	{
 		printf("draw\n");
 		if(!render_board_squares(screen)) return false;
 	}
 	else return false; // The game has not ended
 
-	if(!render_check_squares(screen, board, info)) return false;
+	if(!render_check_squares(screen, board, state)) return false;
 
 	if(!render_board_pieces(screen, board)) return false;
 
@@ -144,7 +144,7 @@ bool render_board_piece(Screen screen, Piece piece, Point point)
 	return true;
 }
 
-bool render_check_square(Screen screen, const Piece board[], Info info, Point kingPoint)
+bool render_check_square(Screen screen, const Piece board[], State state, Point kingPoint)
 {
 	if(!king_inside_check(board, kingPoint)) return true;
 
@@ -157,29 +157,29 @@ bool render_check_square(Screen screen, const Piece board[], Info info, Point ki
 	return true;
 }
 
-bool render_check_squares(Screen screen, const Piece board[], Info info)
+bool render_check_squares(Screen screen, const Piece board[], State state)
 {
 	Point whiteKing = board_king_point(board, TEAM_WHITE);
 	Point blackKing = board_king_point(board, TEAM_BLACK);
 
-	if(!render_check_square(screen, board, info, whiteKing)) return false;
+	if(!render_check_square(screen, board, state, whiteKing)) return false;
 
-	if(!render_check_square(screen, board, info, blackKing)) return false;
+	if(!render_check_square(screen, board, state, blackKing)) return false;
 
 	return true;
 }
 
-bool render_move_squares(Screen screen, const Piece board[], Info info, Point point)
+bool render_move_squares(Screen screen, const Piece board[], State state, Point point)
 {
 	if(!POINT_INSIDE_BOARD(point)) return true;
 
 	uint8_t team = BOARD_POINT_TEAM(board, point);
 
-	if(!current_team_move(info, team)) return false;
+	if(!current_team_move(state, team)) return false;
 
 
 	Point* pointArray; int pointAmount;
-	if(!piece_legal_points(&pointArray, &pointAmount, board, info, point)) return true;
+	if(!piece_legal_points(&pointArray, &pointAmount, board, state, point)) return true;
 
 
 	if(pointAmount <= 0) { free(pointArray); return false; }

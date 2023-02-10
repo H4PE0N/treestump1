@@ -12,6 +12,6 @@ void create_pieces_hashes(uint64_t hashMatrix[BOARD_LENGTH][12], Point point);
 
 uint64_t create_random_uint64(uint64_t minimum, uint64_t maximum);
 
-uint64_t create_zobrist_hash(uint64_t* hashMatrix[], const Piece board[], Info info);
+uint64_t create_zobrist_hash(uint64_t* hashMatrix[], const Piece board[], State state);
 
 #endif

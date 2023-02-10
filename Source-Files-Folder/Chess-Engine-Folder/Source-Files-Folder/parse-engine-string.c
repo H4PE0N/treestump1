@@ -1,14 +1,14 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool parse_update_string(Piece* board, Info* info, const char string[])
+bool parse_update_string(Piece* board, State* state, const char string[])
 {
 	char valString[256];
   memset(valString, '\0', sizeof(valString));
 
   if(parse_token_quotes(valString, string, "board"))
   {
-    if(!parse_fen_string(board, info, valString)) return false;
+    if(!parse_fen_string(board, state, valString)) return false;
   }
   if(parse_spaced_token(valString, string, "wtime"))
   {

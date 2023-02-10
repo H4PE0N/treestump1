@@ -3,11 +3,11 @@
 #include "../Chess-Engine-Folder/Header-Files-Folder/engine-include-file.h"
 #include "../Game-Console-Folder/Header-Files-Folder/console-include-file.h"
 
-bool engine_console_loop(Piece*, Info*, Entry* hashTable);
+bool engine_console_loop(Piece*, State*, Entry* hashTable);
 
-bool parse_coneng_action(Piece*, Info*, Entry* hashTable, const char[]);
+bool parse_coneng_action(Piece*, State*, Entry* hashTable, const char[]);
 
-bool parse_coneng_move(Piece*, Info*, Entry* hashTable, const char[]);
+bool parse_coneng_move(Piece*, State*, Entry* hashTable, const char[]);
 
 
 int main(int argc, char* argv[])
@@ -20,13 +20,13 @@ int main(int argc, char* argv[])
 
 	create_hash_matrix(HASH_MATRIX);
 
-	Piece* board; Info info; 
-	if(!parse_create_board(&board, &info, fenString)) return false;
+	Piece* board; State state; 
+	if(!parse_create_board(&board, &state, fenString)) return false;
 
 	Entry* hashTable = create_hash_table(HASH_TABLE_SIZE);
 
 
-  engine_console_loop(board, &info, hashTable);
+  engine_console_loop(board, &state, hashTable);
 
 
   printf("free(hashTable);\n"); free(hashTable);
@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
 	return false;
 }
 
-bool engine_console_loop(Piece* board, Info* info, Entry* hashTable)
+bool engine_console_loop(Piece* board, State* state, Entry* hashTable)
 {
   char inputString[256];
 
@@ -46,25 +46,25 @@ bool engine_console_loop(Piece* board, Info* info, Entry* hashTable)
 
     if(!input_stdin_string(inputString, "input -> ")) return false;
 
-    if(!parse_coneng_action(board, info, hashTable, inputString)) return false;
+    if(!parse_coneng_action(board, state, hashTable, inputString)) return false;
   }
   return true;
 }
 
-bool parse_coneng_action(Piece* board, Info* info, Entry* hashTable, const char string[])
+bool parse_coneng_action(Piece* board, State* state, Entry* hashTable, const char string[])
 {
   if(!strncmp(string, "update", 6))
-    return parse_update_string(board, info, string);
+    return parse_update_string(board, state, string);
 
   else if(!strncmp(string, "move", 4))
-    return parse_coneng_move(board, info, hashTable, string);
+    return parse_coneng_move(board, state, hashTable, string);
 
   else if(!strncmp(string, "quit", 4)) return false;
 
   return false;
 }
 
-bool parse_coneng_move(Piece* board, Info* info, Entry* hashTable, const char string[])
+bool parse_coneng_move(Piece* board, State* state, Entry* hashTable, const char string[])
 {
 	int depth = -1, mtime = -1;
 
@@ -103,12 +103,12 @@ bool parse_coneng_move(Piece* board, Info* info, Entry* hashTable, const char st
 
 	if(mtime == -1)
 	{
-		if(!engine_depth_move(&engineMove, board, *info, hashTable, depth)) return false;
+		if(!engine_depth_move(&engineMove, board, *state, hashTable, depth)) return false;
 	}
 	else
 	{
 		int seconds = mtime / 1000;
-		if(!optimal_depth_move(&engineMove, board, *info, hashTable, seconds)) return false;
+		if(!optimal_depth_move(&engineMove, board, *state, hashTable, seconds)) return false;
 	}
 
 	char moveString[16];
@@ -118,7 +118,7 @@ bool parse_coneng_move(Piece* board, Info* info, Entry* hashTable, const char st
 
 	printf("move %s\n", moveString);
 
-	if(!move_chess_piece(board, info, engineMove))
+	if(!move_chess_piece(board, state, engineMove))
 	{
 		printf("move_chess_piece\n");
 

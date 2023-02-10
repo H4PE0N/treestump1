@@ -1,57 +1,57 @@
 
 #include "../Header-Files-Folder/englog-include-file.h"
 
-bool create_fen_string(char* fenString, const Piece board[], Info info)
+bool create_fen_string(char* fenString, const Piece board[], State state)
 {
 	char* stringArray[FEN_STRING_PARTS];
 	alloc_array_strings(stringArray, FEN_STRING_PARTS, 72);
 
-	bool result = create_fen_string_t(fenString, stringArray, board, info);
+	bool result = create_fen_string_t(fenString, stringArray, board, state);
 
 	free_array_strings(stringArray, FEN_STRING_PARTS);
 
 	return result;
 }
 
-bool create_fen_string_t(char* fenString, char** stringArray, const Piece board[], Info info)
+bool create_fen_string_t(char* fenString, char** stringArray, const Piece board[], State state)
 {
-	if(!create_fenstr_parts(stringArray, board, info)) return false;
+	if(!create_fenstr_parts(stringArray, board, state)) return false;
 
 	merge_string_delim(fenString, stringArray, FEN_STRING_PARTS, FEN_STRING_DELIM);
 
 	return true;
 }
 
-bool create_fenstr_parts(char* stringArray[], const Piece board[], Info info)
+bool create_fenstr_parts(char* stringArray[], const Piece board[], State state)
 {
 	if(!create_string_board(stringArray[0], board)) return false;
 
-	if(!create_string_current(stringArray[1], info)) return false;
+	if(!create_string_current(stringArray[1], state)) return false;
 
-	if(!create_string_castles(stringArray[2], info)) return false;
+	if(!create_string_castles(stringArray[2], state)) return false;
 
-	if(!create_string_passant(stringArray[3], info)) return false;
+	if(!create_string_passant(stringArray[3], state)) return false;
 
-	if(!create_string_counter(stringArray[4], info)) return false;
+	if(!create_string_counter(stringArray[4], state)) return false;
 
-	if(!create_string_turns(stringArray[5], info)) return false;
+	if(!create_string_turns(stringArray[5], state)) return false;
 
 	return true;
 }
 
-bool create_string_counter(char* string, Info info)
+bool create_string_counter(char* string, State state)
 {
-	return sprintf(string, "%d", INFO_COUNTER_MACRO(info));
+	return sprintf(string, "%d", STATE_COUNTER_MACRO(state));
 }
 
-bool create_string_turns(char* string, Info info)
+bool create_string_turns(char* string, State state)
 {
-	return sprintf(string, "%d", INFO_TURNS_MACRO(info));
+	return sprintf(string, "%d", STATE_TURNS_MACRO(state));
 }
 
-bool create_string_passant(char* string, Info info)
+bool create_string_passant(char* string, State state)
 {
-	Point pawnPoint = passant_pawn_point(info);
+	Point pawnPoint = passant_pawn_point(state);
 
 	if(pawnPoint != POINT_NONE)
 	{
@@ -65,26 +65,26 @@ bool create_string_passant(char* string, Info info)
 	return true;
 }
 
-bool create_string_castles(char* string, Info info)
+bool create_string_castles(char* string, State state)
 {
-	if(MASK_WHITE_KSIDE(info)) strncat(string, &(FEN_WKING_SYMBOL), 1);
+	if(MASK_WHITE_KSIDE(state)) strncat(string, &(FEN_WKING_SYMBOL), 1);
 
-	if(MASK_WHITE_QSIDE(info)) strncat(string, &(FEN_WQUEEN_SYMBOL), 1);
+	if(MASK_WHITE_QSIDE(state)) strncat(string, &(FEN_WQUEEN_SYMBOL), 1);
 
-	if(MASK_BLACK_KSIDE(info)) strncat(string, &(FEN_BKING_SYMBOL), 1);
+	if(MASK_BLACK_KSIDE(state)) strncat(string, &(FEN_BKING_SYMBOL), 1);
 
-	if(MASK_BLACK_QSIDE(info)) strncat(string, &(FEN_BQUEEN_SYMBOL), 1);
+	if(MASK_BLACK_QSIDE(state)) strncat(string, &(FEN_BQUEEN_SYMBOL), 1);
 
 	if(strlen(string) == 0) strcpy(string, FEN_CASTLES_NONE);
 
 	return true;
 }
 
-bool create_string_current(char* string, Info info)
+bool create_string_current(char* string, State state)
 {
-	if(INFO_TEAM_MACRO(info) == TEAM_WHITE) string[0] = WHITE_SYMBOL;
+	if(STATE_TEAM_MACRO(state) == TEAM_WHITE) string[0] = WHITE_SYMBOL;
 
-	else if(INFO_TEAM_MACRO(info) == TEAM_BLACK) string[0] = BLACK_SYMBOL;
+	else if(STATE_TEAM_MACRO(state) == TEAM_BLACK) string[0] = BLACK_SYMBOL;
 
 	else return false;
 

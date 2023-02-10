@@ -1,26 +1,26 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool ordered_legal_moves(Move** moveArray, int* moveAmount, const Piece board[], Info info, uint8_t team)
+bool ordered_legal_moves(Move** moveArray, int* moveAmount, const Piece board[], State state, uint8_t team)
 {
-	if(!team_legal_moves(moveArray, moveAmount, board, info, team)) return false;
+	if(!team_legal_moves(moveArray, moveAmount, board, state, team)) return false;
 
-	return guess_order_moves(*moveArray, *moveAmount, board, info, team);
+	return guess_order_moves(*moveArray, *moveAmount, board, state, team);
 }
 
-bool guess_order_moves(Move* moveArray, int moveAmount, const Piece board[], Info info, uint8_t team)
+bool guess_order_moves(Move* moveArray, int moveAmount, const Piece board[], State state, uint8_t team)
 {
 	if(moveAmount <= 0) return false;
 
 	int* moveScores;
-	if(!guess_moves_scores(&moveScores, moveArray, moveAmount, board, info)) return false;
+	if(!guess_moves_scores(&moveScores, moveArray, moveAmount, board, state)) return false;
 
 	qsort_moves_scores(moveArray, moveScores, moveAmount, team);
 
 	free(moveScores); return true;
 }
 
-bool guess_moves_scores(int** moveScores, const Move moveArray[], int moveAmount, const Piece board[], Info info)
+bool guess_moves_scores(int** moveScores, const Move moveArray[], int moveAmount, const Piece board[], State state)
 {
 	if(moveAmount <= 0) return false;
 
@@ -29,13 +29,13 @@ bool guess_moves_scores(int** moveScores, const Move moveArray[], int moveAmount
 
 	for(int index = 0; index < moveAmount; index += 1)
 	{
-		(*moveScores)[index] = guess_move_score(board, info, moveArray[index]);
+		(*moveScores)[index] = guess_move_score(board, state, moveArray[index]);
 	}
 	return true;
 }
 
 // Make this guess function better, it will benifit
-int guess_move_score(const Piece board[], Info info, Move move)
+int guess_move_score(const Piece board[], State state, Move move)
 {
 	int moveScore = 0;
 

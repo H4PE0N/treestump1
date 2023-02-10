@@ -1,10 +1,10 @@
 
 #include "../Header-Files-Folder/screen-include-file.h"
 
-bool input_screen_move(Move* move, Screen* screen, const Piece board[], Info info, const Move moveArray[])
+bool input_screen_move(Move* move, Screen* screen, const Piece board[], State state, const Move moveArray[])
 {
 	Move inputMove = MOVE_NONE;
-	if(!input_legal_move(&inputMove, screen, board, info, moveArray)) return false;
+	if(!input_legal_move(&inputMove, screen, board, state, moveArray)) return false;
 
 	if(MOVE_PROMOTE_FLAG(inputMove))
 	{
@@ -14,28 +14,28 @@ bool input_screen_move(Move* move, Screen* screen, const Piece board[], Info inf
 		if(!input_promote_flag(&promoteFlag, screen, startTeam)) return false;
 
 		if(promoteFlag == MOVE_FLAG_NONE)
-			return input_screen_move(move, screen, board, info, moveArray);
+			return input_screen_move(move, screen, board, state, moveArray);
 
 		inputMove = ALLOC_MOVE_FLAG(inputMove, promoteFlag);
 	}
 	*move = inputMove; return true;
 }
 
-bool print_console_info(Info info)
+bool print_console_state(State state)
 {
-	uint8_t team = INFO_TEAM_MACRO(info);
+	uint8_t team = STATE_TEAM_MACRO(state);
 	if(!NORMAL_TEAM_EXISTS(team)) return false;
 
 	printf("current team:(%s)\n", TEAM_WORDS[team]);
 
-	printf("turns:(%d)\n", INFO_TURNS_MACRO(info));
+	printf("turns:(%d)\n", STATE_TURNS_MACRO(state));
 
-	printf("counter:(%d)\n", INFO_COUNTER_MACRO(info));
+	printf("counter:(%d)\n", STATE_COUNTER_MACRO(state));
 
 	char passantString[16];
 	memset(passantString, '\0', sizeof(passantString));
 
-	Point passantPoint = passant_pawn_point(info);
+	Point passantPoint = passant_pawn_point(state);
 	if(!create_string_point(passantString, passantPoint))
 	{
 		strcpy(passantString, "none");
@@ -45,22 +45,22 @@ bool print_console_info(Info info)
 	return true;
 }
 
-bool input_legal_move(Move* move, Screen* screen, const Piece board[], Info info, const Move moveArray[])
+bool input_legal_move(Move* move, Screen* screen, const Piece board[], State state, const Move moveArray[])
 {
 	Move inputMove = MOVE_NONE;
 
-	while(!move_fully_legal(board, info, inputMove))
+	while(!move_fully_legal(board, state, inputMove))
 	{
-		print_console_info(info);
+		print_console_state(state);
 
-		if(!input_single_move(&inputMove, screen, board, info, moveArray)) return false;
+		if(!input_single_move(&inputMove, screen, board, state, moveArray)) return false;
 
 		if(!MOVE_INSIDE_BOARD(inputMove)) continue;
 
 		uint8_t startTeam = MOVE_START_TEAM(board, inputMove);
-		if(!current_team_move(info, startTeam)) continue;
+		if(!current_team_move(state, startTeam)) continue;
 
-		if(!correct_move_flag(&inputMove, board, info)) continue;
+		if(!correct_move_flag(&inputMove, board, state)) continue;
 	}
 	*move = inputMove; return true;
 }
@@ -92,7 +92,7 @@ bool input_promote_flagX(Move* promoteFlag, Screen* screen, uint8_t team)
 	parse_promote_point(promoteFlag, piecePoint); return true;
 }
 
-bool input_single_move(Move* move, Screen* screen, const Piece board[], Info info, const Move moveArray[])
+bool input_single_move(Move* move, Screen* screen, const Piece board[], State state, const Move moveArray[])
 {
 	Point markPoints[BOARD_LENGTH];
 	memset(markPoints, POINT_NONE, sizeof(Point) * BOARD_LENGTH);
@@ -101,13 +101,13 @@ bool input_single_move(Move* move, Screen* screen, const Piece board[], Info inf
 	do {
 		if(!SDL_WaitEvent(&event)) continue;
 
-		if(!display_mark_board(*screen, board, info, moveArray, markPoints)) return false;
+		if(!display_mark_board(*screen, board, state, moveArray, markPoints)) return false;
 
 		if(parse_quit_input(event)) return false;
 
 
 		if(mouse_event_check(event, RIGHT_BUTTON, BUTTON_DOWN))
-			input_mark_parser(markPoints, *screen, board, info, moveArray, event);
+			input_mark_parser(markPoints, *screen, board, state, moveArray, event);
 
 		if(key_event_check(event, SDLK_SPACE, SDL_KEYDOWN))
 			invert_screen_parser(screen, event);
@@ -117,7 +117,7 @@ bool input_single_move(Move* move, Screen* screen, const Piece board[], Info inf
 	}
 	while(!mouse_event_check(event, LEFT_BUTTON, BUTTON_DOWN));
 
-	input_move_parser(move, *screen, board, info, moveArray, event);
+	input_move_parser(move, *screen, board, state, moveArray, event);
 
 	return true;
 }
@@ -139,11 +139,11 @@ bool resize_window_parser(Screen* screen, Event event)
 	return true;
 }
 
-bool input_mark_parser(Point* markPoints, Screen screen, const Piece board[], Info info, const Move moveArray[], Event event)
+bool input_mark_parser(Point* markPoints, Screen screen, const Piece board[], State state, const Move moveArray[], Event event)
 {
 	if(!mouse_event_check(event, RIGHT_BUTTON, BUTTON_DOWN)) return false;
 
-	if(!display_mark_board(screen, board, info, moveArray, markPoints)) return false;
+	if(!display_mark_board(screen, board, state, moveArray, markPoints)) return false;
 
 	Event upEvent;
 	while(!mouse_event_check(upEvent, RIGHT_BUTTON, BUTTON_UP))
@@ -168,18 +168,18 @@ bool input_mark_parser(Point* markPoints, Screen screen, const Piece board[], In
 	else delete_array_point(markPoints, amount, pointIndex);
 
 
-	if(!display_mark_board(screen, board, info, moveArray, markPoints)) return false;
+	if(!display_mark_board(screen, board, state, moveArray, markPoints)) return false;
 
 	return true;
 }
 
-bool input_move_parser(Move* move, Screen screen, const Piece board[], Info info, const Move moveArray[], Event event)
+bool input_move_parser(Move* move, Screen screen, const Piece board[], State state, const Move moveArray[], Event event)
 {
 	if(!mouse_event_check(event, LEFT_BUTTON, BUTTON_DOWN)) return false;
 
 	Point startPoint = parse_mouse_point(event, screen);
 
-	if(!display_move_board(screen, board, info, moveArray, startPoint)) return false;
+	if(!display_move_board(screen, board, state, moveArray, startPoint)) return false;
 
 	Event upEvent;
 	while(!mouse_event_check(upEvent, LEFT_BUTTON, BUTTON_UP))
@@ -189,7 +189,7 @@ bool input_move_parser(Move* move, Screen screen, const Piece board[], Info info
 
 	*move = START_STOP_MOVE(startPoint, stopPoint);
 
-	if(!display_chess_board(screen, board, info, moveArray)) return false;
+	if(!display_chess_board(screen, board, state, moveArray)) return false;
 
 	return true;
 }

@@ -1,11 +1,11 @@
 
 #include "../Header-Files-Folder/englog-include-file.h"
 
-bool execute_chess_move(Piece* board, Info* info, Move move)
+bool execute_chess_move(Piece* board, State* state, Move move)
 {
 	if(!MOVE_INSIDE_BOARD(move)) return false;
 
-	update_info_values(info, board, move);
+	update_state_values(state, board, move);
 
 	if(MOVE_PROMOTE_FLAG(move))
 		return execute_promote_move(board, move);
@@ -19,65 +19,65 @@ bool execute_chess_move(Piece* board, Info* info, Move move)
 	return execute_board_move(board, move);
 }
 
-void update_info_values(Info* info, const Piece board[], Move move)
+void update_state_values(State* state, const Piece board[], Move move)
 {
-	if(INFO_STORE_TEAM(*info, INFO_TEAM_BLACK))
-		increase_info_turns(info);
+	if(STATE_STORE_TEAM(*state, STATE_TEAM_BLACK))
+		increase_state_turns(state);
 
-	switch_current_team(info);
+	switch_current_team(state);
 
 	if((START_PIECE_TYPE(board, move) == PIECE_TYPE_PAWN) || STOP_PIECE_EXISTS(board, move))
-		*info = CLEAR_INFO_COUNTER(*info);
+		*state = CLEAR_STATE_COUNTER(*state);
 
-	else increase_info_counter(info);
+	else increase_state_counter(state);
 
 	if(MOVE_STORE_FLAG(move, MOVE_FLAG_DOUBLE))
-		alloc_passant_point(info, move);
+		alloc_passant_point(state, move);
 
-	else *info = CLEAR_INFO_PASSANT(*info);
+	else *state = CLEAR_STATE_PASSANT(*state);
 
-	moved_reset_castle(info, board, move);
+	moved_reset_castle(state, board, move);
 }
 
-bool moved_reset_castle(Info* info, const Piece board[], Move move)
+bool moved_reset_castle(State* state, const Piece board[], Move move)
 {
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
 
 	if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_KING))
-		return reset_king_ability(info, board[startPoint]);
+		return reset_king_ability(state, board[startPoint]);
 
 	if(PIECE_STORE_TYPE(board[stopPoint], PIECE_TYPE_ROOK))
-		return reset_rook_ability(info, board[stopPoint], stopPoint);
+		return reset_rook_ability(state, board[stopPoint], stopPoint);
 
 	if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_ROOK))
-		return reset_rook_ability(info, board[startPoint], startPoint);
+		return reset_rook_ability(state, board[startPoint], startPoint);
 
 	return false;
 }
 
-bool reset_king_ability(Info* info, Piece kingPiece)
+bool reset_king_ability(State* state, Piece kingPiece)
 {
 	if(!PIECE_STORE_TYPE(kingPiece, PIECE_TYPE_KING)) return false;
 
-	if(PIECE_TEAM_MACRO(kingPiece) == TEAM_WHITE) *info = CLEAR_WHITE_CASTLE(*info);
+	if(PIECE_TEAM_MACRO(kingPiece) == TEAM_WHITE) *state = CLEAR_WHITE_CASTLE(*state);
 
-	else if(PIECE_TEAM_MACRO(kingPiece) == TEAM_BLACK) *info = CLEAR_BLACK_CASTLE(*info);
+	else if(PIECE_TEAM_MACRO(kingPiece) == TEAM_BLACK) *state = CLEAR_BLACK_CASTLE(*state);
 
 	return true;
 }
 
-bool reset_rook_ability(Info* info, Piece rookPiece, Point rookPoint)
+bool reset_rook_ability(State* state, Piece rookPiece, Point rookPoint)
 {
 	if(!PIECE_STORE_TYPE(rookPiece, PIECE_TYPE_ROOK)) return false;
 
-	if(rookPoint == WROOK_QSIDE_POINT) *info = CLEAR_WHITE_QSIDE(*info);
+	if(rookPoint == WROOK_QSIDE_POINT) *state = CLEAR_WHITE_QSIDE(*state);
 
-	else if(rookPoint == WROOK_KSIDE_POINT) *info = CLEAR_WHITE_KSIDE(*info);
+	else if(rookPoint == WROOK_KSIDE_POINT) *state = CLEAR_WHITE_KSIDE(*state);
 
-	else if(rookPoint == BROOK_QSIDE_POINT) *info = CLEAR_BLACK_QSIDE(*info);
+	else if(rookPoint == BROOK_QSIDE_POINT) *state = CLEAR_BLACK_QSIDE(*state);
 
-	else if(rookPoint == BROOK_KSIDE_POINT) *info = CLEAR_BLACK_KSIDE(*info);
+	else if(rookPoint == BROOK_KSIDE_POINT) *state = CLEAR_BLACK_KSIDE(*state);
 
 	return true;
 }

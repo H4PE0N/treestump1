@@ -1,23 +1,23 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool engine_depth_move(Move* bestMove, const Piece board[], Info info, Entry* hashTable, int depth)
+bool engine_depth_move(Move* bestMove, const Piece board[], State state, Entry* hashTable, int depth)
 {
 	if(depth <= 0) return false;
 
-	int team = INFO_TEAM_MACRO(info);
+	int team = STATE_TEAM_MACRO(state);
 
 	Move* moveArray; int moveAmount;
-	if(!team_legal_moves(&moveArray, &moveAmount, board, info, team)) return false;
+	if(!team_legal_moves(&moveArray, &moveAmount, board, state, team)) return false;
 
 	int playerSign = TEAM_SCORE_WEIGHT(team);
 
-	bool result = choose_engine_move(bestMove, board, info, hashTable, depth, playerSign, moveArray, moveAmount);
+	bool result = choose_engine_move(bestMove, board, state, hashTable, depth, playerSign, moveArray, moveAmount);
 
 	free(moveArray); return result;
 }
 
-bool choose_engine_move(Move* bestMove, const Piece board[], Info info, Entry* hashTable, int depth, int playerSign, const Move moveArray[], int moveAmount)
+bool choose_engine_move(Move* bestMove, const Piece board[], State state, Entry* hashTable, int depth, int playerSign, const Move moveArray[], int moveAmount)
 {
 	if(moveAmount <= 0) return false;
 
@@ -31,7 +31,7 @@ bool choose_engine_move(Move* bestMove, const Piece board[], Info info, Entry* h
 	{
 		Move currMove = moveArray[index];
 
-		int currScore = chess_move_score(board, info, hashTable, depth, MIN_STATE_SCORE, MAX_STATE_SCORE, playerSign, currMove);
+		int currScore = chess_move_score(board, state, hashTable, depth, MIN_STATE_SCORE, MAX_STATE_SCORE, playerSign, currMove);
 
 		if(currScore > bestScore)
 		{
@@ -42,9 +42,9 @@ bool choose_engine_move(Move* bestMove, const Piece board[], Info info, Entry* h
 }
 
 // Change the name of this function some time
-int storgryta(const Piece board[], Info info, Entry* hashTable, int depth, int alpha, int beta, int playerSign)
+int storgryta(const Piece board[], State state, Entry* hashTable, int depth, int alpha, int beta, int playerSign)
 {
-	// uint64_t zobristHash = create_zobrist_hash(HASH_MATRIX, board, info);
+	// uint64_t zobristHash = create_zobrist_hash(HASH_MATRIX, board, state);
 	//
 	// int hashIndex = (zobristHash % HASH_TABLE_SIZE);
 
@@ -65,7 +65,7 @@ int storgryta(const Piece board[], Info info, Entry* hashTable, int depth, int a
 	// 	if(alpha >= beta) return oldEntry.score;
 	// }
 
-	int bestScore = board_depth_score(board, info, hashTable, depth, alpha, beta, playerSign);
+	int bestScore = board_depth_score(board, state, hashTable, depth, alpha, beta, playerSign);
 
 
 	// Entry newEntry = (Entry) {.hash = zobristHash, .depth = depth, .score = bestScore};
@@ -82,29 +82,29 @@ int storgryta(const Piece board[], Info info, Entry* hashTable, int depth, int a
 	return bestScore;
 }
 
-int board_depth_score(const Piece board[], Info info, Entry* hashTable, int depth, int alpha, int beta, int playerSign)
+int board_depth_score(const Piece board[], State state, Entry* hashTable, int depth, int alpha, int beta, int playerSign)
 {
-	if(depth <= 0) return (playerSign * board_state_score(board, info));
+	if(depth <= 0) return (playerSign * board_state_score(board, state));
 
-	int team = INFO_TEAM_MACRO(info);
+	int team = STATE_TEAM_MACRO(state);
 
 	Move* moveArray; int moveAmount;
-	if(!ordered_legal_moves(&moveArray, &moveAmount, board, info, team))
+	if(!ordered_legal_moves(&moveArray, &moveAmount, board, state, team))
 	{
-		return (playerSign * board_state_score(board, info));
+		return (playerSign * board_state_score(board, state));
 	}
-	int bestScore = choose_move_score(board, info, hashTable, depth, alpha, beta, playerSign, moveArray, moveAmount);
+	int bestScore = choose_move_score(board, state, hashTable, depth, alpha, beta, playerSign, moveArray, moveAmount);
 
 	free(moveArray); return bestScore;
 }
 
-int choose_move_score(const Piece board[], Info info, Entry* hashTable, int depth, int alpha, int beta, int playerSign, const Move moveArray[], int moveAmount)
+int choose_move_score(const Piece board[], State state, Entry* hashTable, int depth, int alpha, int beta, int playerSign, const Move moveArray[], int moveAmount)
 {
 	int bestScore = MIN_STATE_SCORE;
 
 	for(int index = 0; index < moveAmount; index += 1)
 	{
-		int currScore = chess_move_score(board, info, hashTable, depth, alpha, beta, playerSign, moveArray[index]);
+		int currScore = chess_move_score(board, state, hashTable, depth, alpha, beta, playerSign, moveArray[index]);
 
 		bestScore = MAX_NUMBER_VALUE(bestScore, currScore);
 
@@ -115,18 +115,18 @@ int choose_move_score(const Piece board[], Info info, Entry* hashTable, int dept
 	return bestScore;
 }
 
-int chess_move_score(const Piece board[], Info info, Entry* hashTable, int depth, int alpha, int beta, int playerSign, Move move)
+int chess_move_score(const Piece board[], State state, Entry* hashTable, int depth, int alpha, int beta, int playerSign, Move move)
 {
 	Piece* boardCopy = copy_chess_board(board);
 
-	int moveScore = simulate_move_score(boardCopy, info, hashTable, depth, alpha, beta, playerSign, move);
+	int moveScore = simulate_move_score(boardCopy, state, hashTable, depth, alpha, beta, playerSign, move);
 
 	free(boardCopy); return moveScore;
 }
 
-int simulate_move_score(Piece* boardCopy, Info infoCopy, Entry* hashTable, int depth, int alpha, int beta, int playerSign, Move move)
+int simulate_move_score(Piece* boardCopy, State stateCopy, Entry* hashTable, int depth, int alpha, int beta, int playerSign, Move move)
 {
-	if(!execute_chess_move(boardCopy, &infoCopy, move)) return 0;
+	if(!execute_chess_move(boardCopy, &stateCopy, move)) return 0;
 
-	return -storgryta(boardCopy, infoCopy, hashTable, (depth - 1), -beta, -alpha, -playerSign);
+	return -storgryta(boardCopy, stateCopy, hashTable, (depth - 1), -beta, -alpha, -playerSign);
 }

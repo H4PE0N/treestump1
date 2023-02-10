@@ -1,16 +1,16 @@
 
 #include "../Header-Files-Folder/englog-include-file.h"
 
-bool parse_create_board(Piece** board, Info* info, const char fenString[])
+bool parse_create_board(Piece** board, State* state, const char fenString[])
 {
 	*board = malloc(sizeof(Piece) * BOARD_LENGTH);
 
-	if(parse_fen_string(*board, info, fenString)) return true;
+	if(parse_fen_string(*board, state, fenString)) return true;
 
 	free(*board); return false;
 }
 
-bool parse_fen_string(Piece* board, Info* info, const char fenString[])
+bool parse_fen_string(Piece* board, State* state, const char fenString[])
 {
 	int stringLength = strlen(fenString);
 
@@ -18,78 +18,78 @@ bool parse_fen_string(Piece* board, Info* info, const char fenString[])
 
 	if(!split_string_delim(stringArray, fenString, stringLength, FEN_STRING_DELIM, FEN_STRING_PARTS)) return false;
 
-	bool parseResult = parse_string_array(board, info, stringArray);
+	bool parseResult = parse_string_array(board, state, stringArray);
 
 	free_array_strings(stringArray, FEN_STRING_PARTS);
 
 	return parseResult;
 }
 
-bool parse_string_array(Piece* board, Info* info, char* stringArray[])
+bool parse_string_array(Piece* board, State* state, char* stringArray[])
 {
-	*info = INFO_BLANK;
+	*state = STATE_BLANK;
 
 	if(!parse_string_board(board, stringArray[0])) return false;
 
-	if(!parse_string_info(info, stringArray)) return false;
+	if(!parse_string_state(state, stringArray)) return false;
 
 	return true;
 }
 
-bool parse_string_info(Info* info, char* stringArray[])
+bool parse_string_state(State* state, char* stringArray[])
 {
-	if(!parse_string_current(info, stringArray[1])) return false;
+	if(!parse_string_current(state, stringArray[1])) return false;
 
-	if(!parse_string_castles(info, stringArray[2])) return false;
+	if(!parse_string_castles(state, stringArray[2])) return false;
 
-	if(!parse_string_passant(info, stringArray[3])) return false;
+	if(!parse_string_passant(state, stringArray[3])) return false;
 
-	if(!parse_string_counter(info, stringArray[4])) return false;
+	if(!parse_string_counter(state, stringArray[4])) return false;
 
-	if(!parse_string_turns(info, stringArray[5])) return false;
+	if(!parse_string_turns(state, stringArray[5])) return false;
 
 	return true;
 }
 
-bool parse_string_current(Info* info, const char stringToken[])
+bool parse_string_current(State* state, const char stringToken[])
 {
-	Info infoCurrentTeam = INFO_BLANK;
+	State stateCurrentTeam = STATE_BLANK;
 
 	int stringLength = strlen(stringToken);
 
 	if(stringLength != 1) return false;
 
 
-	if(stringToken[0] == WHITE_SYMBOL) infoCurrentTeam = INFO_TEAM_WHITE;
+	if(stringToken[0] == WHITE_SYMBOL) stateCurrentTeam = STATE_TEAM_WHITE;
 
-	else if(stringToken[0] == BLACK_SYMBOL) infoCurrentTeam = INFO_TEAM_BLACK;
+	else if(stringToken[0] == BLACK_SYMBOL) stateCurrentTeam = STATE_TEAM_BLACK;
 
 	else return false;
 
-	*info = ALLOC_INFO_TEAM(*info, infoCurrentTeam);
+	*state = ALLOC_STATE_TEAM(*state, stateCurrentTeam);
 
 	return true;
 }
 
-bool parse_string_counter(Info* info, const char stringToken[])
+bool parse_string_counter(State* state, const char stringToken[])
 {
 	int counter = atoi(stringToken);
 
 	if((counter == 0) && (stringToken[0] != '0')) return false;
 
-	*info = ALLOC_COUNTER_INFO(*info, counter); return true;
+	*state = ALLOC_COUNTER_STATE(*state, counter); return true;
 }
 
-bool parse_string_turns(Info* info, const char stringToken[])
+bool parse_string_turns(State* state, const char stringToken[])
 {
 	int turns = atoi(stringToken);
 
 	if((turns == 0) && (stringToken[0] != '0')) return false;
 
-	*info = ALLOC_TURNS_INFO(*info, turns); return true;
+	*state = ALLOC_TURNS_STATE(*state, turns); return true;
 }
 
-bool parse_string_passant(Info* info, const char stringToken[])
+bool parse_string_passant(State* state, const char stringToken[])
 {
 	if(!strcmp(stringToken, FEN_PASSANT_NONE)) return true;
 
@@ -98,7 +98,7 @@ bool parse_string_passant(Info* info, const char stringToken[])
 
 	unsigned short passant = (POINT_FILE_MACRO(passantPoint) + 1);
 
-	*info = ALLOC_PASSANT_INFO(*info, passant);
+	*state = ALLOC_PASSANT_STATE(*state, passant);
 
 	return true;
 }
@@ -146,9 +146,9 @@ bool parse_string_move(Move* move, const char stringMove[])
   return true;
 }
 
-bool parse_string_castles(Info* info, const char stringToken[])
+bool parse_string_castles(State* state, const char stringToken[])
 {
-	Info castles = INFO_NONE;
+	State castles = STATE_NONE;
 
 	if(!strcmp(stringToken, FEN_CASTLES_NONE)) return true;
 
@@ -159,32 +159,32 @@ bool parse_string_castles(Info* info, const char stringToken[])
 	{
 		char symbol = stringToken[index];
 
-		Info infoCastle = INFO_BLANK;
+		State stateCastle = STATE_BLANK;
 
-		if(!parse_castle_symbol(&infoCastle, symbol)) return false;
+		if(!parse_castle_symbol(&stateCastle, symbol)) return false;
 
-		castles |= infoCastle;
+		castles |= stateCastle;
 	}
-	*info = ALLOC_INFO_CASTLES(*info, castles); return true;
+	*state = ALLOC_STATE_CASTLES(*state, castles); return true;
 }
 
-bool parse_castle_symbol(Info* infoCastle, char symbol)
+bool parse_castle_symbol(State* stateCastle, char symbol)
 {
 	if(symbol == chess_piece_symbol(PIECE_TEAM_WHITE | PIECE_TYPE_KING))
 	{
-		*infoCastle = INFO_WHITE_KSIDE;
+		*stateCastle = STATE_WHITE_KSIDE;
 	}
 	else if(symbol == chess_piece_symbol(PIECE_TEAM_WHITE | PIECE_TYPE_QUEEN))
 	{
-		*infoCastle = INFO_WHITE_QSIDE;
+		*stateCastle = STATE_WHITE_QSIDE;
 	}
 	else if(symbol == chess_piece_symbol(PIECE_TEAM_BLACK | PIECE_TYPE_KING))
 	{
-		*infoCastle = INFO_BLACK_KSIDE;
+		*stateCastle = STATE_BLACK_KSIDE;
 	}
 	else if(symbol == chess_piece_symbol(PIECE_TEAM_BLACK | PIECE_TYPE_QUEEN))
 	{
-		*infoCastle = INFO_BLACK_QSIDE;
+		*stateCastle = STATE_BLACK_QSIDE;
 	}
 	else return false;
 

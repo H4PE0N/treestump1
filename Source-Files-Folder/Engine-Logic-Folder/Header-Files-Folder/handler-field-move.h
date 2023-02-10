@@ -12,7 +12,7 @@ int8_t normal_file_offset(Move move);
 
 Move* create_move_array(int arrayLength);
 
-bool create_move_string(char* moveString, const Piece board[], Info info, Move move);
+bool create_move_string(char* moveString, const Piece board[], State state, Move move);
 
 bool create_point_string(char* pointString, Point point);
 
@@ -20,7 +20,7 @@ int move_array_amount(const Move moveArray[]);
 
 char piece_move_symbol(Piece piece);
 
-bool chess_move_capture(Move move, const Piece board[], Info info);
+bool chess_move_capture(Move move, const Piece board[], State state);
 
 bool castle_move_string(char* moveString, Move move);
 
@@ -30,7 +30,7 @@ bool equal_piece_rank(const Piece board[], Point point);
 
 bool equal_piece_file(const Piece board[], Point point);
 
-bool equal_piece_attack(const Piece board[], Info info, Move move);
+bool equal_piece_attack(const Piece board[], State state, Move move);
 
 bool pattern_moves_equal(Move move1, Move move2);
 

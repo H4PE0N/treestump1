@@ -2,15 +2,15 @@
 #include "../Header-Files-Folder/engine-include-file.h"
 
 // The score of the board is positive for whites favour and negative for blacks favour
-int board_state_score(const Piece board[], Info info)
+int board_state_score(const Piece board[], State state)
 {
-	uint8_t team = INFO_TEAM_MACRO(info);
+	uint8_t team = STATE_TEAM_MACRO(state);
 
-	if(check_mate_ending(board, info, team))
+	if(check_mate_ending(board, state, team))
 	{
 		return TEAM_WEIGHT_SCORE(MATE_SCORE, team);
 	}
-	else if(check_draw_ending(board, info, team))
+	else if(check_draw_ending(board, state, team))
 	{
 		return TEAM_WEIGHT_SCORE(DRAW_SCORE, team);
 	}

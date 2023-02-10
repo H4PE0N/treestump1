@@ -37,7 +37,7 @@ uint64_t create_random_uint64(uint64_t minimum, uint64_t maximum)
 	return (rand() % (maximum - minimum + 1) + minimum);
 }
 
-uint64_t create_zobrist_hash(uint64_t* hashMatrix[], const Piece board[], Info info)
+uint64_t create_zobrist_hash(uint64_t* hashMatrix[], const Piece board[], State state)
 {
 	uint64_t zobristHash = 0;
 	for(Point point = 0; point < BOARD_LENGTH; point += 1)

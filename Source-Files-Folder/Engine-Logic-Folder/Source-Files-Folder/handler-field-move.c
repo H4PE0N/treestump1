@@ -98,13 +98,13 @@ bool castle_move_string(char* moveString, Move move)
 	return true;
 }
 
-bool chess_move_capture(Move move, const Piece board[], Info info)
+bool chess_move_capture(Move move, const Piece board[], State state)
 {
 	uint8_t stopFile = MOVE_STOP_FILE(move);
 
 	if(MOVE_POINTS_ENEMY(board, move)) return true;
 
-	else if(INFO_PASSANT_MACRO(info) == (stopFile + 1)) return true;
+	else if(STATE_PASSANT_MACRO(state) == (stopFile + 1)) return true;
 
 	return false;
 }
@@ -175,7 +175,7 @@ bool start_pieces_equal(const Piece board[], Move move1, Move move2)
 	return (MOVE_START_PIECE(board, move1) == MOVE_START_PIECE(board, move2));
 }
 
-bool equal_piece_attack(const Piece board[], Info info, Move move)
+bool equal_piece_attack(const Piece board[], State state, Move move)
 {
 	Move* equalMoves; int moveAmount;
 	if(!equal_pattern_moves(&equalMoves, &moveAmount, board, move)) return false;
@@ -188,7 +188,7 @@ bool equal_piece_attack(const Piece board[], Info info, Move move)
 
 		if(pattern_moves_equal(currentMove, move)) continue;
 
-		if(!pattern_move_legal(&currentMove, board, info)) continue;
+		if(!pattern_move_legal(&currentMove, board, state)) continue;
 
 		free(equalMoves); return true;
 	}
@@ -234,7 +234,7 @@ bool target_pattern_moves(Move** moves, int* moveAmount, const Piece board[], Mo
 	return false;
 }
 
-bool create_move_string(char* moveString, const Piece board[], Info info, Move move)
+bool create_move_string(char* moveString, const Piece board[], State state, Move move)
 {
 	if(!MOVE_INSIDE_BOARD(move)) return false;
 
@@ -255,14 +255,14 @@ bool create_move_string(char* moveString, const Piece board[], Info info, Move m
 	}
 
 	char placeString[8];
-	if(equal_piece_attack(board, info, move))
+	if(equal_piece_attack(board, state, move))
 	{
 		if(!piece_place_string(placeString, board, startPoint)) return false;
 
 		strcat(moveString, placeString);
 	}
 
-	if(chess_move_capture(move, board, info))
+	if(chess_move_capture(move, board, state))
 	{
 		if(PIECE_STORE_TYPE(board[startPoint], PIECE_TYPE_PAWN))
 		{
@@ -298,9 +298,9 @@ bool create_move_string(char* moveString, const Piece board[], Info info, Move m
 	}
 
 
-	if(move_deliver_mate(board, info, move)) strcat(moveString, "#");
+	if(move_deliver_mate(board, state, move)) strcat(moveString, "#");
 
-	else if(move_deliver_check(board, info, move)) strcat(moveString, "+");
+	else if(move_deliver_check(board, state, move)) strcat(moveString, "+");
 
 	return true;
 }

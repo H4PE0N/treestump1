@@ -1,12 +1,12 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool amount_engine_moves(Move** moveArray, const Piece board[], Info info, Entry* hashTable, uint8_t team, int depth, int amount)
+bool amount_engine_moves(Move** moveArray, const Piece board[], State state, Entry* hashTable, uint8_t team, int depth, int amount)
 {
 	if((amount <= 0) && (depth <= 0)) return false;
 
 	Move* engineMoves; int engineAmount;
-	if(!sorted_engine_moves(&engineMoves, &engineAmount, board, info, hashTable, team, depth)) return false;
+	if(!sorted_engine_moves(&engineMoves, &engineAmount, board, state, hashTable, team, depth)) return false;
 
 	*moveArray = create_move_array(amount);
 
@@ -15,23 +15,23 @@ bool amount_engine_moves(Move** moveArray, const Piece board[], Info info, Entry
 	free(engineMoves); return true;
 }
 
-bool sorted_engine_moves(Move** moveArray, int* moveAmount, const Piece board[], Info info, Entry* hashTable, uint8_t evalTeam, int depth)
+bool sorted_engine_moves(Move** moveArray, int* moveAmount, const Piece board[], State state, Entry* hashTable, uint8_t evalTeam, int depth)
 {
 	if(depth <= 0) return false;
 
-	int currTeam = INFO_TEAM_MACRO(info);
+	int currTeam = STATE_TEAM_MACRO(state);
 
-	if(!team_legal_moves(moveArray, moveAmount, board, info, currTeam)) return false;
+	if(!team_legal_moves(moveArray, moveAmount, board, state, currTeam)) return false;
 
 	int* moveScores;
-	if(!move_array_scores(&moveScores, board, info, hashTable, currTeam, depth, *moveArray, *moveAmount)) return false;
+	if(!move_array_scores(&moveScores, board, state, hashTable, currTeam, depth, *moveArray, *moveAmount)) return false;
 
 	qsort_moves_scores(*moveArray, moveScores, *moveAmount, evalTeam);
 
 	free(moveScores); return true;
 }
 
-bool move_array_scores(int** moveScores, const Piece board[], Info info, Entry* hashTable, uint8_t team, int depth, const Move moveArray[], int moveAmount)
+bool move_array_scores(int** moveScores, const Piece board[], State state, Entry* hashTable, uint8_t team, int depth, const Move moveArray[], int moveAmount)
 {
 	if(moveAmount <= 0) return false;
 
@@ -44,7 +44,7 @@ bool move_array_scores(int** moveScores, const Piece board[], Info info, Entry* 
 	{
 		Move currentMove = moveArray[index];
 
-		int moveScore = chess_move_score(board, info, hashTable, depth, MIN_STATE_SCORE, MAX_STATE_SCORE, playerSign, currentMove);
+		int moveScore = chess_move_score(board, state, hashTable, depth, MIN_STATE_SCORE, MAX_STATE_SCORE, playerSign, currentMove);
 
 		(*moveScores)[index] = moveScore;
 	}

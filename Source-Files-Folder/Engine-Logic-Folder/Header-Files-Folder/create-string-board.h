@@ -2,21 +2,21 @@
 #ifndef CREATE_STRING_BOARD_H
 #define CREATE_STRING_BOARD_H
 
-bool create_fen_string(char* fenString, const Piece board[], Info info);
+bool create_fen_string(char* fenString, const Piece board[], State state);
 
-bool create_fen_string_t(char* fenString, char** stringArray, const Piece board[], Info info);
+bool create_fen_string_t(char* fenString, char** stringArray, const Piece board[], State state);
 
-bool create_string_info(char* stringArray[], Info info);
+bool create_string_state(char* stringArray[], State state);
 
-bool create_string_counter(char* string, Info info);
+bool create_string_counter(char* string, State state);
 
-bool create_string_turns(char* string, Info info);
+bool create_string_turns(char* string, State state);
 
-bool create_string_passant(char* string, Info info);
+bool create_string_passant(char* string, State state);
 
-bool create_string_castles(char* string, Info info);
+bool create_string_castles(char* string, State state);
 
-bool create_string_current(char* string, Info info);
+bool create_string_current(char* string, State state);
 
 bool create_string_board(char* string, const Piece board[]);
 
@@ -30,7 +30,7 @@ bool create_string_move(char* string, Move move);
 
 bool create_string_point(char* string, Point point);
 
-bool create_fenstr_parts(char* stringArray[], const Piece board[], Info info);
+bool create_fenstr_parts(char* stringArray[], const Piece board[], State state);
 
 bool promote_piece_symbol(char* symbol, Move move);
 
