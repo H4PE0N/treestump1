@@ -8,3 +8,4 @@ Todo:
 - implement look up table for openings
 - store images of chess pieces ans so on in a variable for fast lookup
 - implement sound effects, like in my minesweeper game
+- change time argument from seconds to milliseconds (optimal_depth_move)

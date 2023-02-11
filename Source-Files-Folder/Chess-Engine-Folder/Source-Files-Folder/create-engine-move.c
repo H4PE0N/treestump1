@@ -44,10 +44,10 @@ bool choose_engine_move(Move* bestMove, const Piece board[], State state, Entry*
 // Change the name of this function some time
 int storgryta(const Piece board[], State state, Entry* hashTable, int depth, int alpha, int beta, int playerSign)
 {
-	// uint64_t zobristHash = create_zobrist_hash(HASH_MATRIX, board, state);
+	// uint64_t zobristHash = create_zobrist_hash(board, state);
 	//
 	// int hashIndex = (zobristHash % HASH_TABLE_SIZE);
-
+	//
 	// Entry oldEntry = hashTable[hashIndex];
 	//
 	// if((oldEntry.hash == zobristHash) && (oldEntry.depth >= depth))

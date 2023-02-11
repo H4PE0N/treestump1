@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 
 	if(!extract_score_matrixs(TYPE_SCORE_MATRIX)) return false;
 
-	create_hash_matrix(HASH_MATRIX);
+	create_zobrist_keys(&ZOBRIST_KEYS);
 
 	Piece* board; State state;
 	if(!parse_create_board(&board, &state, fenString)) return false;

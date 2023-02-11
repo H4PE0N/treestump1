@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 
 	if(!extract_score_matrixs(TYPE_SCORE_MATRIX)) return false;
 
-	create_hash_matrix(HASH_MATRIX);
+	create_zobrist_keys(&ZOBRIST_KEYS);
 
 	char* fenString = (argc >= 2) ? argv[1] : (char*) FEN_START_STRING;
 

@@ -18,9 +18,9 @@ int main(int argc, char* argv[])
 
 	if(!extract_score_matrixs(TYPE_SCORE_MATRIX)) return false;
 
-	create_hash_matrix(HASH_MATRIX);
+	init_zobrist_hashes();
 
-	Piece* board; State state; 
+	Piece* board; State state;
 	if(!parse_create_board(&board, &state, fenString)) return false;
 
 	Entry* hashTable = create_hash_table(HASH_TABLE_SIZE);
@@ -101,6 +101,10 @@ bool parse_coneng_move(Piece* board, State* state, Entry* hashTable, const char 
 
 	printf("moving depth=%d mtime=%d\n", depth, mtime);
 
+
+
+	long startTime = clock();
+
 	if(mtime == -1)
 	{
 		if(!engine_depth_move(&engineMove, board, *state, hashTable, depth)) return false;
@@ -111,12 +115,16 @@ bool parse_coneng_move(Piece* board, State* state, Entry* hashTable, const char 
 		if(!optimal_depth_move(&engineMove, board, *state, hashTable, seconds)) return false;
 	}
 
+	double time = time_passed_since(startTime);
+
+
+
 	char moveString[16];
 	memset(moveString, '\n', sizeof(moveString));
 
 	create_string_move(moveString, engineMove);
 
-	printf("move %s\n", moveString);
+	printf("move %s time %.2f\n", moveString, time);
 
 	if(!move_chess_piece(board, state, engineMove))
 	{

@@ -21,6 +21,7 @@ extern const State STATE_TEAM_BLACK;
 
 extern const uint8_t STATE_CURRENT_SHIFT;
 extern const uint8_t STATE_PASSANT_SHIFT;
+extern const uint8_t STATE_CASTLES_SHIFT;
 extern const uint8_t STATE_TURNS_SHIFT;
 extern const uint8_t STATE_CLOCK_SHIFT;
 
