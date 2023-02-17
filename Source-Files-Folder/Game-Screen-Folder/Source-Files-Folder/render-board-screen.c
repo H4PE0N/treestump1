@@ -70,11 +70,11 @@ bool render_result_board(Screen screen, const Piece board[], State state)
 	uint8_t team = STATE_CURRENT_MACRO(state);
 	uint8_t winningTeam = NORMAL_TEAM_ENEMY(team);
 
-	if(check_mate_ending(board, state, team))
+	if(check_mate_ending(board, state))
 	{
 		if(!render_team_squares(screen, winningTeam)) return false;
 	}
-	else if(check_draw_ending(board, state, team))
+	else if(check_draw_ending(board, state))
 	{
 		printf("draw\n");
 		if(!render_board_squares(screen)) return false;

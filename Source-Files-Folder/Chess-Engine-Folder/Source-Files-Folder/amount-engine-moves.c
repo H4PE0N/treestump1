@@ -1,12 +1,12 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool amount_engine_moves(Move** moveArray, const Piece board[], State state, Entry* hashTable, uint8_t team, int depth, int amount)
+bool amount_engine_moves(Move** moveArray, const Piece board[], State state, Entry* hashTable, uint8_t evalTeam, int depth, int amount)
 {
 	if((amount <= 0) && (depth <= 0)) return false;
 
 	Move* engineMoves; int engineAmount;
-	if(!sorted_engine_moves(&engineMoves, &engineAmount, board, state, hashTable, team, depth)) return false;
+	if(!sorted_engine_moves(&engineMoves, &engineAmount, board, state, hashTable, evalTeam, depth)) return false;
 
 	*moveArray = create_move_array(amount);
 
@@ -19,34 +19,38 @@ bool sorted_engine_moves(Move** moveArray, int* moveAmount, const Piece board[],
 {
 	if(depth <= 0) return false;
 
-	int currTeam = STATE_CURRENT_MACRO(state);
-
-	if(!team_legal_moves(moveArray, moveAmount, board, state, currTeam)) return false;
+	if(!team_legal_moves(moveArray, moveAmount, board, state)) return false;
 
 	int* moveScores;
-	if(!move_array_scores(&moveScores, board, state, hashTable, currTeam, depth, *moveArray, *moveAmount)) return false;
+	if(!move_array_scores(&moveScores, board, state, hashTable, depth, *moveArray, *moveAmount)) return false;
 
 	qsort_moves_scores(*moveArray, moveScores, *moveAmount, evalTeam);
 
 	free(moveScores); return true;
 }
 
-bool move_array_scores(int** moveScores, const Piece board[], State state, Entry* hashTable, uint8_t team, int depth, const Move moveArray[], int moveAmount)
+bool move_array_scores(int** moveScores, const Piece board[], State state, Entry* hashTable, int depth, const Move moveArray[], int moveAmount)
 {
 	if(moveAmount <= 0) return false;
 
-	*moveScores = malloc(sizeof(int) * moveAmount);
-	memset(*moveScores, 0, sizeof(int) * moveAmount);
+	*moveScores = create_score_array(moveAmount);
 
-	int playerSign = TEAM_SCORE_WEIGHT(team);
+	int playerSign = CURRENT_TEAM_WEIGHT(state);
 
 	for(int index = 0; index < moveAmount; index += 1)
 	{
-		Move currentMove = moveArray[index];
-
-		int moveScore = chess_move_score(board, state, hashTable, depth, MIN_STATE_SCORE, MAX_STATE_SCORE, playerSign, currentMove);
+		int moveScore = chess_move_score(board, state, hashTable, depth, MIN_STATE_SCORE, MAX_STATE_SCORE, playerSign, moveArray[index]);
 
 		(*moveScores)[index] = moveScore;
 	}
 	return true;
+}
+
+int* create_score_array(int moveAmount)
+{
+	int* moveScores = malloc(sizeof(int) * moveAmount);
+
+	memset(moveScores, 0, sizeof(int) * moveAmount);
+
+	return moveScores;
 }

@@ -17,7 +17,7 @@ bool move_pattern_fits(const Piece board[], Move move)
 	if(MOVE_STORE_FLAG(move, MOVE_FLAG_PASSANT))
 		return passant_pattern_fits(board, move);
 
-	if(START_PIECE_TYPE(board, move) == PIECE_TYPE_PAWN)
+	if(MOVE_START_TYPE(board, move) == TYPE_PAWN)
 		return pawn_pattern_fits(board, move);
 
 	return normal_pattern_fits(board, move);
@@ -56,7 +56,7 @@ bool castle_pattern_fits(const Piece board[], Move castleMove)
 
 	uint8_t startTeam = MOVE_START_TEAM(board, castleMove);
 
-	if(START_PIECE_TYPE(board, castleMove) != PIECE_TYPE_KING) return false;
+	if(MOVE_START_TYPE(board, castleMove) != TYPE_KING) return false;
 
 	Point rookPoint = castle_rook_point(castleMove);
 	if(rookPoint == POINT_NONE) return false;
@@ -97,7 +97,7 @@ bool pawn_pattern_fits(const Piece board[], Move move)
 {
 	if(!MOVE_INSIDE_BOARD(move)) return false;
 
-	if(START_PIECE_TYPE(board, move) != PIECE_TYPE_PAWN) return false;
+	if(MOVE_START_TYPE(board, move) != TYPE_PAWN) return false;
 
 	Point startPoint = MOVE_START_MACRO(move);
 	Point stopPoint = MOVE_STOP_MACRO(move);
@@ -123,7 +123,7 @@ bool clear_moving_path(const Piece board[], Move move)
 {
 	if(!MOVE_INSIDE_BOARD(move)) return false;
 
-	if(START_PIECE_TYPE(board, move) == PIECE_TYPE_KNIGHT) return true;
+	if(MOVE_START_TYPE(board, move) == TYPE_KNIGHT) return true;
 
 	int8_t rankFactor, fileFactor, moveSteps;
 	if(!moving_path_values(&rankFactor, &fileFactor, &moveSteps, move)) return false;

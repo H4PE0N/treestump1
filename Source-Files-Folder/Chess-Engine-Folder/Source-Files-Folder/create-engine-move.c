@@ -5,12 +5,10 @@ bool engine_depth_move(Move* bestMove, const Piece board[], State state, Entry* 
 {
 	if(depth <= 0) return false;
 
-	int team = STATE_CURRENT_MACRO(state);
-
 	Move* moveArray; int moveAmount;
-	if(!team_legal_moves(&moveArray, &moveAmount, board, state, team)) return false;
+	if(!team_legal_moves(&moveArray, &moveAmount, board, state)) return false;
 
-	int playerSign = TEAM_SCORE_WEIGHT(team);
+	int playerSign = CURRENT_TEAM_WEIGHT(state);
 
 	bool result = choose_engine_move(bestMove, board, state, hashTable, depth, playerSign, moveArray, moveAmount);
 
@@ -21,11 +19,9 @@ bool choose_engine_move(Move* bestMove, const Piece board[], State state, Entry*
 {
 	if(moveAmount <= 0) return false;
 
-	*bestMove = moveArray[0];
+	*bestMove = moveArray[0]; int bestScore = MIN_STATE_SCORE;
 
 	if(moveAmount == 1) return true;
-
-	int bestScore = MIN_STATE_SCORE;
 
 	for(int index = 0; index < moveAmount; index += 1)
 	{

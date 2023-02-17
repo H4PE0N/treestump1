@@ -26,7 +26,7 @@ void update_state_values(State* state, const Piece board[], Move move)
 
 	switch_current_team(state);
 
-	if((START_PIECE_TYPE(board, move) == PIECE_TYPE_PAWN) || STOP_PIECE_EXISTS(board, move))
+	if((MOVE_START_TYPE(board, move) == TYPE_PAWN) || STOP_PIECE_EXISTS(board, move))
 		*state = CLEAR_STATE_CLOCK(*state);
 
 	else increase_state_clock(state);

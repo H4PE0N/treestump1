@@ -12,11 +12,13 @@ bool chess_piece_movable(const Piece board[], State state, Point piecePoint);
 
 bool piece_movable_test(const Piece board[], State state, const Move moveArray[], int moveAmount);
 
-bool check_draw_ending(const Piece board[], State state, uint8_t team);
+bool check_draw_ending(const Piece board[], State state);
 
-bool check_mate_ending(const Piece board[], State state, uint8_t team);
+bool check_mate_ending(const Piece board[], State state);
 
 bool little_material_draw(const Piece board[]);
+
+bool knight_bishop_draw(uint8_t* knightAmount, uint8_t* whiteBishops, uint8_t* blackBishops, Point point, uint8_t type);
 
 bool game_still_running(const Piece board[], State state);
 

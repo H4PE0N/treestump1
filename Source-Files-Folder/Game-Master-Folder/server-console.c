@@ -127,7 +127,7 @@ bool conser_result_handler(const int clientSocks[], const Piece board[], State s
   char resultString[SOCKET_STR_SIZE];
   memset(resultString, '\0', sizeof(resultString));
 
-  if(check_mate_ending(board, state, team))
+  if(check_mate_ending(board, state))
   {
     sprintf(resultString, "quit state %s", TEAM_WORDS[winningTeam]);
 
@@ -136,7 +136,7 @@ bool conser_result_handler(const int clientSocks[], const Piece board[], State s
       if(!send_socket_string(clientSocks[index], resultString, SOCKET_STR_SIZE)) return false;
     }
   }
-  else if(check_draw_ending(board, state, team))
+  else if(check_draw_ending(board, state))
   {
     sprintf(resultString, "quit state draw");
 

@@ -94,24 +94,28 @@ void append_promote_moves(Move* moveArray, int* moveAmount, Move promoteMove)
 	moveArray[(*moveAmount)++] = ALLOC_MOVE_FLAG(promoteMove, MOVE_FLAG_QUEEN);
 }
 
-// Maybe remove team from the arguments and instead use state team
-bool team_legal_moves(Move** moveArray, int* moveAmount, const Piece board[], State state, uint8_t team)
+bool team_legal_moves(Move** moveArray, int* moveAmount, const Piece board[], State state)
 {
-	if(!NORMAL_TEAM_EXISTS(team)) return false;
+	uint8_t team = STATE_CURRENT_MACRO(state);
 
 	*moveArray = create_move_array(256); *moveAmount = 0;
 
 	for(Point point = 0; point < BOARD_POINTS; point += 1)
 	{
-		uint8_t currentTeam = BOARD_POINT_TEAM(board, point);
-		if(!NORMAL_TEAMS_TEAM(currentTeam, team)) continue;
-
-		Move* pieceMoves; int addingAmount;
-		if(!piece_legal_moves(&pieceMoves, &addingAmount, board, state, point)) continue;
-
-		append_move_array(*moveArray, moveAmount, pieceMoves, addingAmount);
-
-		free(pieceMoves);
+		append_piece_moves(*moveArray, moveAmount, board, state, team, point);
 	}
 	return true;
+}
+
+bool append_piece_moves(Move* moveArray, int* moveAmount, const Piece board[], State state, uint8_t team, Point point)
+{
+	uint8_t currentTeam = BOARD_POINT_TEAM(board, point);
+	if(!NORMAL_TEAMS_TEAM(currentTeam, team)) return false;
+
+	Move* pieceMoves; int addingAmount;
+	if(!piece_legal_moves(&pieceMoves, &addingAmount, board, state, point)) return false;
+
+	append_move_array(moveArray, moveAmount, pieceMoves, addingAmount);
+
+	free(pieceMoves); return true;
 }

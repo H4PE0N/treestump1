@@ -30,18 +30,16 @@ bool piece_does_check(const Piece board[], Point kingPoint, Point point)
 
 bool game_still_running(const Piece board[], State state)
 {
-	uint8_t currentTeam = STATE_CURRENT_MACRO(state);
+	if(check_mate_ending(board, state)) return false;
 
-	if(check_mate_ending(board, state, currentTeam)) return false;
-
-	if(check_draw_ending(board, state, currentTeam)) return false;
+	if(check_draw_ending(board, state)) return false;
 
 	return true;
 }
 
-bool check_mate_ending(const Piece board[], State state, uint8_t team)
+bool check_mate_ending(const Piece board[], State state)
 {
-	if(!NORMAL_TEAM_EXISTS(team)) return false;
+	uint8_t team = STATE_CURRENT_MACRO(state);
 
 	Point kingPoint = board_king_point(board, team);
 	if(kingPoint == POINT_NONE) return false;
@@ -53,13 +51,13 @@ bool check_mate_ending(const Piece board[], State state, uint8_t team)
 	return true;
 }
 
-bool check_draw_ending(const Piece board[], State state, uint8_t team)
+bool check_draw_ending(const Piece board[], State state)
 {
-	if(!NORMAL_TEAM_EXISTS(team)) return false;
-
 	if(STATE_CLOCK_MACRO(state) >= 100) return true;
 
 	if(little_material_draw(board)) return true;
+
+	uint8_t team = STATE_CURRENT_MACRO(state);
 
 	Point kingPoint = board_king_point(board, team);
 	if(kingPoint == POINT_NONE) return false;
@@ -70,15 +68,7 @@ bool check_draw_ending(const Piece board[], State state, uint8_t team)
 
 	return true;
 }
-/*
-if(knightAmount >= 2) return false;
 
-if((knightAmount >= 1) && (blackBishops || whiteBishops)) return false;
-
-if(blackBishops && whiteBishops) return false;
-
-return true;
-*/
 bool little_material_draw(const Piece board[])
 {
 	uint8_t blackBishops = 0, whiteBishops = 0, knightAmount = 0;
@@ -93,20 +83,26 @@ bool little_material_draw(const Piece board[])
 
 		if((type != TYPE_KNIGHT) && (type != TYPE_BISHOP)) continue;
 
-
-		if(type == TYPE_KNIGHT) knightAmount += 1;
-
-		else if(POINT_SQAURE_WHITE(point)) whiteBishops += 1;
-
-		else blackBishops += 1;
-
-
-		if(knightAmount >= 2) return false;
-
-		if((knightAmount >= 1) && (blackBishops || whiteBishops)) return false;
-
-		if(blackBishops && whiteBishops) return false;
+		if(!knight_bishop_draw(&knightAmount, &whiteBishops, &blackBishops, point, type)) return false;
 	}
+	return true;
+}
+
+bool knight_bishop_draw(uint8_t* knightAmount, uint8_t* whiteBishops, uint8_t* blackBishops, Point point, uint8_t type)
+{
+	if(type == TYPE_KNIGHT) *knightAmount += 1;
+
+	else if(POINT_SQAURE_WHITE(point)) *whiteBishops += 1;
+
+	else *blackBishops += 1;
+
+
+	if(*knightAmount >= 2) return false;
+
+	if((*knightAmount >= 1) && (*blackBishops || *whiteBishops)) return false;
+
+	if(*blackBishops && *whiteBishops) return false;
+
 	return true;
 }
 
@@ -186,9 +182,7 @@ bool move_deliver_mate(const Piece board[], State state, Move move)
 
 bool deliver_mate_test(Piece* boardCopy, State stateCopy, Move move)
 {
-	uint8_t enemyTeam = MOVE_START_ENEMY(boardCopy, move);
-
 	if(!execute_chess_move(boardCopy, &stateCopy, move)) return false;
 
-	return check_mate_ending(boardCopy, stateCopy, enemyTeam);
+	return check_mate_ending(boardCopy, stateCopy);
 }

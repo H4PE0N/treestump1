@@ -234,6 +234,7 @@ bool target_pattern_moves(Move** moves, int* moveAmount, const Piece board[], Mo
 	return false;
 }
 
+// Fix this function
 bool create_move_string(char* moveString, const Piece board[], State state, Move move)
 {
 	if(!MOVE_INSIDE_BOARD(move)) return false;

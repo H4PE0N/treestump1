@@ -12,7 +12,9 @@ bool piece_legal_moves(Move** moveArray, int* moveAmount, const Piece board[], S
 
 bool piece_legal_points(Point** pointArray, int* pointAmount, const Piece board[], State state, Point piecePoint);
 
-bool team_legal_moves(Move** moveArray, int* moveAmount, const Piece board[], State state, uint8_t team);
+bool team_legal_moves(Move** moveArray, int* moveAmount, const Piece board[], State state);
+
+bool append_piece_moves(Move* moveArray, int* moveAmount, const Piece board[], State state, uint8_t team, Point point);
 
 void append_promote_moves(Move* moveArray, int* moveAmount, Move promoteMove);
 

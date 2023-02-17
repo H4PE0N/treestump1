@@ -3,10 +3,8 @@
 
 bool optimal_depth_move(Move* move, const Piece board[], State state, Entry* hashTable, int seconds)
 {
-	uint8_t team = STATE_CURRENT_MACRO(state);
-
 	Move* moveArray; int moveAmount;
-	if(!team_legal_moves(&moveArray, &moveAmount, board, state, team)) return false;
+	if(!team_legal_moves(&moveArray, &moveAmount, board, state)) return false;
 
 	bool result = search_depths_move(move, board, state, hashTable, seconds, moveArray, moveAmount);
 
@@ -21,9 +19,7 @@ bool search_depths_move(Move* move, const Piece board[], State state, Entry* has
 
 	if(moveAmount == 1) return true;
 
-	uint8_t team = STATE_CURRENT_MACRO(state);
-
-	int playerSign = TEAM_SCORE_WEIGHT(team);
+	int playerSign = CURRENT_TEAM_WEIGHT(state);
 
 	long startClock = clock();
 
@@ -41,7 +37,7 @@ bool search_depths_move(Move* move, const Piece board[], State state, Entry* has
 		create_string_move(moveString, engineMove);
 		printf("state depth %d time %d move %s score %d\n", depth, (int) (time_passed_since(startClock) * 1000), moveString, engineScore);
 
-		if(TEAM_WEIGHT_SCORE(engineScore, team) <= MATE_SCORE) return true;
+		if((playerSign * engineScore) <= MATE_SCORE) return true;
 	}
 	return true;
 }
@@ -50,8 +46,7 @@ bool choose_timing_move(Move* bestMove, int* bestScore, const Piece board[], Sta
 {
 	if(moveAmount <= 0) return false;
 
-	*bestMove = moveArray[0];
-	*bestScore = MIN_STATE_SCORE;
+	*bestMove = moveArray[0]; *bestScore = MIN_STATE_SCORE;
 
 	for(int index = 0; index < moveAmount; index += 1)
 	{

@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 
 	if(!extract_score_matrixs(TYPE_SCORE_MATRIX)) return false;
 
-	init_zobrist_hashes();
+	create_zobrist_keys(&ZOBRIST_KEYS);
 
 	Piece* board; State state;
 	if(!parse_create_board(&board, &state, fenString)) return false;

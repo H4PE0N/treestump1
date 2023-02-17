@@ -12,6 +12,8 @@ void qswap_moves_scores(Move* moveArray, int* moveScores, int index1, int index2
 
 void qswap_move_scores(int* moveScores, int index1, int index2);
 
+bool check_pivot_score(uint8_t team, int moveScore, int pivotScore);
+
 void qswap_array_moves(Move* moveArray, int index1, int index2);
 
 #endif

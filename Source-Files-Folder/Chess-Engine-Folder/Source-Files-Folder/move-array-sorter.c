@@ -13,6 +13,7 @@ void qsort_moves_indexis(Move* moveArray, int* moveScores, int index1, int index
 	int partIndex = partly_qsort_moves(moveArray, moveScores, index1, index2, team);
 
 	qsort_moves_indexis(moveArray, moveScores, index1, (partIndex - 1), team);
+
 	qsort_moves_indexis(moveArray, moveScores, (partIndex + 1), index2, team);
 }
 
@@ -24,8 +25,7 @@ int partly_qsort_moves(Move* moveArray, int* moveScores, int index1, int index2,
 
 	for(int jIndex = index1; jIndex <= (index2 - 1); jIndex += 1)
 	{
-		if(!((team == TEAM_WHITE) && (moveScores[jIndex] > pivotScore)) &&
-			!((team == TEAM_BLACK) && (moveScores[jIndex] < pivotScore))) continue;
+		if(check_pivot_score(team, moveScores[jIndex], pivotScore)) continue;
 
 		qswap_moves_scores(moveArray, moveScores, (++iIndex), jIndex);
 	}
@@ -34,9 +34,18 @@ int partly_qsort_moves(Move* moveArray, int* moveScores, int index1, int index2,
 	return (iIndex + 1);
 }
 
+bool check_pivot_score(uint8_t team, int moveScore, int pivotScore)
+{
+	if((team == TEAM_WHITE) && (moveScore > pivotScore)) return false;
+	if((team == TEAM_BLACK) && (moveScore < pivotScore)) return false;
+
+	return true;
+}
+
 void qswap_moves_scores(Move* moveArray, int* moveScores, int index1, int index2)
 {
 	qswap_array_moves(moveArray, index1, index2);
+
 	qswap_move_scores(moveScores, index1, index2);
 }
 

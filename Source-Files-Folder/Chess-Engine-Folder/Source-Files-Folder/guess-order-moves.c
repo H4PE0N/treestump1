@@ -1,58 +1,58 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-bool ordered_legal_moves(Move** moveArray, int* moveAmount, const Piece board[], State state, uint8_t team)
+bool ordered_legal_moves(Move** moveArray, int* moveAmount, const Piece board[], State state, uint8_t evalTeam)
 {
-	if(!team_legal_moves(moveArray, moveAmount, board, state, team)) return false;
+	if(!team_legal_moves(moveArray, moveAmount, board, state)) return false;
 
-	return guess_order_moves(*moveArray, *moveAmount, board, state, team);
+	return guess_order_moves(*moveArray, *moveAmount, board, state, evalTeam);
 }
 
-bool guess_order_moves(Move* moveArray, int moveAmount, const Piece board[], State state, uint8_t team)
+bool guess_order_moves(Move* moveArray, int moveAmount, const Piece board[], State state, uint8_t evalTeam)
 {
 	if(moveAmount <= 0) return false;
 
 	int* moveScores;
-	if(!guess_moves_scores(&moveScores, moveArray, moveAmount, board, state)) return false;
+	if(!guess_moves_scores(&moveScores, moveArray, moveAmount, board, state, evalTeam)) return false;
 
-	qsort_moves_scores(moveArray, moveScores, moveAmount, team);
+	qsort_moves_scores(moveArray, moveScores, moveAmount, evalTeam);
 
 	free(moveScores); return true;
 }
 
-bool guess_moves_scores(int** moveScores, const Move moveArray[], int moveAmount, const Piece board[], State state)
+bool guess_moves_scores(int** moveScores, const Move moveArray[], int moveAmount, const Piece board[], State state, uint8_t evalTeam)
 {
 	if(moveAmount <= 0) return false;
 
-	*moveScores = malloc(sizeof(int) * moveAmount);
-	memset(*moveScores, 0, sizeof(int) * moveAmount);
+	*moveScores = create_score_array(moveAmount);
 
 	for(int index = 0; index < moveAmount; index += 1)
 	{
-		(*moveScores)[index] = guess_move_score(board, state, moveArray[index]);
+		(*moveScores)[index] = guess_move_score(board, state, evalTeam, moveArray[index]);
 	}
 	return true;
 }
 
-// Make this guess function better, it will benifit
-int guess_move_score(const Piece board[], State state, Move move)
+int guess_move_score(const Piece board[], State state, uint8_t evalTeam, Move move)
 {
 	int moveScore = 0;
 
-	Piece stopPieceType = STOP_PIECE_TYPE(board, move);
+	Piece stopPiece = MOVE_STOP_PIECE(board, move);
 
-	if(stopPieceType != PIECE_TYPE_NONE)
+	if(!PIECE_STORE_TYPE(stopPiece, PIECE_TYPE_NONE))
 	{
-		Piece startPieceType = START_PIECE_TYPE(board, move);
+		Piece startPiece = MOVE_START_PIECE(board, move);
 
-		int stopPieceScore = PIECE_TYPE_SCORES[stopPieceType];
-		int startPieceScore = PIECE_TYPE_SCORES[startPieceType];
+		int stopScore = CHESS_PIECE_SCORE(stopPiece);
+		int startScore = CHESS_PIECE_SCORE(startPiece);
 
-		moveScore = (10 * stopPieceScore - startPieceScore);
+		moveScore = (10 * stopScore - startScore);
 	}
-	if(MOVE_PROMOTE_FLAG(move)) moveScore += move_promote_piece(move);
+	if(MOVE_PROMOTE_FLAG(move))
+	{
+		Piece promotePiece = move_promote_piece(move);
 
-	uint8_t startTeam = MOVE_START_TEAM(board, move);
-
-	return TEAM_WEIGHT_SCORE(moveScore, startTeam);
+		moveScore += CHESS_PIECE_SCORE(promotePiece);
+	}
+	return TEAM_WEIGHT_SCORE(moveScore, evalTeam);
 }

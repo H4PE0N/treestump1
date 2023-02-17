@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 
   print_console_state(state);
 
-	int depth = 7;
+	int depth = 6;
 
 	long startTime = clock();
 

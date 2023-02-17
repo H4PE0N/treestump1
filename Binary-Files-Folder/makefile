@@ -105,6 +105,9 @@ GROUP2_FLAGS := $(COMPILE_FLAGS) $(SOCKET_FLAGS)
 GROUP3_FLAGS := $(COMPILE_FLAGS) $(SCREEN_FLAGS)
 GROUP4_FLAGS := $(COMPILE_FLAGS) $(SCREEN_FLAGS) $(SOCKET_FLAGS)
 ################################################################################
+default: $(GROUP1_FILES)
+# default: $(GROUP1_FILES) $(GROUP2_FILES) $(GROUP3_FILES) $(GROUP4_FILES)
+################################################################################
 $(GROUP1_FILES): %: $(OBJECT_FOLDER)/%.o $(GROUP1_OBJECTS) $(MASTER_FOLDER)/%.c $(GROUP1_SOURCES) $(GROUP1_HEADERS)
 	$(COMPILE_COMND) $(GROUP1_OBJECTS) $(OBJECT_FOLDER)/$@.o $(GROUP1_FLAGS) -o $@
 

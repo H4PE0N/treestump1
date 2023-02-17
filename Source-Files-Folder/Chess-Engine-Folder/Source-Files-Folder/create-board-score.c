@@ -1,16 +1,15 @@
 
 #include "../Header-Files-Folder/engine-include-file.h"
 
-// The score of the board is positive for whites favour and negative for blacks favour
 int board_state_score(const Piece board[], State state)
 {
 	uint8_t team = STATE_CURRENT_MACRO(state);
 
-	if(check_mate_ending(board, state, team))
+	if(check_mate_ending(board, state))
 	{
 		return TEAM_WEIGHT_SCORE(MATE_SCORE, team);
 	}
-	else if(check_draw_ending(board, state, team))
+	else if(check_draw_ending(board, state))
 	{
 		return TEAM_WEIGHT_SCORE(DRAW_SCORE, team);
 	}
@@ -34,7 +33,7 @@ int chess_piece_score(Piece piece, Point point)
 	uint8_t team = PIECE_TEAM_MACRO(piece);
 	uint8_t type = PIECE_TYPE_MACRO(piece);
 
-	uint8_t rank = TEAM_MATRIX_RANK(POINT_RANK_MACRO(point), team);
+	uint8_t rank = MATRIX_POINT_RANK(point, team);
 	uint8_t file = POINT_FILE_MACRO(point);
 
 	int typeScore = PIECE_TYPE_SCORES[type];
