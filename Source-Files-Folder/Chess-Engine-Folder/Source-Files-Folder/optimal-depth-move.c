@@ -33,11 +33,9 @@ bool search_depths_move(Move* move, const Piece board[], State state, Entry* has
 
 		*move = engineMove;
 
-		char moveString[16];
-		create_string_move(moveString, engineMove);
-		printf("state depth %d time %d move %s score %d\n", depth, (int) (time_passed_since(startClock) * 1000), moveString, engineScore);
+		printf("\n");
 
-		if((playerSign * engineScore) <= MATE_SCORE) return true;
+		if(engineScore >= MATE_SCORE || engineScore <= -MATE_SCORE) return true;
 	}
 	return true;
 }
@@ -46,7 +44,7 @@ bool choose_timing_move(Move* bestMove, int* bestScore, const Piece board[], Sta
 {
 	if(moveAmount <= 0) return false;
 
-	*bestMove = moveArray[0]; *bestScore = MIN_STATE_SCORE;
+	*bestMove = moveArray[0]; *bestScore = -MATE_SCORE;
 
 	for(int index = 0; index < moveAmount; index += 1)
 	{
@@ -54,7 +52,11 @@ bool choose_timing_move(Move* bestMove, int* bestScore, const Piece board[], Sta
 
 		Move currMove = moveArray[index];
 
-		int currScore = chess_move_score(board, state, hashTable, depth, MIN_STATE_SCORE, MAX_STATE_SCORE, playerSign, currMove);
+		int currScore = chess_move_score(board, state, hashTable, depth, -MATE_SCORE, MATE_SCORE, playerSign, currMove);
+
+		char moveString[16];
+		create_string_move(moveString, currMove);
+		printf("state depth %d time %d move %s score %d\n", depth, (int) (time_passed_since(startClock) * 1000), moveString, currScore);
 
 		if(currScore > *bestScore)
 		{

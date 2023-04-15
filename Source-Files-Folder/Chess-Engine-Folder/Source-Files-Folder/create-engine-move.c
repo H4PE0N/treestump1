@@ -19,7 +19,7 @@ bool choose_engine_move(Move* bestMove, const Piece board[], State state, Entry*
 {
 	if(moveAmount <= 0) return false;
 
-	*bestMove = moveArray[0]; int bestScore = MIN_STATE_SCORE;
+	*bestMove = moveArray[0]; int bestScore = -MATE_SCORE;
 
 	if(moveAmount == 1) return true;
 
@@ -27,53 +27,66 @@ bool choose_engine_move(Move* bestMove, const Piece board[], State state, Entry*
 	{
 		Move currMove = moveArray[index];
 
-		int currScore = chess_move_score(board, state, hashTable, depth, MIN_STATE_SCORE, MAX_STATE_SCORE, playerSign, currMove);
+		int currScore = chess_move_score(board, state, hashTable, depth, -MATE_SCORE, MATE_SCORE, playerSign, currMove);
 
-		if(currScore > bestScore)
-		{
-			*bestMove = currMove; bestScore = currScore;
-		}
+		if(currScore <= bestScore) continue;
+
+		*bestMove = currMove; bestScore = currScore;
 	}
 	return true;
 }
 
-// Change the name of this function some time
-int storgryta(const Piece board[], State state, Entry* hashTable, int depth, int alpha, int beta, int playerSign)
+bool lookup_hash_entry(int* bestScore, Entry* hashTable, uint64_t zobristHash, int depth, int* alpha, int* beta)
 {
-	// uint64_t zobristHash = create_zobrist_hash(board, state);
-	//
-	// int hashIndex = (zobristHash % HASH_TABLE_SIZE);
-	//
-	// Entry oldEntry = hashTable[hashIndex];
-	//
-	// if((oldEntry.hash == zobristHash) && (oldEntry.depth >= depth))
-	// {
-	// 	if(oldEntry.flag == ENTRY_FLAG_EXACT) return oldEntry.score;
-	//
-	// 	else if(oldEntry.flag == ENTRY_FLAG_LOWER)
-	// 	{
-	// 		alpha = MAX_NUMBER_VALUE(alpha, oldEntry.score);
-	// 	}
-	// 	else if(oldEntry.flag == ENTRY_FLAG_UPPER)
-	// 	{
-	// 		beta = MIN_NUMBER_VALUE(beta, oldEntry.score);
-	// 	}
-	// 	if(alpha >= beta) return oldEntry.score;
-	// }
+	int hashIndex = HASH_TABLE_INDEX(zobristHash);
 
-	int bestScore = board_depth_score(board, state, hashTable, depth, alpha, beta, playerSign);
+	Entry oldEntry = hashTable[hashIndex];
 
+	if((oldEntry.hash != zobristHash) || (oldEntry.depth < depth)) return false;
 
-	// Entry newEntry = (Entry) {.hash = zobristHash, .depth = depth, .score = bestScore};
-	//
-	// if(bestScore <= alpha) newEntry.flag = ENTRY_FLAG_UPPER;
-	//
-	// else if(bestScore >= beta) newEntry.flag = ENTRY_FLAG_LOWER;
-	//
-	// else newEntry.flag = ENTRY_FLAG_EXACT;
-	//
-	// hashTable[hashIndex] = newEntry;
+	if(oldEntry.flag == ENTRY_FLAG_EXACT)
+	{
+		*bestScore = oldEntry.score; return true;
+	}
+	else if(oldEntry.flag == ENTRY_FLAG_LOWER)
+	{
+		*alpha = MAX_NUMBER_VALUE(*alpha, oldEntry.score);
+	}
+	else if(oldEntry.flag == ENTRY_FLAG_UPPER)
+	{
+		*beta = MIN_NUMBER_VALUE(*beta, oldEntry.score);
+	}
+	if(*alpha < *beta) return false;
 
+	*bestScore = oldEntry.score; return true;
+}
+
+bool store_hash_entry(Entry* hashTable, uint64_t zobristHash, int depth, int alpha, int beta, int score)
+{
+	int hashIndex = HASH_TABLE_INDEX(zobristHash);
+
+	Entry newEntry = {.hash = zobristHash, .depth = depth, .score = score};
+
+	if(score <= alpha) newEntry.flag = ENTRY_FLAG_UPPER;
+
+	else if(score >= beta) newEntry.flag = ENTRY_FLAG_LOWER;
+
+	else newEntry.flag = ENTRY_FLAG_EXACT;
+
+	hashTable[hashIndex] = newEntry; return true;
+}
+
+int entry_board_score(const Piece board[], State state, Entry* hashTable, int depth, int alpha, int beta, int playerSign)
+{
+	uint64_t zobristHash = create_zobrist_hash(board, state);
+
+	int bestScore;
+
+	if(lookup_hash_entry(&bestScore, hashTable, zobristHash, depth, &alpha, &beta)) return bestScore;
+
+	bestScore = board_depth_score(board, state, hashTable, depth, alpha, beta, playerSign);
+
+	store_hash_entry(hashTable, zobristHash, depth, alpha, beta, bestScore);
 
 	return bestScore;
 }
@@ -96,7 +109,7 @@ int board_depth_score(const Piece board[], State state, Entry* hashTable, int de
 
 int choose_move_score(const Piece board[], State state, Entry* hashTable, int depth, int alpha, int beta, int playerSign, const Move moveArray[], int moveAmount)
 {
-	int bestScore = MIN_STATE_SCORE;
+	int bestScore = -MATE_SCORE;
 
 	for(int index = 0; index < moveAmount; index += 1)
 	{
@@ -124,5 +137,5 @@ int simulate_move_score(Piece* boardCopy, State stateCopy, Entry* hashTable, int
 {
 	if(!execute_chess_move(boardCopy, &stateCopy, move)) return 0;
 
-	return -storgryta(boardCopy, stateCopy, hashTable, (depth - 1), -beta, -alpha, -playerSign);
+	return -entry_board_score(boardCopy, stateCopy, hashTable, (depth - 1), -beta, -alpha, -playerSign);
 }

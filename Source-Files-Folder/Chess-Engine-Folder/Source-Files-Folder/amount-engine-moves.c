@@ -39,7 +39,7 @@ bool move_array_scores(int** moveScores, const Piece board[], State state, Entry
 
 	for(int index = 0; index < moveAmount; index += 1)
 	{
-		int moveScore = chess_move_score(board, state, hashTable, depth, MIN_STATE_SCORE, MAX_STATE_SCORE, playerSign, moveArray[index]);
+		int moveScore = chess_move_score(board, state, hashTable, depth, -MATE_SCORE, MATE_SCORE, playerSign, moveArray[index]);
 
 		(*moveScores)[index] = moveScore;
 	}

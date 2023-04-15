@@ -7,11 +7,11 @@ int board_state_score(const Piece board[], State state)
 
 	if(check_mate_ending(board, state))
 	{
-		return TEAM_WEIGHT_SCORE(MATE_SCORE, team);
+		return TEAM_WEIGHT_SCORE(-MATE_SCORE, team);
 	}
 	else if(check_draw_ending(board, state))
 	{
-		return TEAM_WEIGHT_SCORE(DRAW_SCORE, team);
+		return TEAM_WEIGHT_SCORE(-DRAW_SCORE, team);
 	}
 	return board_pieces_score(board);
 }

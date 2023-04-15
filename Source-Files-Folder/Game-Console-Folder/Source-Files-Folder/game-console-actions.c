@@ -21,7 +21,7 @@ bool console_user_handler(Piece* board, State* state)
 
 bool console_engine_handler(Piece* board, State* state, Entry* hashTable)
 {
-	unsigned short seconds = 2;
+	unsigned short seconds = 5;
 
 	Move engineMove;
 	if(!optimal_depth_move(&engineMove, board, *state, hashTable, seconds)) return false;

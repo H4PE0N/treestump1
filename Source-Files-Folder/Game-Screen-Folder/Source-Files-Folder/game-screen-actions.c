@@ -3,7 +3,7 @@
 
 bool screen_engine_handler(Piece* board, State* state, Entry* hashTable, Move* moves, Screen screen)
 {
-	int seconds = 10;
+	int seconds = 5;
 
 	Move computerMove;
 	if(!optimal_depth_move(&computerMove, board, *state, hashTable, seconds)) return false;

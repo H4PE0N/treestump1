@@ -29,6 +29,9 @@ int main(int argc, char* argv[])
   engine_console_loop(board, &state, hashTable);
 
 
+	print_console_board(board);
+
+
   printf("free(hashTable);\n"); free(hashTable);
 
 	printf("free(board);\n"); free(board);
@@ -39,10 +42,14 @@ int main(int argc, char* argv[])
 bool engine_console_loop(Piece* board, State* state, Entry* hashTable)
 {
   char inputString[256];
+	char fenString[256];
 
-  while(strcmp(inputString, "quit"))
+  while(game_still_running(board, *state))
   {
-    if(!print_console_board(board));
+    print_console_board(board);
+
+		memset(fenString, '\0', 256);
+		if(create_fen_string(fenString, board, *state)) printf("\"%s\"\n", fenString);
 
     if(!input_stdin_string(inputString, "input -> ")) return false;
 

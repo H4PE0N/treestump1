@@ -14,7 +14,4 @@ extern const int DRAW_SCORE;
 extern const float MATRIX_FACTOR;
 extern const float TYPE_FACTOR;
 
-extern const int MIN_STATE_SCORE;
-extern const int MAX_STATE_SCORE;
-
 #endif
