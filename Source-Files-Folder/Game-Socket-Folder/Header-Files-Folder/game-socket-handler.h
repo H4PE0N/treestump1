@@ -4,6 +4,8 @@
 
 bool create_server_socket(int* serverSock, const char sockAddr[], int sockPort);
 
+bool ready_server_socket(int socket, const char sockAddr[], int sockPort);
+
 bool server_socket_listen(int serverSock, int backlog);
 
 bool bind_server_socket(int serverSock, const char sockAddr[], int sockPort);
@@ -16,9 +18,11 @@ bool create_address_struct(sockaddr_in* addrStruct, const char sockAddr[], int s
 
 bool create_client_socket(int* clientSock, const char sockAddr[], int sockPort);
 
+bool ready_client_socket(int socket, const char sockAddr[], int sockPort);
+
 bool connect_client_socket(int clientSock, const char sockAddr[], int sockPort);
 
-void close_socket_desc(int sockDesc);
+int close_socket_desc(int sockDesc);
 
 bool init_socket_drivers();
 

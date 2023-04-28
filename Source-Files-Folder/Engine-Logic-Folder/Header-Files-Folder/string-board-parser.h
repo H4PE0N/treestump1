@@ -22,7 +22,7 @@ bool parse_string_passant(State* state, const char stringToken[]);
 
 bool parse_string_point(Point* point, const char string[]);
 
-bool parse_string_move(Move* move, const char stringMove[]);
+bool string_basic_move(Move* move, const char stringMove[]);
 
 bool parse_string_castles(State* state, const char stringToken[]);
 

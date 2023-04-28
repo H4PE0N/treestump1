@@ -48,12 +48,12 @@ int main(int argc, char* argv[])
 
 bool client_screen_loop(int clientSock, Screen screen, Piece* board, State* state)
 {
-  char recvString[SOCKET_STR_SIZE];
+  char recvString[SOCK_STRING_SIZE];
 
   Move moves[16];
   memset(moves, MOVE_NONE, sizeof(Move) * 16);
 
-  while(recv_socket_string(clientSock, recvString, SOCKET_STR_SIZE))
+  while(recv_socket_string(clientSock, recvString, SOCK_STRING_SIZE))
   {
     printf("server:(%s)\n", recvString);
 
@@ -128,10 +128,10 @@ bool parse_sdlcli_move(int clientSock, Screen screen, const Piece board[], State
   char moveString[16];
   if(!create_string_move(moveString, inputMove)) return false;
 
-  char moveSend[SOCKET_STR_SIZE];
+  char moveSend[SOCK_STRING_SIZE];
   sprintf(moveSend, "move %s", moveString);
 
-  if(!send_socket_string(clientSock, moveSend, SOCKET_STR_SIZE)) return false;
+  if(!send_socket_string(clientSock, moveSend, SOCK_STRING_SIZE)) return false;
 
   return true;
 }

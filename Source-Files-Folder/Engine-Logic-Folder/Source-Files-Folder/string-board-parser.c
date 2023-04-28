@@ -119,7 +119,7 @@ bool parse_string_point(Point* point, const char string[])
 	return true;
 }
 
-bool parse_string_move(Move* move, const char stringMove[])
+bool string_basic_move(Move* move, const char stringMove[])
 {
   int stringLen = strlen(stringMove);
   if(stringLen != 4 && stringLen != 5) return false;

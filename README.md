@@ -10,3 +10,6 @@ Todo:
 - implement sound effects, like in my minesweeper game
 - change time argument from seconds to milliseconds (optimal_depth_move)
 - use only one min/max value for engine search
+- change static allocated strings to dynamic allocated strings
+- add temporary variable to functions before changing argument
+- maybe change it back to just words in socket messages (not variables)

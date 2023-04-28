@@ -6,10 +6,10 @@ char console_piece_symbol(Piece piece)
 	Piece pieceTeam = (piece & PIECE_TEAM_MASK);
 	unsigned short typeIndex = PIECE_TYPE_MACRO(piece);
 
-	if(pieceTeam == PIECE_TEAM_WHITE) return WHITE_CON_SYMBOLS[typeIndex];
-	if(pieceTeam == PIECE_TEAM_BLACK) return BLACK_CON_SYMBOLS[typeIndex];
+	if(pieceTeam == PIECE_TEAM_WHITE) return WHITE_CONS_SYMBOLS[typeIndex];
+	if(pieceTeam == PIECE_TEAM_BLACK) return BLACK_CONS_SYMBOLS[typeIndex];
 
-	return CON_SYMBOL_NONE;
+	return CONS_SYMBOL_NONE;
 }
 
 bool print_console_board(const Piece board[])

@@ -4,251 +4,82 @@
 #include "../Engine-Logic-Folder/Header-Files-Folder/englog-include-file.h"
 #include "../Game-Console-Folder/Header-Files-Folder/console-include-file.h"
 
-bool server_console_loop(const int[], Piece*, State*);
+bool server_console_loop(const Client clients[], Piece* board, State* state);
 
-bool accept_conct_clients(int*, int, const char[], int);
+bool setup_console_server(int socket, Piece* board, State* state, Client* clients);
 
-bool send_update_string(const int[], const Piece[], State);
-
-bool send_move_string(int);
-
-bool recv_socket_move(Move*, int, const Piece[], State);
-
-bool conser_result_handler(const int[], const Piece[], State);
-
-
-int create_random_number(int minimum, int maximum)
-{
-  return (minimum + (rand() % (maximum - minimum + 1)));
-}
-
+// Prevent momory leaks by handling the returns
 int main(int argc, char* argv[])
 {
-  char sockAddr[128];
-  memset(sockAddr, '\0', sizeof(sockAddr));
-
-  int sockPort = 5555;
-
-  char fenString[128];
-  memset(fenString, '\0', sizeof(fenString));
-
-
-
-
-
-  char setupString[256];
-  input_stdin_string(setupString, "setup -> ");
-
-  char valString[128];
-  memset(valString, '\0', sizeof(valString));
-
-
-
-  if(parse_token_quotes(valString, setupString, "board"))
-  {
-    strcpy(fenString, valString);
-  }
-  else strcpy(fenString, FEN_START_STRING);
-
-  if(parse_spaced_token(valString, setupString, "address"))
-  {
-    strcpy(sockAddr, valString);
-  }
-  else strcpy(sockAddr, "192.168.1.113");
-
-  if(parse_spaced_token(valString, setupString, "port"))
-  {
-    sockPort = atoi(valString);
-  }
-
-  if(parse_spaced_token(valString, setupString, "wtime"))
-  {
-    printf("wtime:(%d)\n", atoi(valString));
-  }
-  if(parse_spaced_token(valString, setupString, "btime"))
-  {
-    printf("btime:(%d)\n", atoi(valString));
-  }
-  if(parse_spaced_token(valString, setupString, "winc"))
-  {
-    printf("winc:(%d)\n", atoi(valString));
-  }
-  if(parse_spaced_token(valString, setupString, "binc"))
-  {
-    printf("binc:(%d)\n", atoi(valString));
-  }
-
-
-
   if(!init_socket_drivers()) return true;
 
   int serverSock;
-  if(!create_server_socket(&serverSock, sockAddr, sockPort))
-  {
-    printf("could not create server\n");
-    return true;
-  }
-  printf("created server:(%s, %d)\n", sockAddr, sockPort);
+  if(!create_socket_struct(&serverSock, AF_INET, SOCK_STREAM, 0)) return false;
 
-  int clientSocks[2];
-  if(!accept_conct_clients(clientSocks, serverSock, sockAddr, sockPort))
-  {
-    close_socket_desc(serverSock); return true;
-  }
+  Piece* board = malloc(sizeof(Piece) * BOARD_POINTS);
+  memset(board, PIECE_NONE, sizeof(Piece) * BOARD_POINTS);
 
-  Piece* board;
   State state;
 
-  if(!parse_create_board(&board, &state, fenString))
+  Client clients[2];
+
+  if(setup_console_server(serverSock, board, &state, clients))
   {
-    close_socket_desc(serverSock); return true;
+    if(server_console_loop(clients, board, &state))
+    {
+      send_clients_result(clients, board, state);
+    }
   }
 
-
-  if(server_console_loop(clientSocks, board, &state))
-  {
-    conser_result_handler(clientSocks, board, state);
-  }
-
-
-  printf("close_socket_desc(serverSock); free(board);\n");
   close_socket_desc(serverSock); free(board);
+  printf("close_socket_desc(serverSock); free(board);\n");
 
   return false;
 }
 
-bool conser_result_handler(const int clientSocks[], const Piece board[], State state)
+bool setup_console_server(int serverSock, Piece* board, State* state, Client* clients)
 {
-  if(!send_update_string(clientSocks, board, state)) return false;
+  // #############################################################
+  if(!parse_fen_string(board, state, FEN_START_STRING)) return false;
 
-  unsigned short team = STATE_CURRENT_MACRO(state);
-	unsigned short winningTeam = NORMAL_TEAM_ENEMY(team);
+  char string[256];
+  memset(string, 0, sizeof(string));
 
-  char resultString[SOCKET_STR_SIZE];
-  memset(resultString, '\0', sizeof(resultString));
+  input_stdin_string(string, UPDATE_BOARD_PROMPT);
 
-  if(check_mate_ending(board, state))
-  {
-    sprintf(resultString, "quit state %s", TEAM_WORDS[winningTeam]);
+	if(!parse_update_string(board, state, string)) return false;
+  // #############################################################
 
-    for(int index = 0; index < 2; index += 1)
-    {
-      if(!send_socket_string(clientSocks[index], resultString, SOCKET_STR_SIZE)) return false;
-    }
-  }
-  else if(check_draw_ending(board, state))
-  {
-    sprintf(resultString, "quit state draw");
+  // #############################################################
+  char sockAddr[128]; int sockPort = 0;
+  memset(sockAddr, 0, sizeof(sockAddr));
 
-    for(int index = 0; index < 2; index += 1)
-    {
-      if(!send_socket_string(clientSocks[index], resultString, SOCKET_STR_SIZE)) return false;
-    }
-  }
-  else return false;
+  if(!input_socket_setup(sockAddr, &sockPort)) return false;
+
+  if(!ready_server_socket(serverSock, sockAddr, sockPort)) return false;
+
+  printf(CREATED_SERVER_PRINT, sockAddr, sockPort);
+
+  if(!manage_conct_clients(clients, serverSock, sockAddr, sockPort)) return false;
+  // #############################################################
 
   return true;
 }
 
-bool accept_conct_clients(int* clientSocks, int serverSock, const char sockAddr[], int sockPort)
-{
-  for(int index = 0; index < 2; index += 1)
-  {
-    if(!accept_conct_client(&clientSocks[index], serverSock, sockAddr, sockPort)) return false;
-
-    char joinString[SOCKET_STR_SIZE];
-    if(!recv_socket_string(clientSocks[index], joinString, SOCKET_STR_SIZE)) return false;
-
-    if(!strncmp(joinString, "join", 4))
-    {
-      char valString[256];
-      memset(valString, '\0', sizeof(valString));
-
-      if(parse_spaced_token(valString, joinString, "name"))
-      {
-        printf("name:[%s]\n", valString);
-      }
-      if(parse_spaced_token(valString, joinString, "type"))
-      {
-        printf("type:[%s]\n", valString);
-      }
-    }
-    else return false;
-  }
-  return true;
-}
-
-bool send_update_string(const int clientSocks[], const Piece board[], State state)
-{
-  char updateString[SOCKET_STR_SIZE];
-  memset(updateString, '\0', sizeof(updateString));
-
-  char fenString[128];
-  memset(fenString, '\0', sizeof(fenString));
-  if(!create_fen_string(fenString, board, state)) return false;
-
-  sprintf(updateString, "update board \"%s\"", fenString);
-
-  for(int clientIndex = 0; clientIndex < 2; clientIndex += 1)
-  {
-    if(!send_socket_string(clientSocks[clientIndex], updateString, SOCKET_STR_SIZE)) return false;
-  }
-  return true;
-}
-
-bool send_move_string(int clientSock)
-{
-  char moveAction[SOCKET_STR_SIZE];
-  memset(moveAction, '\0', sizeof(moveAction));
-
-  sprintf(moveAction, "move");
-
-  if(!send_socket_string(clientSock, moveAction, SOCKET_STR_SIZE)) return false;
-
-  return true;
-}
-
-bool recv_socket_move(Move* move, int clientSock, const Piece board[], State state)
-{
-  Move recvMove = MOVE_NONE;
-  while(!move_fully_legal(board, state, recvMove))
-  {
-    if(!send_move_string(clientSock)) return false;
-
-    char recvString[SOCKET_STR_SIZE];
-    if(!recv_socket_string(clientSock, recvString, SOCKET_STR_SIZE)) return false;
-
-    printf("client:(%s)\n", recvString);
-
-    if(!strcmp(recvString, "quit")) return false;
-
-    char moveString[16];
-    if(!parse_spaced_token(moveString, recvString, "move")) continue;
-
-    if(!parse_string_move(&recvMove, moveString)) continue;
-
-    if(!correct_move_flag(&recvMove, board, state)) continue;
-  }
-  *move = recvMove; return true;
-}
-
-bool server_console_loop(const int clientSocks[], Piece* board, State* state)
+bool server_console_loop(const Client clients[], Piece* board, State* state)
 {
   while(game_still_running(board, *state))
   {
     if(!print_console_board(board)) return false;
+
     if(!print_console_state(*state)) return false;
 
-    if(!send_update_string(clientSocks, board, *state)) return false;
+    if(!send_update_string(clients, board, *state)) return false;
 
     int moveIndex = (STATE_CURRENT_MACRO(*state) == TEAM_WHITE) ? 0 : 1;
 
     Move recvMove = MOVE_NONE;
-    if(!recv_socket_move(&recvMove, clientSocks[moveIndex], board, *state))
-    {
-      printf("player #%d quit!\n", moveIndex + 1);
-      return false;
-    }
+    if(!demand_client_move(&recvMove, clients[moveIndex].socket, board, *state)) return false;
 
     if(!move_chess_piece(board, state, recvMove)) return false;
   }

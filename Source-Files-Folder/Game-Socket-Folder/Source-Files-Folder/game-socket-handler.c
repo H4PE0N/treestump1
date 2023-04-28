@@ -1,29 +1,34 @@
 
 #include "../Header-Files-Folder/socket-include-file.h"
 
-bool create_server_socket(int* serverSock, const char sockAddr[], int sockPort)
+// Protect socket with tempSocket before return
+bool create_server_socket(int* socket, const char sockAddr[], int sockPort)
 {
-  int tempSocket;
-  if(!create_socket_struct(&tempSocket, AF_INET, SOCK_STREAM, 0)) return false;
+  if(!create_socket_struct(socket, AF_INET, SOCK_STREAM, 0)) return false;
 
-  if(!bind_server_socket(tempSocket, sockAddr, sockPort)) return false;
+  if(ready_server_socket(*socket, sockAddr, sockPort)) return true;
 
-  if(!server_socket_listen(tempSocket, SOCK_LISTEN_AMOUNT)) return false;
-
-  *serverSock = tempSocket; return true;
+  close_socket_desc(*socket); return false;
 }
 
-bool server_socket_listen(int serverSock, int backlog)
+bool ready_server_socket(int socket, const char sockAddr[], int sockPort)
 {
-  return (listen(serverSock, backlog) != LISTEN_ERROR_CODE);
+  if(!bind_server_socket(socket, sockAddr, sockPort)) return false;
+
+  return server_socket_listen(socket, SOCK_LISTEN_AMOUNT);
 }
 
-bool bind_server_socket(int serverSock, const char sockAddr[], int sockPort)
+bool server_socket_listen(int socket, int backlog)
+{
+  return (listen(socket, backlog) != LISTEN_ERROR_CODE);
+}
+
+bool bind_server_socket(int socket, const char sockAddr[], int sockPort)
 {
   sockaddr_in addrStruct;
   if(!create_address_struct(&addrStruct, sockAddr, sockPort)) return false;
 
-  bool result = bind(serverSock, (sockaddr*) &addrStruct, sizeof(addrStruct));
+  bool result = bind(socket, (sockaddr*) &addrStruct, sizeof(addrStruct));
 
   return (result != BIND_ERROR_CODE);
 }
@@ -31,6 +36,7 @@ bool bind_server_socket(int serverSock, const char sockAddr[], int sockPort)
 bool create_socket_struct(int* sockDesc, int domain, int sockType, int protocol)
 {
   int tempSocket = socket(domain, sockType, protocol);
+
   if(tempSocket == SOCKET_ERROR_CODE) return false;
 
   *sockDesc = tempSocket; return true;
@@ -60,32 +66,37 @@ bool create_address_struct(sockaddr_in* addrStruct, const char sockAddr[], int s
   *addrStruct = tempAddr; return true;
 }
 
-bool create_client_socket(int* clientSock, const char sockAddr[], int sockPort)
+// Protect socket with tempSocket before return
+bool create_client_socket(int* socket, const char sockAddr[], int sockPort)
 {
-  int tempSocket;
-  if(!create_socket_struct(&tempSocket, AF_INET, SOCK_STREAM, 0)) return false;
+  if(!create_socket_struct(socket, AF_INET, SOCK_STREAM, 0)) return false;
 
-  if(!connect_client_socket(tempSocket, sockAddr, sockPort)) return false;
+  if(ready_client_socket(*socket, sockAddr, sockPort)) return true;
 
-  *clientSock = tempSocket; return true;
+  close_socket_desc(*socket); return false;
 }
 
-bool connect_client_socket(int clientSock, const char sockAddr[], int sockPort)
+bool ready_client_socket(int socket, const char sockAddr[], int sockPort)
+{
+  return connect_client_socket(socket, sockAddr, sockPort);
+}
+
+bool connect_client_socket(int socket, const char sockAddr[], int sockPort)
 {
   sockaddr_in addrStruct;
   if(!create_address_struct(&addrStruct, sockAddr, sockPort)) return false;
 
-  bool result = connect(clientSock, (sockaddr*) &addrStruct, sizeof(addrStruct));
+  bool result = connect(socket, (sockaddr*) &addrStruct, sizeof(addrStruct));
 
   return (result != CONNECT_ERROR_CODE);
 }
 
-void close_socket_desc(int sockDesc)
+int close_socket_desc(int socket)
 {
   #if defined(_WIN32) || defined(_WIN64)
-    closesocket(sockDesc); WSACleanup();
+    closesocket(socket); WSACleanup();
   #else
-    close(sockDesc);
+    return close(socket);
   #endif
 }
 

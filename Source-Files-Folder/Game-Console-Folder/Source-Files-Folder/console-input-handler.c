@@ -1,32 +1,39 @@
 
 #include "../Header-Files-Folder/console-include-file.h"
 
-const char CONSOLE_MOVE_PROMT[] = "input move -> ";
-const char CONSOLE_QUIT_STRING[] = "quit";
-
 bool input_console_move(Move* move, const Piece board[], State state)
 {
   Move inputMove = MOVE_NONE;
 
   char stringMove[256];
-  memset(stringMove, '\0', sizeof(stringMove));
+  memset(stringMove, 0, sizeof(stringMove));
 
   while(!MOVE_INSIDE_BOARD(inputMove))
   {
-    input_stdin_string(stringMove, CONSOLE_MOVE_PROMT);
+    input_stdin_string(stringMove, INPUT_MOVE_PROMPT);
 
-    if(!strcmp(stringMove, CONSOLE_QUIT_STRING)) return false;
+    if(!strcmp(stringMove, CONS_QUIT_ACTION)) return false;
 
-    if(!parse_string_move(&inputMove, stringMove)) continue;
+    if(!string_basic_move(&inputMove, stringMove)) continue;
   }
   *move = inputMove; return true;
 }
 
-bool input_stdin_string(char* string, const char inputPromt[])
+bool input_stdin_string(char* string, const char prompt[])
 {
   fflush(stdin);
-  printf("%s", inputPromt);
+  printf("%s", prompt);
   char buffer[1024];
   if(fgets(buffer, sizeof(buffer), stdin) == NULL) return false;
   return sscanf(buffer, "%[^\n]%*c", string);
+}
+
+char* force_input_string(char* string, const char prompt[])
+{
+  char inputString[256];
+  memset(inputString, 0, sizeof(inputString));
+
+  while(!input_stdin_string(inputString, prompt));
+
+  strcpy(string, inputString); return string;
 }
